@@ -1,1668 +1,3028 @@
 {% load static %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Zumedical — Centro Médico Especializado</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
     <style>
-        :root {
-            --magenta: #b5488a;
-            --magenta-dark: #8b2252;
-            --magenta-light: #d4709a;
-            --pink-soft: #f9eef4;
-            --pink-mid: #f0d6e8;
-            --purple-soft: #e8e4f8;
-            --purple: #7c6fc4;
-            --white: #ffffff;
-            --text-dark: #1a1a2e;
-            --text-mid: #4a4a6a;
-            --text-light: #8888aa;
-            --radius: 16px;
-            --shadow: 0 4px 24px rgba(181,72,138,0.10);
-            --shadow-hover: 0 8px 32px rgba(181,72,138,0.18);
-        }
+      :root {
+        --magenta: #b5488a;
+        --magenta-dark: #8b2252;
+        --magenta-light: #d4709a;
+        --pink-soft: #f9eef4;
+        --pink-mid: #f0d6e8;
+        --purple-soft: #e8e4f8;
+        --purple: #7c6fc4;
+        --white: #ffffff;
+        --text-dark: #1a1a2e;
+        --text-mid: #4a4a6a;
+        --text-light: #8888aa;
+        --radius: 16px;
+        --shadow: 0 4px 24px rgba(181, 72, 138, 0.1);
+        --shadow-hover: 0 8px 32px rgba(181, 72, 138, 0.18);
+      }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
-        body { font-family: 'DM Sans', sans-serif; color: var(--text-dark); background: var(--white); overflow-x: hidden; }
-        ::selection { background: var(--magenta); color: white; }
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "DM Sans", sans-serif;
+        color: var(--text-dark);
+        background: var(--white);
+        overflow-x: hidden;
+      }
+      ::selection {
+        background: var(--magenta);
+        color: white;
+      }
 
-        ::-webkit-scrollbar { width: 10px; }
-        ::-webkit-scrollbar-track { background: var(--pink-soft); }
-        ::-webkit-scrollbar-thumb { background: linear-gradient(var(--magenta), var(--purple)); border-radius: 10px; }
+      ::-webkit-scrollbar {
+        width: 10px;
+      }
+      ::-webkit-scrollbar-track {
+        background: var(--pink-soft);
+      }
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(var(--magenta), var(--purple));
+        border-radius: 10px;
+      }
 
-        .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; width: 0%; background: linear-gradient(90deg, var(--magenta), var(--purple)); z-index: 1100; transition: width 0.1s ease-out; }
+      .scroll-progress {
+        position: fixed;
+        top: 0;
+        left: 0;
+        height: 3px;
+        width: 0%;
+        background: linear-gradient(90deg, var(--magenta), var(--purple));
+        z-index: 1100;
+        transition: width 0.1s ease-out;
+      }
 
-        .reveal { opacity: 0; transform: translateY(32px); transition: opacity 0.7s cubic-bezier(.21,.6,.35,1), transform 0.7s cubic-bezier(.21,.6,.35,1); }
-        .reveal.is-visible { opacity: 1; transform: translateY(0); }
-        .reveal-stagger.is-visible > * { animation: staggerIn 0.6s cubic-bezier(.21,.6,.35,1) backwards; }
-        .reveal-stagger.is-visible > *:nth-child(1) { animation-delay: 0.05s; }
-        .reveal-stagger.is-visible > *:nth-child(2) { animation-delay: 0.12s; }
-        .reveal-stagger.is-visible > *:nth-child(3) { animation-delay: 0.19s; }
-        .reveal-stagger.is-visible > *:nth-child(4) { animation-delay: 0.26s; }
-        .reveal-stagger.is-visible > *:nth-child(5) { animation-delay: 0.33s; }
-        .reveal-stagger.is-visible > *:nth-child(6) { animation-delay: 0.40s; }
-        @keyframes staggerIn { from { opacity: 0; transform: translateY(28px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-        @media (prefers-reduced-motion: reduce) { .reveal, .reveal-stagger > *, .reveal.is-visible, .reveal-stagger.is-visible > * { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; } }
+      .reveal {
+        opacity: 0;
+        transform: translateY(32px);
+        transition:
+          opacity 0.7s cubic-bezier(0.21, 0.6, 0.35, 1),
+          transform 0.7s cubic-bezier(0.21, 0.6, 0.35, 1);
+      }
+      .reveal.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .reveal-stagger.is-visible > * {
+        animation: staggerIn 0.6s cubic-bezier(0.21, 0.6, 0.35, 1) backwards;
+      }
+      .reveal-stagger.is-visible > *:nth-child(1) {
+        animation-delay: 0.05s;
+      }
+      .reveal-stagger.is-visible > *:nth-child(2) {
+        animation-delay: 0.12s;
+      }
+      .reveal-stagger.is-visible > *:nth-child(3) {
+        animation-delay: 0.19s;
+      }
+      .reveal-stagger.is-visible > *:nth-child(4) {
+        animation-delay: 0.26s;
+      }
+      .reveal-stagger.is-visible > *:nth-child(5) {
+        animation-delay: 0.33s;
+      }
+      .reveal-stagger.is-visible > *:nth-child(6) {
+        animation-delay: 0.4s;
+      }
+      @keyframes staggerIn {
+        from {
+          opacity: 0;
+          transform: translateY(28px) scale(0.97);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .reveal,
+        .reveal-stagger > *,
+        .reveal.is-visible,
+        .reveal-stagger.is-visible > * {
+          animation: none !important;
+          transition: none !important;
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      }
 
-        /* ===== NAVBAR ===== */
-        nav {
-            position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-            background: rgba(255,255,255,0.97);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid var(--pink-mid);
-            padding: 0 5%;
-            height: 72px;
-            display: flex; align-items: center; justify-content: space-between;
-            transition: height 0.3s ease, box-shadow 0.3s ease;
-        }
-        nav.scrolled {
-            height: 60px;
-            box-shadow: 0 2px 20px rgba(181,72,138,0.12);
-            background: rgba(255,255,255,0.99);
-        }
+      /* ===== NAVBAR ===== */
+      nav {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        background: rgba(255, 255, 255, 0.97);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--pink-mid);
+        padding: 0 5%;
+        height: 72px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        transition:
+          height 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+      nav.scrolled {
+        height: 60px;
+        box-shadow: 0 2px 20px rgba(181, 72, 138, 0.12);
+        background: rgba(255, 255, 255, 0.99);
+      }
 
-        /* Logo */
-        .nav-logo {
-            display: flex; align-items: center; gap: 10px;
-            text-decoration: none; flex-shrink: 0;
-        }
-        .nav-logo-icon {
-            width: 42px; height: 42px;
-            border-radius: 50%;
-            background: var(--pink-soft);
-            border: 2px solid var(--pink-mid);
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
-            transition: transform 0.35s ease, border-color 0.25s;
-            flex-shrink: 0;
-        }
-        .nav-logo-icon img {
-            width: 34px; height: 34px;
-            object-fit: contain;
-            display: block;
-        }
-        .nav-logo:hover .nav-logo-icon {
-            transform: rotate(-10deg) scale(1.08);
-            border-color: var(--magenta-light);
-        }
-        .nav-logo-text {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 20px; font-weight: 600;
-            color: var(--magenta-dark);
-            letter-spacing: 0.01em;
-            line-height: 1;
-        }
-        .nav-logo-text small {
-            display: block;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 9.5px; font-weight: 500;
-            color: var(--text-light);
-            text-transform: uppercase; letter-spacing: 0.12em;
-            margin-top: 2px;
-        }
+      /* Logo */
+      .nav-logo {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-decoration: none;
+        flex-shrink: 0;
+      }
+      .nav-logo-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        background: var(--pink-soft);
+        border: 2px solid var(--pink-mid);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        transition:
+          transform 0.35s ease,
+          border-color 0.25s;
+        flex-shrink: 0;
+      }
+      .nav-logo-icon img {
+        width: 34px;
+        height: 34px;
+        object-fit: contain;
+        display: block;
+      }
+      .nav-logo:hover .nav-logo-icon {
+        transform: rotate(-10deg) scale(1.08);
+        border-color: var(--magenta-light);
+      }
+      .nav-logo-text {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--magenta-dark);
+        letter-spacing: 0.01em;
+        line-height: 1;
+      }
+      .nav-logo-text small {
+        display: block;
+        font-family: "DM Sans", sans-serif;
+        font-size: 9.5px;
+        font-weight: 500;
+        color: var(--text-light);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        margin-top: 2px;
+      }
 
-        /* Links */
-        .nav-links { display: flex; align-items: center; gap: 28px; list-style: none; }
-        .nav-links a {
-            text-decoration: none; color: var(--text-mid);
-            font-size: 14px; font-weight: 500;
-            transition: color 0.2s; position: relative; padding-bottom: 4px;
-        }
-        .nav-links a::after {
-            content: ''; position: absolute; left: 0; bottom: 0;
-            width: 0%; height: 2px;
-            background: linear-gradient(90deg, var(--magenta), var(--purple));
-            transition: width 0.25s ease; border-radius: 2px;
-        }
-        .nav-links a:hover { color: var(--magenta); }
-        .nav-links a:hover::after { width: 100%; }
+      /* Links */
+      .nav-links {
+        display: flex;
+        align-items: center;
+        gap: 28px;
+        list-style: none;
+      }
+      .nav-links a {
+        text-decoration: none;
+        color: var(--text-mid);
+        font-size: 14px;
+        font-weight: 500;
+        transition: color 0.2s;
+        position: relative;
+        padding-bottom: 4px;
+      }
+      .nav-links a::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 0%;
+        height: 2px;
+        background: linear-gradient(90deg, var(--magenta), var(--purple));
+        transition: width 0.25s ease;
+        border-radius: 2px;
+      }
+      .nav-links a:hover {
+        color: var(--magenta);
+      }
+      .nav-links a:hover::after {
+        width: 100%;
+      }
 
-        /* CTA */
-        .nav-cta { display: flex; gap: 8px; align-items: center; }
+      /* CTA */
+      .nav-cta {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
 
-        /* Hamburger */
+      /* Hamburger */
+      .nav-toggle {
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        gap: 5px;
+        width: 38px;
+        height: 38px;
+        border: none;
+        background: var(--pink-soft);
+        border-radius: 10px;
+        cursor: pointer;
+        z-index: 1001;
+      }
+      .nav-toggle span {
+        display: block;
+        width: 18px;
+        height: 2px;
+        background: var(--magenta-dark);
+        margin: 0 auto;
+        transition:
+          transform 0.3s ease,
+          opacity 0.3s ease;
+      }
+      .nav-toggle.active span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+      .nav-toggle.active span:nth-child(2) {
+        opacity: 0;
+      }
+      .nav-toggle.active span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
+      /* Overlay oscuro */
+      .menu-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(42, 16, 32, 0.45);
+        z-index: 998;
+        opacity: 0;
+        transition: opacity 0.3s;
+        pointer-events: none;
+      }
+      .menu-overlay.active {
+        opacity: 1;
+        pointer-events: all;
+      }
+      /* Panel menú lateral */
+      /* ===== MOBILE MENU ===== */
+      .mobile-menu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: min(320px, 90vw);
+        height: 100vh;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        transform: translateX(110%);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+          transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+          opacity 0.25s ease;
+        z-index: 1001;
+        overflow-y: auto;
+        box-shadow: -12px 0 48px rgba(139, 34, 82, 0.18);
+      }
+      .mobile-menu.open {
+        transform: translateX(0);
+        opacity: 1;
+        pointer-events: all;
+      }
+
+      .mobile-menu-header {
+        background: linear-gradient(
+          135deg,
+          var(--magenta-dark),
+          var(--magenta-light)
+        );
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0;
+      }
+      .mobile-menu-brand {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+      }
+      .mobile-menu-brand-logo {
+        width: 44px;
+        height: 44px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+      }
+      .mobile-menu-brand-logo img {
+        width: 40px;
+        height: 40px;
+        object-fit: contain;
+      }
+      .mobile-menu-brand-text h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: white;
+        line-height: 1;
+      }
+      .mobile-menu-brand-text span {
+        font-size: 0.68rem;
+        color: rgba(255, 255, 255, 0.7);
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+      }
+      .mobile-menu-close {
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.15);
+        border: none;
+        border-radius: 50%;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: background 0.2s;
+      }
+      .mobile-menu-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .mobile-menu-nav {
+        padding: 1.25rem 1.25rem 0.75rem;
+        flex: 1;
+      }
+      .mobile-menu-lbl {
+        font-size: 0.68rem;
+        font-weight: 700;
+        color: var(--magenta);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        padding: 0.5rem 0 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+      }
+      .mobile-menu-lbl::after {
+        content: "";
+        flex: 1;
+        height: 1px;
+        background: var(--pink-mid);
+      }
+      .mobile-nav-link {
+        display: flex;
+        align-items: center;
+        gap: 0.85rem;
+        padding: 0.9rem 1rem;
+        border-radius: 12px;
+        color: var(--text-dark);
+        text-decoration: none;
+        font-size: 0.95rem;
+        font-weight: 500;
+        transition: all 0.2s;
+        margin-bottom: 0.2rem;
+      }
+      .mobile-nav-link:hover {
+        background: var(--pink-soft);
+        color: var(--magenta);
+      }
+      .mobile-nav-link i {
+        width: 36px;
+        height: 36px;
+        background: var(--pink-soft);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--magenta);
+        font-size: 14px;
+        flex-shrink: 0;
+        transition: background 0.2s;
+      }
+      .mobile-nav-link:hover i {
+        background: var(--magenta);
+        color: white;
+      }
+
+      .mobile-menu-cta {
+        padding: 1rem 1.25rem 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.65rem;
+        border-top: 1px solid var(--pink-mid);
+        background: var(--pink-soft);
+        flex-shrink: 0;
+      }
+      .mobile-menu-cta .btn {
+        width: 100%;
+        justify-content: center;
+        padding: 13px;
+        font-size: 0.9rem;
+        border-radius: 12px;
+      }
+      .mobile-menu-cta .btn-outline {
+        border-color: var(--magenta);
+        color: var(--magenta);
+      }
+
+      /* ===== BUTTONS ===== */
+      .btn {
+        padding: 10px 22px;
+        border-radius: 50px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        position: relative;
+        overflow: hidden;
+      }
+      .btn-outline {
+        background: transparent;
+        border: 2px solid var(--magenta);
+        color: var(--magenta);
+      }
+      .btn-outline:hover {
+        background: var(--magenta);
+        color: white;
+      }
+      .btn-primary {
+        background: linear-gradient(
+          135deg,
+          var(--magenta-dark),
+          var(--magenta-light)
+        );
+        color: white;
+        box-shadow: 0 4px 14px rgba(181, 72, 138, 0.3);
+      }
+      .btn-primary::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: radial-gradient(
+          circle at center,
+          rgba(255, 255, 255, 0.25) 0%,
+          transparent 70%
+        );
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        opacity: 0;
+        transition:
+          width 0.5s ease,
+          height 0.5s ease,
+          opacity 0.5s ease;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(181, 72, 138, 0.4);
+      }
+      .btn-primary:active::after {
+        width: 220px;
+        height: 220px;
+        transition:
+          width 0s,
+          height 0s;
+      }
+
+      /* ===== HERO ===== */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 100px 5% 60px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Video de fondo */
+      .hero-video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        z-index: 0;
+      }
+
+      /* Overlay para legibilidad */
+      .hero-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          135deg,
+          rgba(20, 5, 15, 0.45) 0%,
+          rgba(30, 10, 25, 0.35) 50%,
+          rgba(20, 5, 15, 0.45) 100%
+        );
+        z-index: 1;
+      }
+
+      .hero-content {
+        flex: 1;
+        max-width: 580px;
+        position: relative;
+        z-index: 2;
+        animation: heroFadeUp 0.8s cubic-bezier(0.21, 0.6, 0.35, 1) backwards;
+      }
+      .hero-content .hero-badge {
+        animation-delay: 0.05s;
+      }
+      @keyframes heroFadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(24px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: white;
+        border: 1px solid var(--pink-mid);
+        border-radius: 50px;
+        padding: 6px 16px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--magenta);
+        margin-bottom: 24px;
+        box-shadow: var(--shadow);
+      }
+      .hero-badge i {
+        animation: pulseHeart 1.8s ease-in-out infinite;
+      }
+      @keyframes pulseHeart {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.2);
+        }
+      }
+
+      .hero h1 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(40px, 5vw, 62px);
+        font-weight: 600;
+        line-height: 1.15;
+        color: var(--text-dark);
+        margin-bottom: 20px;
+      }
+      .hero h1 span {
+        background: linear-gradient(135deg, var(--magenta), var(--purple));
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      .hero p {
+        font-size: 17px;
+        color: var(--text-mid);
+        line-height: 1.7;
+        margin-bottom: 36px;
+        max-width: 480px;
+      }
+      .hero-buttons {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+      }
+      .hero-buttons .btn-primary {
+        padding: 14px 32px;
+        font-size: 15px;
+      }
+      .hero-buttons .btn-outline {
+        padding: 14px 28px;
+        font-size: 15px;
+      }
+      .hero-stats {
+        display: flex;
+        gap: 32px;
+        margin-top: 48px;
+      }
+      .stat {
+        text-align: center;
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(8px);
+        padding: 10px 18px;
+        border-radius: 12px;
+        border: 1px solid rgba(181, 72, 138, 0.15);
+      }
+      .stat-number {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 32px;
+        font-weight: 600;
+        color: var(--magenta);
+      }
+      .stat-label {
+        font-size: 12px;
+        color: var(--text-mid);
+        margin-top: 2px;
+        font-weight: 500;
+      }
+
+      .hero-image {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        z-index: 2;
+        animation: heroFadeUp 0.8s cubic-bezier(0.21, 0.6, 0.35, 1) 0.15s
+          backwards;
+        perspective: 1000px;
+      }
+      .hero-image-card {
+        width: 380px;
+        height: 420px;
+        background: linear-gradient(
+          135deg,
+          var(--magenta) 0%,
+          var(--magenta-dark) 50%,
+          var(--purple) 100%
+        );
+        border-radius: 32px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 20px 60px rgba(181, 72, 138, 0.3);
+        position: relative;
+        overflow: hidden;
+        animation: cardFloat 5s ease-in-out infinite;
+        transition: transform 0.2s ease-out;
+        will-change: transform;
+      }
+      @keyframes cardFloat {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-14px);
+        }
+      }
+      .hero-image-card::before {
+        content: "";
+        position: absolute;
+        top: -60px;
+        right: -60px;
+        width: 200px;
+        height: 200px;
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 50%;
+      }
+      .hero-image-logo-wrap {
+        width: 130px;
+        height: 130px;
+        background: white;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        animation: pulseHeart 2.4s ease-in-out infinite;
+      }
+      .hero-image-logo {
+        width: 100px;
+        height: 100px;
+        object-fit: contain;
+      }
+      .hero-image-text {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 28px;
+        color: white;
+        font-weight: 600;
+      }
+      .hero-image-sub {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.7);
+        margin-top: 6px;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+      }
+
+      /* ===== SECCIONES GENERALES ===== */
+      section {
+        padding: 90px 5%;
+      }
+      .section-header {
+        text-align: center;
+        margin-bottom: 56px;
+      }
+      .section-tag {
+        display: inline-block;
+        background: var(--pink-soft);
+        color: var(--magenta);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
+        padding: 6px 16px;
+        border-radius: 50px;
+        margin-bottom: 14px;
+      }
+      .section-title {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(28px, 3.5vw, 42px);
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 14px;
+      }
+      .section-subtitle {
+        font-size: 16px;
+        color: var(--text-mid);
+        max-width: 560px;
+        margin: 0 auto;
+        line-height: 1.7;
+      }
+
+      /* ===== SOBRE NOSOTROS ===== */
+      .about {
+        background: white;
+      }
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        align-items: center;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .about-visual {
+        background: linear-gradient(
+          135deg,
+          var(--pink-soft),
+          var(--purple-soft)
+        );
+        border-radius: var(--radius);
+        padding: 48px;
+        text-align: center;
+      }
+      .about-visual i {
+        font-size: 64px;
+        background: linear-gradient(135deg, var(--magenta), var(--purple));
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 20px;
+      }
+      .about-visual p {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 20px;
+        font-style: italic;
+        color: var(--magenta-dark);
+        line-height: 1.6;
+      }
+      .about-text h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 28px;
+        color: var(--text-dark);
+        margin-bottom: 14px;
+      }
+      .about-text p {
+        color: var(--text-mid);
+        line-height: 1.8;
+        margin-bottom: 24px;
+        font-size: 15px;
+      }
+      .mv-cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        margin-top: 24px;
+      }
+      .mv-card {
+        background: var(--pink-soft);
+        border-radius: 12px;
+        padding: 18px;
+        border-left: 3px solid var(--magenta);
+        transition:
+          transform 0.3s ease,
+          box-shadow 0.3s ease,
+          background 0.3s ease;
+      }
+      .mv-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow);
+        background: white;
+      }
+      .mv-card h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--magenta);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 6px;
+      }
+      .mv-card p {
+        font-size: 13px;
+        color: var(--text-mid);
+        line-height: 1.6;
+        margin: 0;
+      }
+
+      /* ===== ESPECIALIDADES ===== */
+      .especialidades {
+        background: var(--pink-soft);
+      }
+      .esp-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+      .esp-card {
+        background: white;
+        border-radius: var(--radius);
+        padding: 32px;
+        box-shadow: var(--shadow);
+        transition:
+          transform 0.35s cubic-bezier(0.21, 0.6, 0.35, 1),
+          box-shadow 0.35s ease,
+          border-color 0.35s ease;
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        border: 1px solid transparent;
+        position: relative;
+        overflow: hidden;
+      }
+      .esp-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--magenta), var(--purple));
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.35s ease;
+      }
+      .esp-card:hover::before {
+        transform: scaleX(1);
+      }
+      .esp-card:hover {
+        transform: translateY(-8px);
+        box-shadow: var(--shadow-hover);
+        border-color: var(--pink-mid);
+      }
+      .esp-icon {
+        width: 56px;
+        height: 56px;
+        background: linear-gradient(
+          135deg,
+          var(--pink-soft),
+          var(--purple-soft)
+        );
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: var(--magenta);
+        transition:
+          transform 0.4s cubic-bezier(0.21, 0.6, 0.35, 1),
+          background 0.4s ease;
+      }
+      .esp-card:hover .esp-icon {
+        transform: rotate(-8deg) scale(1.1);
+        background: linear-gradient(135deg, var(--magenta), var(--purple));
+        color: white;
+      }
+      .esp-card h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 20px;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+      .esp-card p {
+        font-size: 14px;
+        color: var(--text-mid);
+        line-height: 1.7;
+        flex: 1;
+      }
+      .esp-badge {
+        display: inline-block;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 50px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .esp-badge.prenatal {
+        background: var(--pink-soft);
+        color: var(--magenta);
+      }
+      .esp-badge.general {
+        background: var(--purple-soft);
+        color: var(--purple);
+      }
+      .esp-card .btn-primary {
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        font-size: 13px;
+      }
+
+      /* ===== EQUIPO ===== */
+      .equipo {
+        background: white;
+      }
+      .equipo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 28px;
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+      .medico-card {
+        text-align: center;
+        background: var(--pink-soft);
+        border-radius: var(--radius);
+        transition:
+          transform 0.3s cubic-bezier(0.21, 0.6, 0.35, 1),
+          box-shadow 0.3s ease,
+          background 0.3s ease;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+      .medico-card:hover {
+        transform: translateY(-6px);
+        box-shadow: var(--shadow-hover);
+        background: white;
+      }
+      .medico-foto-wrap {
+        width: 100%;
+        aspect-ratio: 3/4;
+        overflow: hidden;
+        border-radius: var(--radius) var(--radius) 0 0;
+        background: linear-gradient(135deg, var(--magenta), var(--purple));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .medico-foto-wrap img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: top;
+        display: block;
+      }
+      .medico-foto-wrap i {
+        font-size: 56px;
+        color: rgba(255, 255, 255, 0.6);
+      }
+      .medico-card-body {
+        padding: 20px 20px 24px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+      }
+      .medico-card h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 4px;
+        line-height: 1.25;
+      }
+      .medico-esp {
+        font-size: 13px;
+        color: var(--magenta);
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: block;
+      }
+      .medico-exp {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 12px;
+        color: var(--text-light);
+        background: rgba(176, 53, 128, 0.1);
+        padding: 3px 10px;
+        border-radius: 999px;
+        margin-bottom: 10px;
+      }
+      .medico-desc {
+        font-size: 12.5px;
+        color: var(--text-light);
+        line-height: 1.65;
+      }
+      .medico-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--magenta), var(--purple));
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 16px;
+        font-size: 32px;
+        color: white;
+        overflow: hidden;
+      }
+      .medico-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .equipo-placeholder {
+        text-align: center;
+        padding: 60px;
+        color: var(--text-light);
+        grid-column: 1 / -1;
+      }
+      .equipo-placeholder i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        color: var(--pink-mid);
+      }
+
+      /* ===== CONTACTO ===== */
+      .contacto {
+        background: var(--pink-soft);
+      }
+      .contacto-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        max-width: 1000px;
+        margin: 0 auto;
+        align-items: start;
+      }
+      .contacto-info {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+      .contacto-item {
+        display: flex;
+        gap: 16px;
+        align-items: flex-start;
+      }
+      .contacto-item-icon {
+        width: 44px;
+        height: 44px;
+        background: white;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--magenta);
+        font-size: 18px;
+        flex-shrink: 0;
+        box-shadow: var(--shadow);
+      }
+      .contacto-item h4 {
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--magenta);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 4px;
+      }
+      .contacto-item p {
+        font-size: 15px;
+        color: var(--text-mid);
+        line-height: 1.6;
+      }
+      .contacto-map {
+        background: white;
+        border-radius: var(--radius);
+        padding: 32px;
+        box-shadow: var(--shadow);
+        text-align: center;
+      }
+      .contacto-map i {
+        font-size: 48px;
+        color: var(--magenta);
+        margin-bottom: 16px;
+      }
+      .contacto-map h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 22px;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+      }
+      .contacto-map p {
+        color: var(--text-mid);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      /* ===== FOOTER ===== */
+      footer {
+        background: linear-gradient(135deg, var(--magenta-dark), #2d1b3d);
+        color: white;
+        padding: 60px 5% 30px;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 40px;
+      }
+      .footer-brand h3 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 26px;
+        margin-bottom: 10px;
+      }
+      .footer-brand p {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.65);
+        line-height: 1.7;
+        margin-bottom: 20px;
+      }
+      .footer-social {
+        display: flex;
+        gap: 10px;
+      }
+      .footer-social a {
+        width: 36px;
+        height: 36px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: background 0.2s;
+        font-size: 14px;
+      }
+      .footer-social a:hover {
+        background: var(--magenta);
+      }
+      .footer-col h4 {
+        font-size: 13px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1.5px;
+        color: rgba(255, 255, 255, 0.5);
+        margin-bottom: 16px;
+      }
+      .footer-col ul {
+        list-style: none;
+      }
+      .footer-col ul li {
+        margin-bottom: 10px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .footer-col ul li a {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      .footer-col ul li a:hover {
+        color: white;
+      }
+      .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        padding-top: 24px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.45);
+      }
+
+      /* ===== BACK TO TOP ===== */
+      .back-to-top {
+        position: fixed;
+        bottom: 28px;
+        right: 28px;
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--magenta), var(--purple));
+        color: white;
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        cursor: pointer;
+        box-shadow: 0 6px 20px rgba(181, 72, 138, 0.35);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(16px);
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s ease,
+          visibility 0.3s,
+          box-shadow 0.2s ease;
+        z-index: 900;
+      }
+      .back-to-top.visible {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+      }
+      .back-to-top:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 28px rgba(181, 72, 138, 0.45);
+      }
+
+      /* ===== RESPONSIVE ===== */
+      @media (max-width: 968px) {
+        .nav-links {
+          display: none;
+        }
+        .nav-cta .btn span {
+          display: none;
+        }
         .nav-toggle {
-            display: none; flex-direction: column; justify-content: center; gap: 5px;
-            width: 38px; height: 38px; border: none;
-            background: var(--pink-soft); border-radius: 10px;
-            cursor: pointer; z-index: 1001;
+          display: flex;
         }
-        .nav-toggle span {
-            display: block; width: 18px; height: 2px;
-            background: var(--magenta-dark); margin: 0 auto;
-            transition: transform 0.3s ease, opacity 0.3s ease;
+        .nav-cta .btn-outline {
+          padding: 10px 14px;
         }
-        .nav-toggle.active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-        .nav-toggle.active span:nth-child(2) { opacity: 0; }
-        .nav-toggle.active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-        /* Overlay oscuro */
-        .menu-overlay { display: none; position: fixed; inset: 0; background: rgba(42,16,32,.45); z-index: 998; opacity: 0; transition: opacity .3s; pointer-events: none; }
-        .menu-overlay.active { opacity: 1; pointer-events: all; }
-        /* Panel menú lateral */
-        /* ===== MOBILE MENU ===== */
+      }
+      @media (min-width: 969px) {
         .mobile-menu {
-            position: fixed;
-            top: 0; right: 0;
-            width: min(320px, 90vw);
-            height: 100vh;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            transform: translateX(110%);
-            opacity: 0;
-            pointer-events: none;
-            transition: transform 0.35s cubic-bezier(0.4,0,0.2,1), opacity 0.25s ease;
-            z-index: 1001;
-            overflow-y: auto;
-            box-shadow: -12px 0 48px rgba(139,34,82,0.18);
+          display: none !important;
         }
-        .mobile-menu.open { transform: translateX(0); opacity: 1; pointer-events: all; }
-
-        .mobile-menu-header {
-            background: linear-gradient(135deg, var(--magenta-dark), var(--magenta-light));
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-shrink: 0;
+        .menu-overlay {
+          display: none !important;
         }
-        .mobile-menu-brand { display: flex; align-items: center; gap: .75rem; }
-        .mobile-menu-brand-logo {
-            width: 44px; height: 44px;
-            background: white; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            overflow: hidden;
+      }
+      @media (max-width: 968px) {
+        .menu-overlay {
+          display: block;
         }
-        .mobile-menu-brand-logo img { width: 40px; height: 40px; object-fit: contain; }
-        .mobile-menu-brand-text h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.2rem; font-weight: 600; color: white; line-height: 1;
+      }
+      @media (max-width: 768px) {
+        nav {
+          padding: 0 4%;
         }
-        .mobile-menu-brand-text span {
-            font-size: .68rem; color: rgba(255,255,255,.7);
-            text-transform: uppercase; letter-spacing: .1em;
+        .nav-cta {
+          display: none;
         }
-        .mobile-menu-close {
-            width: 36px; height: 36px;
-            background: rgba(255,255,255,.15);
-            border: none; border-radius: 50%;
-            color: white; font-size: 16px;
-            cursor: pointer; display: flex;
-            align-items: center; justify-content: center;
-            transition: background .2s;
-        }
-        .mobile-menu-close:hover { background: rgba(255,255,255,.3); }
-
-        .mobile-menu-nav { padding: 1.25rem 1.25rem .75rem; flex: 1; }
-        .mobile-menu-lbl {
-            font-size: .68rem; font-weight: 700;
-            color: var(--magenta); text-transform: uppercase;
-            letter-spacing: .12em; padding: .5rem 0 .5rem;
-            display: flex; align-items: center; gap: .4rem;
-        }
-        .mobile-menu-lbl::after {
-            content: ''; flex: 1; height: 1px;
-            background: var(--pink-mid);
-        }
-        .mobile-nav-link {
-            display: flex; align-items: center; gap: .85rem;
-            padding: .9rem 1rem;
-            border-radius: 12px;
-            color: var(--text-dark);
-            text-decoration: none;
-            font-size: .95rem; font-weight: 500;
-            transition: all .2s;
-            margin-bottom: .2rem;
-        }
-        .mobile-nav-link:hover { background: var(--pink-soft); color: var(--magenta); }
-        .mobile-nav-link i {
-            width: 36px; height: 36px;
-            background: var(--pink-soft);
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--magenta); font-size: 14px;
-            flex-shrink: 0; transition: background .2s;
-        }
-        .mobile-nav-link:hover i { background: var(--magenta); color: white; }
-
-        .mobile-menu-cta {
-            padding: 1rem 1.25rem 2rem;
-            display: flex; flex-direction: column; gap: .65rem;
-            border-top: 1px solid var(--pink-mid);
-            background: var(--pink-soft);
-            flex-shrink: 0;
-        }
-        .mobile-menu-cta .btn {
-            width: 100%; justify-content: center;
-            padding: 13px; font-size: .9rem; border-radius: 12px;
-        }
-        .mobile-menu-cta .btn-outline {
-            border-color: var(--magenta); color: var(--magenta);
-        }
-
-        /* ===== BUTTONS ===== */
-        .btn { padding: 10px 22px; border-radius: 50px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; transition: all 0.2s; border: none; display: inline-flex; align-items: center; gap: 6px; position: relative; overflow: hidden; }
-        .btn-outline { background: transparent; border: 2px solid var(--magenta); color: var(--magenta); }
-        .btn-outline:hover { background: var(--magenta); color: white; }
-        .btn-primary { background: linear-gradient(135deg, var(--magenta-dark), var(--magenta-light)); color: white; box-shadow: 0 4px 14px rgba(181,72,138,0.3); }
-        .btn-primary::after { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(255,255,255,0.25) 0%, transparent 70%); width: 0; height: 0; border-radius: 50%; opacity: 0; transition: width 0.5s ease, height 0.5s ease, opacity 0.5s ease; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(181,72,138,0.4); }
-        .btn-primary:active::after { width: 220px; height: 220px; transition: width 0s, height 0s; }
-
-        /* ===== HERO ===== */
         .hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 100px 5% 60px;
-            position: relative;
-            overflow: hidden;
+          flex-direction: column;
+          text-align: center;
+          padding: 110px 6% 60px;
         }
-
-        /* Video de fondo */
-        .hero-video {
-            position: absolute;
-            inset: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: 0;
+        .hero-content {
+          max-width: 100%;
         }
-
-        /* Overlay para legibilidad */
-        .hero-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(20,5,15,0.45) 0%, rgba(30,10,25,0.35) 50%, rgba(20,5,15,0.45) 100%);
-            z-index: 1;
+        .hero-buttons {
+          justify-content: center;
         }
-
-        .hero-content { flex: 1; max-width: 580px; position: relative; z-index: 2; animation: heroFadeUp 0.8s cubic-bezier(.21,.6,.35,1) backwards; }
-        .hero-content .hero-badge { animation-delay: 0.05s; }
-        @keyframes heroFadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
-
-        .hero-badge { display: inline-flex; align-items: center; gap: 6px; background: white; border: 1px solid var(--pink-mid); border-radius: 50px; padding: 6px 16px; font-size: 12px; font-weight: 600; color: var(--magenta); margin-bottom: 24px; box-shadow: var(--shadow); }
-        .hero-badge i { animation: pulseHeart 1.8s ease-in-out infinite; }
-        @keyframes pulseHeart { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.2); } }
-
-        .hero h1 { font-family: 'Cormorant Garamond', serif; font-size: clamp(40px, 5vw, 62px); font-weight: 600; line-height: 1.15; color: var(--text-dark); margin-bottom: 20px; }
-        .hero h1 span { background: linear-gradient(135deg, var(--magenta), var(--purple)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hero p { font-size: 17px; color: var(--text-mid); line-height: 1.7; margin-bottom: 36px; max-width: 480px; }
-        .hero-buttons { display: flex; gap: 14px; flex-wrap: wrap; }
-        .hero-buttons .btn-primary { padding: 14px 32px; font-size: 15px; }
-        .hero-buttons .btn-outline { padding: 14px 28px; font-size: 15px; }
-        .hero-stats { display: flex; gap: 32px; margin-top: 48px; }
-        .stat {
-            text-align: center;
-            background: rgba(255,255,255,0.75);
-            backdrop-filter: blur(8px);
-            padding: 10px 18px;
-            border-radius: 12px;
-            border: 1px solid rgba(181,72,138,0.15);
+        .hero-image {
+          margin-top: 40px;
         }
-        .stat-number { font-family: 'Cormorant Garamond', serif; font-size: 32px; font-weight: 600; color: var(--magenta); }
-        .stat-label { font-size: 12px; color: var(--text-mid); margin-top: 2px; font-weight: 500; }
-
-        .hero-image { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 2; animation: heroFadeUp 0.8s cubic-bezier(.21,.6,.35,1) 0.15s backwards; perspective: 1000px; }
-        .hero-image-card { width: 380px; height: 420px; background: linear-gradient(135deg, var(--magenta) 0%, var(--magenta-dark) 50%, var(--purple) 100%); border-radius: 32px; display: flex; flex-direction: column; align-items: center; justify-content: center; box-shadow: 0 20px 60px rgba(181,72,138,0.3); position: relative; overflow: hidden; animation: cardFloat 5s ease-in-out infinite; transition: transform 0.2s ease-out; will-change: transform; }
-        @keyframes cardFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-14px); } }
-        .hero-image-card::before { content: ''; position: absolute; top: -60px; right: -60px; width: 200px; height: 200px; background: rgba(255,255,255,0.08); border-radius: 50%; }
-        .hero-image-logo-wrap {
-            width: 130px; height: 130px;
-            background: white;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-            animation: pulseHeart 2.4s ease-in-out infinite;
+        .hero-image-card {
+          width: 280px;
+          height: 300px;
         }
-        .hero-image-logo { width: 100px; height: 100px; object-fit: contain; }
-        .hero-image-text { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: white; font-weight: 600; }
-        .hero-image-sub { font-size: 13px; color: rgba(255,255,255,0.7); margin-top: 6px; letter-spacing: 2px; text-transform: uppercase; }
-
-        /* ===== SECCIONES GENERALES ===== */
-        section { padding: 90px 5%; }
-        .section-header { text-align: center; margin-bottom: 56px; }
-        .section-tag { display: inline-block; background: var(--pink-soft); color: var(--magenta); font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 6px 16px; border-radius: 50px; margin-bottom: 14px; }
-        .section-title { font-family: 'Cormorant Garamond', serif; font-size: clamp(28px, 3.5vw, 42px); font-weight: 600; color: var(--text-dark); margin-bottom: 14px; }
-        .section-subtitle { font-size: 16px; color: var(--text-mid); max-width: 560px; margin: 0 auto; line-height: 1.7; }
-
-        /* ===== SOBRE NOSOTROS ===== */
-        .about { background: white; }
-        .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; max-width: 1100px; margin: 0 auto; }
-        .about-visual { background: linear-gradient(135deg, var(--pink-soft), var(--purple-soft)); border-radius: var(--radius); padding: 48px; text-align: center; }
-        .about-visual i { font-size: 64px; background: linear-gradient(135deg, var(--magenta), var(--purple)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 20px; }
-        .about-visual p { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-style: italic; color: var(--magenta-dark); line-height: 1.6; }
-        .about-text h3 { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--text-dark); margin-bottom: 14px; }
-        .about-text p { color: var(--text-mid); line-height: 1.8; margin-bottom: 24px; font-size: 15px; }
-        .mv-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
-        .mv-card { background: var(--pink-soft); border-radius: 12px; padding: 18px; border-left: 3px solid var(--magenta); transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease; }
-        .mv-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); background: white; }
-        .mv-card h4 { font-size: 13px; font-weight: 700; color: var(--magenta); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
-        .mv-card p { font-size: 13px; color: var(--text-mid); line-height: 1.6; margin: 0; }
-
-        /* ===== ESPECIALIDADES ===== */
-        .especialidades { background: var(--pink-soft); }
-        .esp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
-        .esp-card { background: white; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); transition: transform 0.35s cubic-bezier(.21,.6,.35,1), box-shadow 0.35s ease, border-color 0.35s ease; display: flex; flex-direction: column; gap: 16px; border: 1px solid transparent; position: relative; overflow: hidden; }
-        .esp-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, var(--magenta), var(--purple)); transform: scaleX(0); transform-origin: left; transition: transform 0.35s ease; }
-        .esp-card:hover::before { transform: scaleX(1); }
-        .esp-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); border-color: var(--pink-mid); }
-        .esp-icon { width: 56px; height: 56px; background: linear-gradient(135deg, var(--pink-soft), var(--purple-soft)); border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 24px; color: var(--magenta); transition: transform 0.4s cubic-bezier(.21,.6,.35,1), background 0.4s ease; }
-        .esp-card:hover .esp-icon { transform: rotate(-8deg) scale(1.1); background: linear-gradient(135deg, var(--magenta), var(--purple)); color: white; }
-        .esp-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--text-dark); }
-        .esp-card p { font-size: 14px; color: var(--text-mid); line-height: 1.7; flex: 1; }
-        .esp-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 3px 10px; border-radius: 50px; text-transform: uppercase; letter-spacing: 1px; }
-        .esp-badge.prenatal { background: var(--pink-soft); color: var(--magenta); }
-        .esp-badge.general { background: var(--purple-soft); color: var(--purple); }
-        .esp-card .btn-primary { width: 100%; justify-content: center; padding: 12px; font-size: 13px; }
-
-        /* ===== EQUIPO ===== */
-        .equipo { background: white; }
-        .equipo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 28px; max-width: 1100px; margin: 0 auto; }
-        .medico-card { text-align: center; background: var(--pink-soft); border-radius: var(--radius); transition: transform 0.3s cubic-bezier(.21,.6,.35,1), box-shadow 0.3s ease, background 0.3s ease; overflow: hidden; display: flex; flex-direction: column; }
-        .medico-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-hover); background: white; }
-        .medico-foto-wrap { width: 100%; aspect-ratio: 3/4; overflow: hidden; border-radius: var(--radius) var(--radius) 0 0; background: linear-gradient(135deg, var(--magenta), var(--purple)); display: flex; align-items: center; justify-content: center; }
-        .medico-foto-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: top; display: block; }
-        .medico-foto-wrap i { font-size: 56px; color: rgba(255,255,255,.6); }
-        .medico-card-body { padding: 20px 20px 24px; flex: 1; display: flex; flex-direction: column; }
-        .medico-card h3 { font-family: 'Cormorant Garamond', serif; font-size: 18px; font-weight: 700; color: var(--text-dark); margin-bottom: 4px; line-height: 1.25; }
-        .medico-esp { font-size: 13px; color: var(--magenta); font-weight: 600; margin-bottom: 6px; display: block; }
-        .medico-exp { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: var(--text-light); background: rgba(176,53,128,.1); padding: 3px 10px; border-radius: 999px; margin-bottom: 10px; }
-        .medico-desc { font-size: 12.5px; color: var(--text-light); line-height: 1.65; }
-        .medico-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--magenta), var(--purple)); display: flex; align-items: center; justify-content: center; margin: 0 auto 16px; font-size: 32px; color: white; overflow: hidden; }
-        .medico-avatar img { width: 100%; height: 100%; object-fit: cover; }
-        .equipo-placeholder { text-align: center; padding: 60px; color: var(--text-light); grid-column: 1 / -1; }
-        .equipo-placeholder i { font-size: 48px; margin-bottom: 16px; color: var(--pink-mid); }
-
-        /* ===== CONTACTO ===== */
-        .contacto { background: var(--pink-soft); }
-        .contacto-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; max-width: 1000px; margin: 0 auto; align-items: start; }
-        .contacto-info { display: flex; flex-direction: column; gap: 24px; }
-        .contacto-item { display: flex; gap: 16px; align-items: flex-start; }
-        .contacto-item-icon { width: 44px; height: 44px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; color: var(--magenta); font-size: 18px; flex-shrink: 0; box-shadow: var(--shadow); }
-        .contacto-item h4 { font-size: 13px; font-weight: 700; color: var(--magenta); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; }
-        .contacto-item p { font-size: 15px; color: var(--text-mid); line-height: 1.6; }
-        .contacto-map { background: white; border-radius: var(--radius); padding: 32px; box-shadow: var(--shadow); text-align: center; }
-        .contacto-map i { font-size: 48px; color: var(--magenta); margin-bottom: 16px; }
-        .contacto-map h3 { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--text-dark); margin-bottom: 8px; }
-        .contacto-map p { color: var(--text-mid); font-size: 14px; line-height: 1.6; }
-
-        /* ===== FOOTER ===== */
-        footer { background: linear-gradient(135deg, var(--magenta-dark), #2d1b3d); color: white; padding: 60px 5% 30px; }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-        .footer-brand h3 { font-family: 'Cormorant Garamond', serif; font-size: 26px; margin-bottom: 10px; }
-        .footer-brand p { font-size: 13px; color: rgba(255,255,255,0.65); line-height: 1.7; margin-bottom: 20px; }
-        .footer-social { display: flex; gap: 10px; }
-        .footer-social a { width: 36px; height: 36px; background: rgba(255,255,255,0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; text-decoration: none; transition: background 0.2s; font-size: 14px; }
-        .footer-social a:hover { background: var(--magenta); }
-        .footer-col h4 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: rgba(255,255,255,0.5); margin-bottom: 16px; }
-        .footer-col ul { list-style: none; }
-        .footer-col ul li { margin-bottom: 10px; font-size: 14px; color: rgba(255,255,255,0.75); }
-        .footer-col ul li a { color: inherit; text-decoration: none; transition: color 0.2s; }
-        .footer-col ul li a:hover { color: white; }
-        .footer-bottom { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: rgba(255,255,255,0.45); }
-
-        /* ===== BACK TO TOP ===== */
-        .back-to-top { position: fixed; bottom: 28px; right: 28px; width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, var(--magenta), var(--purple)); color: white; border: none; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; box-shadow: 0 6px 20px rgba(181,72,138,0.35); opacity: 0; visibility: hidden; transform: translateY(16px); transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s, box-shadow 0.2s ease; z-index: 900; }
-        .back-to-top.visible { opacity: 1; visibility: visible; transform: translateY(0); }
-        .back-to-top:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(181,72,138,0.45); }
-
-        /* ===== RESPONSIVE ===== */
-        @media (max-width: 968px) { .nav-links { display: none; } .nav-cta .btn span { display: none; } .nav-toggle { display: flex; } .nav-cta .btn-outline { padding: 10px 14px; } }
-        @media (min-width: 969px) { .mobile-menu { display: none !important; } .menu-overlay { display: none !important; } }
-        @media (max-width: 968px) { .menu-overlay { display: block; } }
-        @media (max-width: 768px) {
-            nav { padding: 0 4%; }
-            .nav-cta { display: none; }
-            .hero { flex-direction: column; text-align: center; padding: 110px 6% 60px; }
-            .hero-content { max-width: 100%; }
-            .hero-buttons { justify-content: center; }
-            .hero-image { margin-top: 40px; }
-            .hero-image-card { width: 280px; height: 300px; }
-            .hero-image-logo { width: 100px; height: 100px; }
-            .hero-stats { justify-content: center; flex-wrap: wrap; gap: 24px; }
-            section { padding: 64px 6%; }
-            .about-grid { grid-template-columns: 1fr; gap: 36px; }
-            .mv-cards { grid-template-columns: 1fr; }
-            .esp-grid { grid-template-columns: 1fr; }
-            .equipo-grid { grid-template-columns: repeat(2, 1fr); }
-            .contacto-grid { grid-template-columns: 1fr; gap: 36px; }
-            .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
-            .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
-            .back-to-top { width: 44px; height: 44px; bottom: 18px; right: 18px; }
+        .hero-image-logo {
+          width: 100px;
+          height: 100px;
         }
-        @media (max-width: 480px) {
-            .nav-logo-text { font-size: 18px; }
-            .hero h1 { font-size: clamp(30px, 8vw, 40px); }
-            .hero p { font-size: 15px; }
-            .hero-buttons .btn { width: 100%; justify-content: center; }
-            .hero-stats { gap: 16px; }
-            .stat-number { font-size: 26px; }
-            .equipo-grid { grid-template-columns: 1fr; }
-            .footer-grid { grid-template-columns: 1fr; text-align: center; }
-            .footer-social { justify-content: center; }
+        .hero-stats {
+          justify-content: center;
+          flex-wrap: wrap;
+          gap: 24px;
         }
+        section {
+          padding: 64px 6%;
+        }
+        .about-grid {
+          grid-template-columns: 1fr;
+          gap: 36px;
+        }
+        .mv-cards {
+          grid-template-columns: 1fr;
+        }
+        .esp-grid {
+          grid-template-columns: 1fr;
+        }
+        .equipo-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+        .contacto-grid {
+          grid-template-columns: 1fr;
+          gap: 36px;
+        }
+        .footer-grid {
+          grid-template-columns: 1fr 1fr;
+          gap: 28px;
+        }
+        .footer-bottom {
+          flex-direction: column;
+          gap: 8px;
+          text-align: center;
+        }
+        .back-to-top {
+          width: 44px;
+          height: 44px;
+          bottom: 18px;
+          right: 18px;
+        }
+      }
+      @media (max-width: 480px) {
+        .nav-logo-text {
+          font-size: 18px;
+        }
+        .hero h1 {
+          font-size: clamp(30px, 8vw, 40px);
+        }
+        .hero p {
+          font-size: 15px;
+        }
+        .hero-buttons .btn {
+          width: 100%;
+          justify-content: center;
+        }
+        .hero-stats {
+          gap: 16px;
+        }
+        .stat-number {
+          font-size: 26px;
+        }
+        .equipo-grid {
+          grid-template-columns: 1fr;
+        }
+        .footer-grid {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+        .footer-social {
+          justify-content: center;
+        }
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
+    <div class="scroll-progress" id="scrollProgress"></div>
 
-<div class="scroll-progress" id="scrollProgress"></div>
-
-<!-- ===== NAVBAR ===== -->
-<nav id="navbar">
-    <a href="#" class="nav-logo">
+    <!-- ===== NAVBAR ===== -->
+    <nav id="navbar">
+      <a href="#" class="nav-logo">
         <div class="nav-logo-icon">
-            <img src="{% static 'img/Logo.png' %}" alt="Zumedical">
+          <img
+            src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png"
+            alt="Zumedical"
+          />
         </div>
         <div class="nav-logo-text">
-            Zumedical
-            <small>Centro Médico Especializado</small>
+          Zumedical
+          <small>Centro Médico Especializado</small>
         </div>
-    </a>
-    <ul class="nav-links">
+      </a>
+      <ul class="nav-links">
         <li><a href="#nosotros">Nosotros</a></li>
         <li><a href="#especialidades">Especialidades</a></li>
         <li><a href="#equipo">Equipo</a></li>
         <li><a href="#contacto">Contacto</a></li>
-    </ul>
-    <div class="nav-cta">
+      </ul>
+      <div class="nav-cta">
         <a href="{% url 'login' %}" class="btn btn-outline">
-            <i class="fa-regular fa-circle-user"></i> <span>Iniciar sesión</span>
+          <i class="fa-regular fa-circle-user"></i> <span>Iniciar sesión</span>
         </a>
         <a href="#especialidades" class="btn btn-primary">
-            <i class="fa-regular fa-calendar-check"></i> <span>Agendar Cita</span>
+          <i class="fa-regular fa-calendar-check"></i> <span>Agendar Cita</span>
         </a>
-    </div>
-    <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
+      </div>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">
         <span></span><span></span><span></span>
-    </button>
-</nav>
+      </button>
+    </nav>
 
-<div class="menu-overlay" id="menuOverlay" onclick="cerrarMenu()"></div>
-<div class="mobile-menu" id="mobileMenu">
-
-    <!-- Header del menú -->
-    <div class="mobile-menu-header">
+    <div class="menu-overlay" id="menuOverlay" onclick="cerrarMenu()"></div>
+    <div class="mobile-menu" id="mobileMenu">
+      <!-- Header del menú -->
+      <div class="mobile-menu-header">
         <div class="mobile-menu-brand">
-            <div class="mobile-menu-brand-logo">
-                <img src="{% static 'img/Logo.png' %}" alt="Zumedical">
-            </div>
-            <div class="mobile-menu-brand-text">
-                <h3>Zumedical</h3>
-                <span>Centro Médico</span>
-            </div>
+          <div class="mobile-menu-brand-logo">
+            <img src="{% static 'img/Logo.png' %}" alt="Zumedical" />
+          </div>
+          <div class="mobile-menu-brand-text">
+            <h3>Zumedical</h3>
+            <span>Centro Médico</span>
+          </div>
         </div>
         <button class="mobile-menu-close" onclick="cerrarMenu()">
-            <i class="fa-solid fa-xmark"></i>
+          <i class="fa-solid fa-xmark"></i>
         </button>
-    </div>
+      </div>
 
-    <!-- Navegación -->
-    <div class="mobile-menu-nav">
+      <!-- Navegación -->
+      <div class="mobile-menu-nav">
         <div class="mobile-menu-lbl">Navegar</div>
         <a href="#nosotros" class="mobile-nav-link" onclick="cerrarMenu()">
-            <i class="fa-solid fa-hospital"></i>
-            Nosotros
+          <i class="fa-solid fa-hospital"></i>
+          Nosotros
         </a>
-        <a href="#especialidades" class="mobile-nav-link" onclick="cerrarMenu()">
-            <i class="fa-solid fa-stethoscope"></i>
-            Especialidades
+        <a
+          href="#especialidades"
+          class="mobile-nav-link"
+          onclick="cerrarMenu()"
+        >
+          <i class="fa-solid fa-stethoscope"></i>
+          Especialidades
         </a>
         <a href="#equipo" class="mobile-nav-link" onclick="cerrarMenu()">
-            <i class="fa-solid fa-user-doctor"></i>
-            Equipo médico
+          <i class="fa-solid fa-user-doctor"></i>
+          Equipo médico
         </a>
         <a href="#contacto" class="mobile-nav-link" onclick="cerrarMenu()">
-            <i class="fa-solid fa-location-dot"></i>
-            Contacto
+          <i class="fa-solid fa-location-dot"></i>
+          Contacto
         </a>
+      </div>
+
+      <!-- Botones CTA -->
+      <div class="mobile-menu-cta">
+        <a
+          href="#especialidades"
+          class="btn btn-primary"
+          onclick="cerrarMenu()"
+        >
+          <i class="fa-regular fa-calendar-check"></i> Agendar mi cita
+        </a>
+        <a
+          href="{% url 'login' %}"
+          class="btn btn-outline"
+          onclick="cerrarMenu()"
+        >
+          <i class="fa-regular fa-circle-user"></i> Iniciar sesión
+        </a>
+      </div>
     </div>
 
-    <!-- Botones CTA -->
-    <div class="mobile-menu-cta">
-        <a href="#especialidades" class="btn btn-primary" onclick="cerrarMenu()">
-            <i class="fa-regular fa-calendar-check"></i> Agendar mi cita
-        </a>
-        <a href="{% url 'login' %}" class="btn btn-outline" onclick="cerrarMenu()">
-            <i class="fa-regular fa-circle-user"></i> Iniciar sesión
-        </a>
-    </div>
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <video class="hero-video" autoplay muted loop playsinline>
+        <source src="{% static 'img/video/Zumedical.mp4' %}" type="video/mp4" />
+      </video>
+      <div class="hero-overlay"></div>
 
-</div>
-
-<!-- ===== HERO ===== -->
-<section class="hero">
-    <video class="hero-video" autoplay muted loop playsinline>
-        <source src="{% static 'img/video/Zumedical.mp4' %}" type="video/mp4">
-    </video>
-    <div class="hero-overlay"></div>
-
-    <div class="hero-content" style="max-width:700px; margin:0 auto; text-align:center;">
-        <div class="hero-badge" style="justify-content:center;">
-            <i class="fa-solid fa-shield-heart"></i>
-            Centro Médico Especializado
+      <div
+        class="hero-content"
+        style="max-width: 700px; margin: 0 auto; text-align: center"
+      >
+        <div class="hero-badge" style="justify-content: center">
+          <i class="fa-solid fa-shield-heart"></i>
+          Centro Médico Especializado
         </div>
-        <h1 style="color:white; text-shadow: 0 2px 24px rgba(0,0,0,0.6), 0 1px 4px rgba(0,0,0,0.4);">
-            Tu salud merece la <span style="background: linear-gradient(135deg, #ee1987, #da1990); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; filter:drop-shadow(0 2px 8px rgba(0,0,0,0.3));">mejor atención</span>
+        <h1
+          style="
+            color: white;
+            text-shadow:
+              0 2px 24px rgba(0, 0, 0, 0.6),
+              0 1px 4px rgba(0, 0, 0, 0.4);
+          "
+        >
+          Tu salud merece la
+          <span
+            style="
+              background: linear-gradient(135deg, #ee1987, #da1990);
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+              filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.3));
+            "
+            >mejor atención</span
+          >
         </h1>
-        <p style="color:white; text-shadow: 0 1px 12px rgba(0,0,0,0.6); font-size:18px; font-weight:400; background:rgba(0,0,0,0.20); backdrop-filter:blur(4px); padding:14px 24px; border-radius:12px; border:1px solid rgba(255,255,255,0.15); text-align:center; max-width:620px; margin:0 auto 36px;">
-            En Zumedical ofrecemos atención médica integral con especialistas altamente capacitados, tecnología avanzada y el cálido trato que mereces.
+        <p
+          style="
+            color: white;
+            text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);
+            font-size: 18px;
+            font-weight: 400;
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(4px);
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            text-align: center;
+            max-width: 620px;
+            margin: 0 auto 36px;
+          "
+        >
+          En Zumedical ofrecemos atención médica integral con especialistas
+          altamente capacitados, tecnología avanzada y el cálido trato que
+          mereces.
         </p>
-        <div class="hero-buttons" style="justify-content:center;">
-            <a href="#especialidades" class="btn btn-primary">
-                <i class="fa-solid fa-stethoscope"></i> Ver especialidades
-            </a>
+        <div class="hero-buttons" style="justify-content: center">
+          <a href="#especialidades" class="btn btn-primary">
+            <i class="fa-solid fa-stethoscope"></i> Ver especialidades
+          </a>
         </div>
-        <div class="hero-stats" style="justify-content:center;">
-            <div class="stat">
-                <div class="stat-number" data-count="5" data-suffix="+">0</div>
-                <div class="stat-label">Especialidades</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" data-count="100" data-suffix="%">0</div>
-                <div class="stat-label">Compromiso</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" data-static="24/7">24/7</div>
-                <div class="stat-label">Atención</div>
-            </div>
+        <div class="hero-stats" style="justify-content: center">
+          <div class="stat">
+            <div class="stat-number" data-count="5" data-suffix="+">0</div>
+            <div class="stat-label">Especialidades</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number" data-count="100" data-suffix="%">0</div>
+            <div class="stat-label">Compromiso</div>
+          </div>
+          <div class="stat">
+            <div class="stat-number" data-static="24/7">24/7</div>
+            <div class="stat-label">Atención</div>
+          </div>
         </div>
-    </div>
-</section>
+      </div>
+    </section>
 
-<!-- ===== SOBRE NOSOTROS ===== -->
-<section class="about" id="nosotros">
-    <div class="section-header reveal">
+    <!-- ===== SOBRE NOSOTROS ===== -->
+    <section class="about" id="nosotros">
+      <div class="section-header reveal">
         <span class="section-tag">Quiénes somos</span>
         <h2 class="section-title">Comprometidos con tu bienestar</h2>
-        <p class="section-subtitle">Más de una década brindando atención médica de calidad en nuestra comunidad.</p>
-    </div>
-    <div class="about-grid reveal">
+        <p class="section-subtitle">
+          Más de una década brindando atención médica de calidad en nuestra
+          comunidad.
+        </p>
+      </div>
+      <div class="about-grid reveal">
         <div class="about-visual">
-            <i class="fa-solid fa-hospital-user"></i>
-            <p>"Cuidamos cada etapa de tu salud con dedicación, empatía y excelencia médica."</p>
+          <i class="fa-solid fa-hospital-user"></i>
+          <p>
+            "Cuidamos cada etapa de tu salud con dedicación, empatía y
+            excelencia médica."
+          </p>
         </div>
         <div class="about-text">
-            <h3>Nuestra historia</h3>
-            <p>Zumedical nació con la misión de brindar atención médica especializada y accesible. Contamos con un equipo de profesionales comprometidos con la salud y el bienestar de cada paciente, ofreciendo un servicio cálido, personalizado y de alta calidad.</p>
-            <p>Hoy atendemos múltiples especialidades médicas, siempre manteniendo el mismo compromiso inicial: tratar a cada paciente como si fuera de nuestra familia.</p>
-            <div class="mv-cards">
-                <div class="mv-card">
-                    <h4>Misión</h4>
-                    <p>Brindar atención médica integral, accesible y de calidad, priorizando siempre el bienestar del paciente.</p>
-                </div>
-                <div class="mv-card">
-                    <h4>Visión</h4>
-                    <p>Ser el centro médico de referencia en la región, reconocido por la excelencia y calidez de nuestro servicio.</p>
-                </div>
+          <h3>Nuestra historia</h3>
+          <p>
+            Zumedical nació con la misión de brindar atención médica
+            especializada y accesible. Contamos con un equipo de profesionales
+            comprometidos con la salud y el bienestar de cada paciente,
+            ofreciendo un servicio cálido, personalizado y de alta calidad.
+          </p>
+          <p>
+            Hoy atendemos múltiples especialidades médicas, siempre manteniendo
+            el mismo compromiso inicial: tratar a cada paciente como si fuera de
+            nuestra familia.
+          </p>
+          <div class="mv-cards">
+            <div class="mv-card">
+              <h4>Misión</h4>
+              <p>
+                Brindar atención médica integral, accesible y de calidad,
+                priorizando siempre el bienestar del paciente.
+              </p>
             </div>
+            <div class="mv-card">
+              <h4>Visión</h4>
+              <p>
+                Ser el centro médico de referencia en la región, reconocido por
+                la excelencia y calidez de nuestro servicio.
+              </p>
+            </div>
+          </div>
         </div>
-    </div>
-</section>
+      </div>
+    </section>
 
-<!-- ===== ESPECIALIDADES ===== -->
-<section class="especialidades" id="especialidades">
-    <div class="section-header reveal">
+    <!-- ===== ESPECIALIDADES ===== -->
+    <section class="especialidades" id="especialidades">
+      <div class="section-header reveal">
         <span class="section-tag">Nuestros servicios</span>
         <h2 class="section-title">Especialidades médicas</h2>
-        <p class="section-subtitle">Contamos con especialistas en diversas áreas para cuidar integralmente tu salud.</p>
-    </div>
-    <div class="esp-grid reveal reveal-stagger">
+        <p class="section-subtitle">
+          Contamos con especialistas en diversas áreas para cuidar integralmente
+          tu salud.
+        </p>
+      </div>
+      <div class="esp-grid reveal reveal-stagger">
         {% for esp in especialidades %}
         <div class="esp-card">
-            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-                <div class="esp-icon">
-                    <i class="fa-solid {{ esp.icono }}"></i>
-                </div>
-                <span class="esp-badge {{ esp.tipo }}">{{ esp.get_tipo_display }}</span>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: flex-start;
+            "
+          >
+            <div class="esp-icon">
+              <i class="fa-solid {{ esp.icono }}"></i>
             </div>
-            <h3>{{ esp.nombre }}</h3>
-            <p>{{ esp.descripcion }}</p>
-            {% if 'parto' in esp.nombre|lower or 'cesárea' in esp.nombre|lower %}
-            <div class="btn btn-outline" style="cursor: not-allowed; opacity: 0.7; pointer-events: none; border-color: rgba(176,53,128,0.3); color: var(--muted);">
-                <i class="fa-solid fa-user-doctor"></i> Programado por el médico
-            </div>
-            {% else %}
-            <a href="{% url 'login' %}" class="btn btn-primary">
-                <i class="fa-regular fa-calendar-check"></i> Agendar cita
-            </a>
-            {% endif %}
+            <span class="esp-badge {{ esp.tipo }}"
+              >{{ esp.get_tipo_display }}</span
+            >
+          </div>
+          <h3>{{ esp.nombre }}</h3>
+          <p>{{ esp.descripcion }}</p>
+          {% if 'parto' in esp.nombre|lower or 'cesárea' in esp.nombre|lower %}
+          <div
+            class="btn btn-outline"
+            style="
+              cursor: not-allowed;
+              opacity: 0.7;
+              pointer-events: none;
+              border-color: rgba(176, 53, 128, 0.3);
+              color: var(--muted);
+            "
+          >
+            <i class="fa-solid fa-user-doctor"></i> Programado por el médico
+          </div>
+          {% else %}
+          <a href="{% url 'login' %}" class="btn btn-primary">
+            <i class="fa-regular fa-calendar-check"></i> Agendar cita
+          </a>
+          {% endif %}
         </div>
         {% empty %}
-        <p style="text-align:center; color:var(--text-light); grid-column:1/-1;">No hay especialidades disponibles.</p>
+        <p
+          style="
+            text-align: center;
+            color: var(--text-light);
+            grid-column: 1/-1;
+          "
+        >
+          No hay especialidades disponibles.
+        </p>
         {% endfor %}
-    </div>
-</section>
+      </div>
+    </section>
 
-<!-- ===== EQUIPO MÉDICO ===== -->
-<section class="equipo" id="equipo">
-    <div class="section-header reveal">
+    <!-- ===== EQUIPO MÉDICO ===== -->
+    <section class="equipo" id="equipo">
+      <div class="section-header reveal">
         <span class="section-tag">Nuestro equipo</span>
         <h2 class="section-title">Profesionales de confianza</h2>
-        <p class="section-subtitle">Un equipo de especialistas dedicados a tu salud y bienestar.</p>
-    </div>
-    <div class="equipo-grid reveal reveal-stagger">
-
+        <p class="section-subtitle">
+          Un equipo de especialistas dedicados a tu salud y bienestar.
+        </p>
+      </div>
+      <div class="equipo-grid reveal reveal-stagger">
         <!-- Carlos García -->
         <div class="medico-card">
-            <div class="medico-foto-wrap">
-                <img src="{% static 'img/equipo/carlos_garcia.jpg' %}" alt="Dr. Carlos Alberto García López"
-                     onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fa-solid fa-user-doctor\'></i>'">
-            </div>
-            <div class="medico-card-body">
-                <h3>Dr. Carlos Alberto García López</h3>
-                <span class="medico-esp">Odontólogo General</span>
-                <span class="medico-exp"><i class="fa-regular fa-clock"></i> 2 años de experiencia</span>
-                <p class="medico-desc">Odontólogo general comprometido con brindar una atención integral, ética y de calidad, enfocada en la salud y el bienestar de cada paciente.</p>
-            </div>
+          <div class="medico-foto-wrap">
+            <img
+              src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997350/carlos_garcia_sucqs8.jpg"
+              alt="Dr. Carlos Alberto García López"
+              onerror="
+                this.style.display = 'none';
+                this.parentElement.innerHTML =
+                  '<i class=\'fa-solid fa-user-doctor\'></i>';
+              "
+            />
+          </div>
+          <div class="medico-card-body">
+            <h3>Dr. Carlos Alberto García López</h3>
+            <span class="medico-esp">Odontólogo General</span>
+            <span class="medico-exp"
+              ><i class="fa-regular fa-clock"></i> 2 años de experiencia</span
+            >
+            <p class="medico-desc">
+              Odontólogo general comprometido con brindar una atención integral,
+              ética y de calidad, enfocada en la salud y el bienestar de cada
+              paciente.
+            </p>
+          </div>
         </div>
 
         <!-- Susana Jurado -->
         <div class="medico-card">
-            <div class="medico-foto-wrap">
-                <img src="{% static 'img/equipo/susana_jurado.jpg' %}" alt="Lic. Susana Roxana Jurado Calderón"
-                     onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fa-solid fa-user-nurse\'></i>'">
-            </div>
-            <div class="medico-card-body">
-                <h3>Lic. Susana Roxana Jurado Calderón</h3>
-                <span class="medico-esp">Auxiliar en Enfermería</span>
-                <span class="medico-exp"><i class="fa-regular fa-clock"></i> 18 años de experiencia</span>
-                <p class="medico-desc">Profesional de enfermería con amplia trayectoria en atención al paciente, brindando cuidados seguros, cálidos y oportunos con dedicación y vocación de servicio.</p>
-            </div>
+          <div class="medico-foto-wrap">
+            <img
+              src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997350/susana_jurado_dvklbx.jpg"
+              alt="Lic. Susana Roxana Jurado Calderón"
+              onerror="
+                this.style.display = 'none';
+                this.parentElement.innerHTML =
+                  '<i class=\'fa-solid fa-user-nurse\'></i>';
+              "
+            />
+          </div>
+          <div class="medico-card-body">
+            <h3>Lic. Susana Roxana Jurado Calderón</h3>
+            <span class="medico-esp">Auxiliar en Enfermería</span>
+            <span class="medico-exp"
+              ><i class="fa-regular fa-clock"></i> 18 años de experiencia</span
+            >
+            <p class="medico-desc">
+              Profesional de enfermería con amplia trayectoria en atención al
+              paciente, brindando cuidados seguros, cálidos y oportunos con
+              dedicación y vocación de servicio.
+            </p>
+          </div>
         </div>
 
         <!-- Zully Matute -->
         <div class="medico-card">
-            <div class="medico-foto-wrap">
-                <img src="{% static 'img/equipo/zully_matute.jpg' %}" alt="Dra. Zully Elizabeth Matute Macías"
-                     onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fa-solid fa-user-doctor\'></i>'">
-            </div>
-            <div class="medico-card-body">
-                <h3>Dra. Zully Elizabeth Matute Macías</h3>
-                <span class="medico-esp">Obstetra</span>
-                <p class="medico-desc">Profesional de la salud altamente calificada, comprometida con la atención integral, segura y humanizada de la mujer en todas sus etapas.</p>
-            </div>
+          <div class="medico-foto-wrap">
+            <img
+              src="{% static 'img/equipo/zully_matute.jpg' %}"
+              alt="Dra. Zully Elizabeth Matute Macías"
+              onerror="
+                this.style.display = 'none';
+                this.parentElement.innerHTML =
+                  '<i class=\'fa-solid fa-user-doctor\'></i>';
+              "
+            />
+          </div>
+          <div class="medico-card-body">
+            <h3>Dra. Zully Elizabeth Matute Macías</h3>
+            <span class="medico-esp">Obstetra</span>
+            <p class="medico-desc">
+              Profesional de la salud altamente calificada, comprometida con la
+              atención integral, segura y humanizada de la mujer en todas sus
+              etapas.
+            </p>
+          </div>
         </div>
 
         <!-- Liseth Zambrano -->
         <div class="medico-card">
-            <div class="medico-foto-wrap">
-                <img src="{% static 'img/equipo/liseth_zambrano.jpg' %}" alt="Dra. Liseth Zambrano"
-                     onerror="this.style.display='none';this.parentElement.innerHTML='<i class=\'fa-solid fa-user-doctor\'></i>'">
-            </div>
-            <div class="medico-card-body">
-                <h3>Dra. Liseth Zambrano</h3>
-                <span class="medico-esp">Obstetra</span>
-                <p class="medico-desc">Especialista en salud obstétrica comprometida con acompañar a cada paciente con calidez, profesionalismo y atención personalizada en cada etapa de su vida.</p>
-            </div>
+          <div class="medico-foto-wrap">
+            <img
+              src="{% static 'img/equipo/liseth_zambrano.jpg' %}"
+              alt="Dra. Liseth Zambrano"
+              onerror="
+                this.style.display = 'none';
+                this.parentElement.innerHTML =
+                  '<i class=\'fa-solid fa-user-doctor\'></i>';
+              "
+            />
+          </div>
+          <div class="medico-card-body">
+            <h3>Dra. Liseth Zambrano</h3>
+            <span class="medico-esp">Obstetra</span>
+            <p class="medico-desc">
+              Especialista en salud obstétrica comprometida con acompañar a cada
+              paciente con calidez, profesionalismo y atención personalizada en
+              cada etapa de su vida.
+            </p>
+          </div>
         </div>
+      </div>
+    </section>
 
-    </div>
-</section>
-
-<!-- ===== CONTACTO ===== -->
-<section class="contacto" id="contacto">
-    <div class="section-header reveal">
+    <!-- ===== CONTACTO ===== -->
+    <section class="contacto" id="contacto">
+      <div class="section-header reveal">
         <span class="section-tag">Encuéntranos</span>
         <h2 class="section-title">Información de contacto</h2>
-        <p class="section-subtitle">Estamos aquí para atenderte. Visítanos o comunícate con nosotros.</p>
-    </div>
-    <div class="contacto-grid reveal">
+        <p class="section-subtitle">
+          Estamos aquí para atenderte. Visítanos o comunícate con nosotros.
+        </p>
+      </div>
+      <div class="contacto-grid reveal">
         <div class="contacto-info">
-            <div class="contacto-item">
-                <div class="contacto-item-icon"><i class="fa-solid fa-location-dot"></i></div>
-                <div>
-                    <h4>Dirección</h4>
-                    <p>2 de Agosto & Av. 13 de Diciembre<br>Valencia, Ecuador</p>
-                </div>
+          <div class="contacto-item">
+            <div class="contacto-item-icon">
+              <i class="fa-solid fa-location-dot"></i>
             </div>
-            <div class="contacto-item">
-                <div class="contacto-item-icon"><i class="fa-solid fa-phone"></i></div>
-                <div>
-                    <h4>Teléfono</h4>
-                    <p>0994385607<br>0989895673</p>
-                </div>
+            <div>
+              <h4>Dirección</h4>
+              <p>2 de Agosto & Av. 13 de Diciembre<br />Valencia, Ecuador</p>
             </div>
-            <div class="contacto-item">
-                <div class="contacto-item-icon"><i class="fa-regular fa-clock"></i></div>
-                <div>
-                    <h4>Horarios de atención</h4>
-                    <p>Lunes a Viernes: 8:30 — 17:00<br>Sábados y Domingos: 9:00 — 15:00</p>
-                </div>
+          </div>
+          <div class="contacto-item">
+            <div class="contacto-item-icon">
+              <i class="fa-solid fa-phone"></i>
             </div>
-            <div class="contacto-item">
-                <div class="contacto-item-icon"><i class="fa-regular fa-envelope"></i></div>
-                <div>
-                    <h4>Correo electrónico</h4>
-                    <p>zumedical20@gmail.com</p>
-                </div>
+            <div>
+              <h4>Teléfono</h4>
+              <p>0994385607<br />0989895673</p>
             </div>
+          </div>
+          <div class="contacto-item">
+            <div class="contacto-item-icon">
+              <i class="fa-regular fa-clock"></i>
+            </div>
+            <div>
+              <h4>Horarios de atención</h4>
+              <p>
+                Lunes a Viernes: 8:30 — 17:00<br />Sábados y Domingos: 9:00 —
+                15:00
+              </p>
+            </div>
+          </div>
+          <div class="contacto-item">
+            <div class="contacto-item-icon">
+              <i class="fa-regular fa-envelope"></i>
+            </div>
+            <div>
+              <h4>Correo electrónico</h4>
+              <p>zumedical20@gmail.com</p>
+            </div>
+          </div>
         </div>
         <div class="contacto-map">
-            <i class="fa-solid fa-map-location-dot"></i>
-            <h3>Zumedical</h3>
-            <p>2 de Agosto & Av. 13 de Diciembre<br>Valencia, Ecuador</p>
-            <br>
-            <a href="https://goo.gl/maps/p6NUK6EcPrd92rbo6?g_st=awESE" target="_blank" class="btn btn-primary" style="margin-top:10px;">
-                <i class="fa-solid fa-map"></i> Ver en Google Maps
-            </a>
+          <i class="fa-solid fa-map-location-dot"></i>
+          <h3>Zumedical</h3>
+          <p>2 de Agosto & Av. 13 de Diciembre<br />Valencia, Ecuador</p>
+          <br />
+          <a
+            href="https://goo.gl/maps/p6NUK6EcPrd92rbo6?g_st=awESE"
+            target="_blank"
+            class="btn btn-primary"
+            style="margin-top: 10px"
+          >
+            <i class="fa-solid fa-map"></i> Ver en Google Maps
+          </a>
         </div>
-    </div>
-</section>
+      </div>
+    </section>
 
-<!-- ===== FOOTER ===== -->
-<footer>
-    <div class="footer-grid">
+    <!-- ===== FOOTER ===== -->
+    <footer>
+      <div class="footer-grid">
         <div class="footer-brand">
-            <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
-                <div style="width:38px; height:38px; background:white; border-radius:50%; display:flex; align-items:center; justify-content:center; overflow:hidden; flex-shrink:0;">
-                    <img src="{% static 'img/Logo.png' %}" alt="Zumedical" style="width:34px; height:34px; object-fit:contain;">
-                </div>
-                <h3 style="margin-bottom:0;">Zumedical</h3>
+          <div
+            style="
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              margin-bottom: 10px;
+            "
+          >
+            <div
+              style="
+                width: 38px;
+                height: 38px;
+                background: white;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                overflow: hidden;
+                flex-shrink: 0;
+              "
+            >
+              <img
+                src="{% static 'img/Logo.png' %}"
+                alt="Zumedical"
+                style="width: 34px; height: 34px; object-fit: contain"
+              />
             </div>
-            <p>Centro Médico Especializado comprometido con tu salud y bienestar. Atención de calidad con calidez humana.<br><br><strong>Ubicación:</strong><br>Valencia: C. 2 de Agosto & Av. 13 de Diciembre</p>
-            <div class="footer-social">
-                <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
-                <a href="#"><i class="fa-brands fa-instagram"></i></a>
-                <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
-                <a href="#"><i class="fa-brands fa-tiktok"></i></a>
-            </div>
+            <h3 style="margin-bottom: 0">Zumedical</h3>
+          </div>
+          <p>
+            Centro Médico Especializado comprometido con tu salud y bienestar.
+            Atención de calidad con calidez humana.<br /><br /><strong
+              >Ubicación:</strong
+            ><br />Valencia: C. 2 de Agosto & Av. 13 de Diciembre
+          </p>
+          <div class="footer-social">
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+            <a href="#"><i class="fa-brands fa-whatsapp"></i></a>
+            <a href="#"><i class="fa-brands fa-tiktok"></i></a>
+          </div>
         </div>
         <div class="footer-col">
-            <h4>Especialidades</h4>
-            <ul>
-                {% for esp in especialidades %}
-                <li><a href="{% url 'login' %}?especialidad={{ esp.id }}">{{ esp.nombre }}</a></li>
-                {% endfor %}
-            </ul>
+          <h4>Especialidades</h4>
+          <ul>
+            {% for esp in especialidades %}
+            <li>
+              <a href="{% url 'login' %}?especialidad={{ esp.id }}"
+                >{{ esp.nombre }}</a
+              >
+            </li>
+            {% endfor %}
+          </ul>
         </div>
         <div class="footer-col">
-            <h4>Acceso</h4>
-            <ul class="footer-links">
-                <li><a href="{% url 'login' %}">Iniciar sesión</a></li>
-                <li><a href="#nosotros">Sobre nosotros</a></li>
-                <li><a href="#especialidades">Servicios</a></li>
-            </ul>
+          <h4>Acceso</h4>
+          <ul class="footer-links">
+            <li><a href="{% url 'login' %}">Iniciar sesión</a></li>
+            <li><a href="#nosotros">Sobre nosotros</a></li>
+            <li><a href="#especialidades">Servicios</a></li>
+          </ul>
         </div>
         <div class="footer-col">
-            <h4>Horarios</h4>
-            <ul>
-                <li>Lun — Vie: 8:30 - 17:00</li>
-                <li>Sábado: 9:00 - 15:00</li>
-                <li>Domingo: 9:00 - 15:00</li>
-            </ul>
+          <h4>Horarios</h4>
+          <ul>
+            <li>Lun — Vie: 8:30 - 17:00</li>
+            <li>Sábado: 9:00 - 15:00</li>
+            <li>Domingo: 9:00 - 15:00</li>
+          </ul>
         </div>
-    </div>
-    <div class="footer-bottom">
+      </div>
+      <div class="footer-bottom">
         <span>© Copyright Zumedical. Todos los derechos reservados.</span>
-        <span>Desarrollado con <i class="fa-solid fa-heart" style="color:var(--magenta-light)"></i> en Ecuador</span>
-    </div>
-</footer>
+        <span
+          >Desarrollado con
+          <i class="fa-solid fa-heart" style="color: var(--magenta-light)"></i>
+          en Ecuador</span
+        >
+      </div>
+    </footer>
 
-<button class="back-to-top" id="backToTop" aria-label="Volver arriba">
-    <i class="fa-solid fa-arrow-up"></i>
-</button>
-<script>
-function abrirMenu() {
-    document.getElementById('mobileMenu').classList.add('open');
-    document.getElementById('menuOverlay').classList.add('active');
-    document.getElementById('navToggle').classList.add('active');
-}
-function cerrarMenu() {
-    document.getElementById('mobileMenu').classList.remove('open');
-    document.getElementById('menuOverlay').classList.remove('active');
-    document.getElementById('navToggle').classList.remove('active');
-}
-</script>
-<script>
-(function () {
-    "use strict";
+    <button class="back-to-top" id="backToTop" aria-label="Volver arriba">
+      <i class="fa-solid fa-arrow-up"></i>
+    </button>
+    <script>
+      function abrirMenu() {
+        document.getElementById("mobileMenu").classList.add("open");
+        document.getElementById("menuOverlay").classList.add("active");
+        document.getElementById("navToggle").classList.add("active");
+      }
+      function cerrarMenu() {
+        document.getElementById("mobileMenu").classList.remove("open");
+        document.getElementById("menuOverlay").classList.remove("active");
+        document.getElementById("navToggle").classList.remove("active");
+      }
+    </script>
+    <script>
+      (function () {
+        "use strict";
 
-    const navbar = document.getElementById('navbar');
-    const scrollProgress = document.getElementById('scrollProgress');
-    const backToTop = document.getElementById('backToTop');
+        const navbar = document.getElementById("navbar");
+        const scrollProgress = document.getElementById("scrollProgress");
+        const backToTop = document.getElementById("backToTop");
 
-    function onScroll() {
-        const scrollY = window.scrollY || document.documentElement.scrollTop;
-        navbar.classList.toggle('scrolled', scrollY > 30);
-        backToTop.classList.toggle('visible', scrollY > 480);
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-        const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
-        scrollProgress.style.width = progress + '%';
-    }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
+        function onScroll() {
+          const scrollY = window.scrollY || document.documentElement.scrollTop;
+          navbar.classList.toggle("scrolled", scrollY > 30);
+          backToTop.classList.toggle("visible", scrollY > 480);
+          const docHeight =
+            document.documentElement.scrollHeight - window.innerHeight;
+          const progress = docHeight > 0 ? (scrollY / docHeight) * 100 : 0;
+          scrollProgress.style.width = progress + "%";
+        }
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
 
-    backToTop.addEventListener('click', function () {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
+        backToTop.addEventListener("click", function () {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
 
-    const navToggle   = document.getElementById('navToggle');
-    const mobileMenu  = document.getElementById('mobileMenu');
-    const menuOverlay = document.getElementById('menuOverlay');
-    navToggle.addEventListener('click', function () { mobileMenu.classList.contains('open') ? cerrarMenu() : abrirMenu(); });
-    mobileMenu.querySelectorAll('a').forEach(function (link) { link.addEventListener('click', cerrarMenu); });
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') cerrarMenu(); });
+        const navToggle = document.getElementById("navToggle");
+        const mobileMenu = document.getElementById("mobileMenu");
+        const menuOverlay = document.getElementById("menuOverlay");
+        navToggle.addEventListener("click", function () {
+          mobileMenu.classList.contains("open") ? cerrarMenu() : abrirMenu();
+        });
+        mobileMenu.querySelectorAll("a").forEach(function (link) {
+          link.addEventListener("click", cerrarMenu);
+        });
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape") cerrarMenu();
+        });
 
-    const revealEls = document.querySelectorAll('.reveal');
-    if ('IntersectionObserver' in window && revealEls.length) {
-        const revealObserver = new IntersectionObserver(function (entries) {
-            entries.forEach(function (entry) {
+        const revealEls = document.querySelectorAll(".reveal");
+        if ("IntersectionObserver" in window && revealEls.length) {
+          const revealObserver = new IntersectionObserver(
+            function (entries) {
+              entries.forEach(function (entry) {
                 if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-                    revealObserver.unobserve(entry.target);
+                  entry.target.classList.add("is-visible");
+                  revealObserver.unobserve(entry.target);
                 }
-            });
-        }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
-        revealEls.forEach(function (el) { revealObserver.observe(el); });
-    } else {
-        revealEls.forEach(function (el) { el.classList.add('is-visible'); });
-    }
+              });
+            },
+            { threshold: 0.15, rootMargin: "0px 0px -40px 0px" },
+          );
+          revealEls.forEach(function (el) {
+            revealObserver.observe(el);
+          });
+        } else {
+          revealEls.forEach(function (el) {
+            el.classList.add("is-visible");
+          });
+        }
 
-    const counters = document.querySelectorAll('.stat-number[data-count]');
-    function animateCounter(el) {
-        const target = parseFloat(el.getAttribute('data-count'));
-        const suffix = el.getAttribute('data-suffix') || '';
-        const duration = 1200;
-        const start = performance.now();
-        function tick(now) {
+        const counters = document.querySelectorAll(".stat-number[data-count]");
+        function animateCounter(el) {
+          const target = parseFloat(el.getAttribute("data-count"));
+          const suffix = el.getAttribute("data-suffix") || "";
+          const duration = 1200;
+          const start = performance.now();
+          function tick(now) {
             const progress = Math.min((now - start) / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
             const value = Math.round(target * eased);
             el.textContent = value + suffix;
             if (progress < 1) requestAnimationFrame(tick);
+          }
+          requestAnimationFrame(tick);
         }
-        requestAnimationFrame(tick);
-    }
-    if (counters.length) {
-        if ('IntersectionObserver' in window) {
-            const counterObserver = new IntersectionObserver(function (entries) {
+        if (counters.length) {
+          if ("IntersectionObserver" in window) {
+            const counterObserver = new IntersectionObserver(
+              function (entries) {
                 entries.forEach(function (entry) {
-                    if (entry.isIntersecting) {
-                        animateCounter(entry.target);
-                        counterObserver.unobserve(entry.target);
-                    }
+                  if (entry.isIntersecting) {
+                    animateCounter(entry.target);
+                    counterObserver.unobserve(entry.target);
+                  }
                 });
-            }, { threshold: 0.5 });
-            counters.forEach(function (el) { counterObserver.observe(el); });
-        } else {
+              },
+              { threshold: 0.5 },
+            );
+            counters.forEach(function (el) {
+              counterObserver.observe(el);
+            });
+          } else {
             counters.forEach(animateCounter);
+          }
         }
-    }
 
-    const heroCard = document.querySelector('.hero-image-card');
-    const heroImage = document.querySelector('.hero-image');
-    if (heroCard && heroImage && window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-        heroImage.addEventListener('mousemove', function (e) {
+        const heroCard = document.querySelector(".hero-image-card");
+        const heroImage = document.querySelector(".hero-image");
+        if (
+          heroCard &&
+          heroImage &&
+          window.matchMedia("(hover: hover) and (pointer: fine)").matches
+        ) {
+          heroImage.addEventListener("mousemove", function (e) {
             const rect = heroImage.getBoundingClientRect();
             const x = (e.clientX - rect.left) / rect.width - 0.5;
             const y = (e.clientY - rect.top) / rect.height - 0.5;
-            heroCard.style.transform = 'rotateY(' + (x * 10) + 'deg) rotateX(' + (-y * 10) + 'deg)';
-        });
-        heroImage.addEventListener('mouseleave', function () {
-            heroCard.style.transform = '';
-        });
-    }
+            heroCard.style.transform =
+              "rotateY(" + x * 10 + "deg) rotateX(" + -y * 10 + "deg)";
+          });
+          heroImage.addEventListener("mouseleave", function () {
+            heroCard.style.transform = "";
+          });
+        }
 
-    document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
-        anchor.addEventListener('click', function (e) {
-            const targetId = this.getAttribute('href');
+        document.querySelectorAll('a[href^="#"]').forEach(function (anchor) {
+          anchor.addEventListener("click", function (e) {
+            const targetId = this.getAttribute("href");
             if (targetId.length <= 1) return;
             const target = document.querySelector(targetId);
             if (!target) return;
             e.preventDefault();
             const offset = 70;
-            const top = target.getBoundingClientRect().top + window.scrollY - offset;
-            window.scrollTo({ top: top, behavior: 'smooth' });
+            const top =
+              target.getBoundingClientRect().top + window.scrollY - offset;
+            window.scrollTo({ top: top, behavior: "smooth" });
+          });
         });
-    });
-})();
-</script>
+      })();
+    </script>
 
-<!-- ===== CHATBOT WIDGET ===== -->
-<style>
-/* ══════════════════════════════════════════════════════════════
+    <!-- ===== CHATBOT WIDGET ===== -->
+    <style>
+      /* ══════════════════════════════════════════════════════════════
    ZUMEDICAL CHATBOT — Diseño premium v3
    Posición: esquina inferior derecha, sobre el botón back-to-top
    ══════════════════════════════════════════════════════════════ */
 
-/* ── Variables locales del chatbot ──────────────────────────── */
-:root {
-  --cb-primary:   #b5488a;
-  --cb-dark:      #8b2252;
-  --cb-light:     #f9eef4;
-  --cb-border:    #e0e0e0;
-  --cb-text:      #333333;
-  --cb-subtext:   #666666;
-  --cb-white:     #ffffff;
-  --cb-shadow:    0 10px 40px rgba(0,0,0,0.15);
-  --cb-radius:    24px;
-}
+      /* ── Variables locales del chatbot ──────────────────────────── */
+      :root {
+        --cb-primary: #b5488a;
+        --cb-dark: #8b2252;
+        --cb-light: #f9eef4;
+        --cb-border: #e0e0e0;
+        --cb-text: #333333;
+        --cb-subtext: #666666;
+        --cb-white: #ffffff;
+        --cb-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+        --cb-radius: 24px;
+      }
 
-/* ── Botón flotante ─────────────────────────────────────────── */
-.cb-container {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    z-index: 9999;
-    font-family: 'DM Sans', sans-serif;
-}
+      /* ── Botón flotante ─────────────────────────────────────────── */
+      .cb-container {
+        position: fixed;
+        bottom: 30px;
+        right: 30px;
+        z-index: 9999;
+        font-family: "DM Sans", sans-serif;
+      }
 
-/* ── Botón principal ────────────────────────────────────────── */
-.cb-toggle-btn {
-    width: 64px;
-    height: 64px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--cb-primary), var(--cb-dark));
-    border: none;
-    color: white;
-    font-size: 26px;
-    cursor: pointer;
-    box-shadow: 0 8px 24px rgba(181,72,138,0.4);
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-}
-.cb-toggle-btn:hover {
-    transform: translateY(-4px) scale(1.05);
-    box-shadow: 0 12px 28px rgba(181,72,138,0.5);
-}
-.cb-toggle-btn:active { transform: scale(0.95); }
+      /* ── Botón principal ────────────────────────────────────────── */
+      .cb-toggle-btn {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--cb-primary), var(--cb-dark));
+        border: none;
+        color: white;
+        font-size: 26px;
+        cursor: pointer;
+        box-shadow: 0 8px 24px rgba(181, 72, 138, 0.4);
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+      }
+      .cb-toggle-btn:hover {
+        transform: translateY(-4px) scale(1.05);
+        box-shadow: 0 12px 28px rgba(181, 72, 138, 0.5);
+      }
+      .cb-toggle-btn:active {
+        transform: scale(0.95);
+      }
 
-/* Pulso de atención */
-.cb-toggle-btn::before {
-    content: '';
-    position: absolute;
-    inset: -6px;
-    border-radius: 50%;
-    border: 2px solid rgba(181,72,138,0.3);
-    animation: cbRipple 2.5s ease-out infinite;
-}
-@keyframes cbRipple {
-    0%   { transform: scale(1);   opacity: 0.8; }
-    70%  { transform: scale(1.3); opacity: 0;   }
-    100% { transform: scale(1.3); opacity: 0;   }
-}
+      /* Pulso de atención */
+      .cb-toggle-btn::before {
+        content: "";
+        position: absolute;
+        inset: -6px;
+        border-radius: 50%;
+        border: 2px solid rgba(181, 72, 138, 0.3);
+        animation: cbRipple 2.5s ease-out infinite;
+      }
+      @keyframes cbRipple {
+        0% {
+          transform: scale(1);
+          opacity: 0.8;
+        }
+        70% {
+          transform: scale(1.3);
+          opacity: 0;
+        }
+        100% {
+          transform: scale(1.3);
+          opacity: 0;
+        }
+      }
 
-/* Badge de notificación */
-.cb-badge {
-    position: absolute;
-    top: 0; right: 0;
-    background: #e63946;
-    color: white;
-    font-size: 11px;
-    font-weight: bold;
-    width: 20px; height: 20px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    border: 2px solid white;
-    animation: cbBounce 2s ease-in-out infinite;
-}
-@keyframes cbBounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-4px)} }
+      /* Badge de notificación */
+      .cb-badge {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #e63946;
+        color: white;
+        font-size: 11px;
+        font-weight: bold;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid white;
+        animation: cbBounce 2s ease-in-out infinite;
+      }
+      @keyframes cbBounce {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-4px);
+        }
+      }
 
-/* Tooltip al hover */
-.cb-tooltip {
-    position: absolute;
-    right: 80px;
-    bottom: 50%;
-    transform: translateY(50%);
-    background: var(--cb-white);
-    color: var(--cb-text);
-    font-size: 13px;
-    font-weight: 500;
-    padding: 8px 16px;
-    border-radius: 20px;
-    white-space: nowrap;
-    opacity: 0;
-    pointer-events: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    transition: opacity 0.3s, transform 0.3s;
-}
-.cb-tooltip::after {
-    content: '';
-    position: absolute;
-    right: -6px; top: 50%;
-    transform: translateY(-50%);
-    border: 6px solid transparent;
-    border-right: none;
-    border-left-color: var(--cb-white);
-}
-.cb-container:hover .cb-tooltip { opacity: 1; transform: translateY(50%) translateX(-4px); }
+      /* Tooltip al hover */
+      .cb-tooltip {
+        position: absolute;
+        right: 80px;
+        bottom: 50%;
+        transform: translateY(50%);
+        background: var(--cb-white);
+        color: var(--cb-text);
+        font-size: 13px;
+        font-weight: 500;
+        padding: 8px 16px;
+        border-radius: 20px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        transition:
+          opacity 0.3s,
+          transform 0.3s;
+      }
+      .cb-tooltip::after {
+        content: "";
+        position: absolute;
+        right: -6px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: 6px solid transparent;
+        border-right: none;
+        border-left-color: var(--cb-white);
+      }
+      .cb-container:hover .cb-tooltip {
+        opacity: 1;
+        transform: translateY(50%) translateX(-4px);
+      }
 
-/* ── Ventana del chat ───────────────────────────────────────── */
-.cb-window {
-    position: absolute;
-    bottom: 85px;
-    right: 0;
-    width: 380px;
-    max-width: calc(100vw - 40px);
-    background: var(--cb-white);
-    border-radius: var(--cb-radius);
-    box-shadow: var(--cb-shadow);
-    display: none;
-    flex-direction: column;
-    overflow: hidden;
-    height: 600px;
-    max-height: calc(100vh - 140px);
-    border: 1px solid rgba(0,0,0,0.05);
-}
-.cb-window.open {
-    display: flex;
-    animation: cbOpen 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-    transform-origin: bottom right;
-}
-@keyframes cbOpen {
-    from { opacity: 0; transform: scale(0.8) translateY(20px); }
-    to   { opacity: 1; transform: scale(1) translateY(0); }
-}
+      /* ── Ventana del chat ───────────────────────────────────────── */
+      .cb-window {
+        position: absolute;
+        bottom: 85px;
+        right: 0;
+        width: 380px;
+        max-width: calc(100vw - 40px);
+        background: var(--cb-white);
+        border-radius: var(--cb-radius);
+        box-shadow: var(--cb-shadow);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        height: 600px;
+        max-height: calc(100vh - 140px);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+      .cb-window.open {
+        display: flex;
+        animation: cbOpen 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        transform-origin: bottom right;
+      }
+      @keyframes cbOpen {
+        from {
+          opacity: 0;
+          transform: scale(0.8) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateY(0);
+        }
+      }
 
-/* ── Header ─────────────────────────────────────────────────── */
-.cb-header {
-    background: linear-gradient(135deg, var(--cb-primary) 0%, var(--cb-dark) 100%);
-    padding: 20px 24px;
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    flex-shrink: 0;
-    position: relative;
-    overflow: hidden;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-}
-.cb-avatar {
-    width: 48px; height: 48px;
-    border-radius: 50%;
-    background: white;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px;
-    color: var(--cb-primary);
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-}
-/* Punto verde de "en línea" */
-.cb-avatar::after {
-    content: '';
-    position: absolute;
-    bottom: 2px; right: 2px;
-    width: 12px; height: 12px;
-    background: #4caf50;
-    border-radius: 50%;
-    border: 2px solid white;
-}
-.cb-header-info {
-    flex: 1;
-    position: relative;
-    z-index: 1;
-}
-.cb-header-info h4 {
-    margin: 0 0 4px;
-    font-size: 16px;
-    font-weight: 700;
-    color: white;
-}
-.cb-header-info p {
-    margin: 0;
-    font-size: 12px;
-    color: rgba(255,255,255,0.85);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-.cb-header-info p::before {
-    content: '';
-    width: 6px; height: 6px;
-    background: #4caf50;
-    border-radius: 50%;
-    display: inline-block;
-    animation: cbPulseGreen 2s infinite;
-}
-.cb-header-close {
-    background: rgba(255,255,255,0.2);
-    border: none;
-    color: white;
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    cursor: pointer; font-size: 16px;
-    display: flex; align-items: center; justify-content: center;
-    transition: all 0.3s;
-    flex-shrink: 0;
-    position: relative;
-    z-index: 1;
-}
-.cb-header-close:hover {
-    background: rgba(255,255,255,0.3);
-    transform: rotate(90deg);
-}
+      /* ── Header ─────────────────────────────────────────────────── */
+      .cb-header {
+        background: linear-gradient(
+          135deg,
+          var(--cb-primary) 0%,
+          var(--cb-dark) 100%
+        );
+        padding: 20px 24px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-shrink: 0;
+        position: relative;
+        overflow: hidden;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .cb-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+        color: var(--cb-primary);
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+      }
+      /* Punto verde de "en línea" */
+      .cb-avatar::after {
+        content: "";
+        position: absolute;
+        bottom: 2px;
+        right: 2px;
+        width: 12px;
+        height: 12px;
+        background: #4caf50;
+        border-radius: 50%;
+        border: 2px solid white;
+      }
+      .cb-header-info {
+        flex: 1;
+        position: relative;
+        z-index: 1;
+      }
+      .cb-header-info h4 {
+        margin: 0 0 4px;
+        font-size: 16px;
+        font-weight: 700;
+        color: white;
+      }
+      .cb-header-info p {
+        margin: 0;
+        font-size: 12px;
+        color: rgba(255, 255, 255, 0.85);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .cb-header-info p::before {
+        content: "";
+        width: 6px;
+        height: 6px;
+        background: #4caf50;
+        border-radius: 50%;
+        display: inline-block;
+        animation: cbPulseGreen 2s infinite;
+      }
+      .cb-header-close {
+        background: rgba(255, 255, 255, 0.2);
+        border: none;
+        color: white;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        cursor: pointer;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s;
+        flex-shrink: 0;
+        position: relative;
+        z-index: 1;
+      }
+      .cb-header-close:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: rotate(90deg);
+      }
 
-/* ── Área de mensajes ───────────────────────────────────────── */
-.cb-messages {
-    flex: 1;
-    padding: 24px 20px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    min-height: 0;
-    background: #f8f9fa;
-    scroll-behavior: smooth;
-}
-/* Scrollbar personalizada */
-.cb-messages::-webkit-scrollbar { width: 6px; }
-.cb-messages::-webkit-scrollbar-track { background: transparent; }
-.cb-messages::-webkit-scrollbar-thumb { background: #d0d0d0; border-radius: 6px; }
+      /* ── Área de mensajes ───────────────────────────────────────── */
+      .cb-messages {
+        flex: 1;
+        padding: 24px 20px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        min-height: 0;
+        background: #f8f9fa;
+        scroll-behavior: smooth;
+      }
+      /* Scrollbar personalizada */
+      .cb-messages::-webkit-scrollbar {
+        width: 6px;
+      }
+      .cb-messages::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .cb-messages::-webkit-scrollbar-thumb {
+        background: #d0d0d0;
+        border-radius: 6px;
+      }
 
-/* ── Burbujas de mensajes ───────────────────────────────────── */
-.cb-msg {
-    max-width: 85%;
-    padding: 14px 18px;
-    border-radius: 20px;
-    font-size: 14px;
-    line-height: 1.5;
-    word-break: break-word;
-    animation: cbMsgIn 0.3s ease-out;
-}
-@keyframes cbMsgIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+      /* ── Burbujas de mensajes ───────────────────────────────────── */
+      .cb-msg {
+        max-width: 85%;
+        padding: 14px 18px;
+        border-radius: 20px;
+        font-size: 14px;
+        line-height: 1.5;
+        word-break: break-word;
+        animation: cbMsgIn 0.3s ease-out;
+      }
+      @keyframes cbMsgIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
 
-.cb-msg.bot {
-    background: var(--cb-white);
-    color: var(--cb-text);
-    align-self: flex-start;
-    border-bottom-left-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-}
-.cb-msg.user {
-    background: linear-gradient(135deg, var(--cb-primary), var(--cb-dark));
-    color: white;
-    align-self: flex-end;
-    border-bottom-right-radius: 4px;
-    box-shadow: 0 4px 12px rgba(181,72,138,0.2);
-}
+      .cb-msg.bot {
+        background: var(--cb-white);
+        color: var(--cb-text);
+        align-self: flex-start;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+      }
+      .cb-msg.user {
+        background: linear-gradient(135deg, var(--cb-primary), var(--cb-dark));
+        color: white;
+        align-self: flex-end;
+        border-bottom-right-radius: 4px;
+        box-shadow: 0 4px 12px rgba(181, 72, 138, 0.2);
+      }
 
-.cb-msg ul {
-    margin: 8px 0 8px 20px;
-    padding: 0;
-}
-.cb-msg li {
-    margin-bottom: 4px;
-}
-.cb-msg hr {
-    border: 0;
-    border-top: 1px solid rgba(0,0,0,0.1);
-    margin: 12px 0;
-}
-.cb-cat-tag {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 700;
-    color: var(--cb-primary);
-    background: var(--cb-light);
-    padding: 3px 10px;
-    border-radius: 10px;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
+      .cb-msg ul {
+        margin: 8px 0 8px 20px;
+        padding: 0;
+      }
+      .cb-msg li {
+        margin-bottom: 4px;
+      }
+      .cb-msg hr {
+        border: 0;
+        border-top: 1px solid rgba(0, 0, 0, 0.1);
+        margin: 12px 0;
+      }
+      .cb-cat-tag {
+        display: inline-block;
+        font-size: 11px;
+        font-weight: 700;
+        color: var(--cb-primary);
+        background: var(--cb-light);
+        padding: 3px 10px;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
 
-/* Timestamp sutil */
-.cb-msg-time {
-    font-size: 11px;
-    opacity: 0.6;
-    margin-top: 6px;
-    text-align: right;
-}
-.cb-msg.bot .cb-msg-time { text-align: left; }
+      /* Timestamp sutil */
+      .cb-msg-time {
+        font-size: 11px;
+        opacity: 0.6;
+        margin-top: 6px;
+        text-align: right;
+      }
+      .cb-msg.bot .cb-msg-time {
+        text-align: left;
+      }
 
-/* ── Grid de categorías ─────────────────────────────────────── */
-.cb-cat-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-    align-self: stretch;
-    animation: cbMsgIn 0.3s ease-out;
-    margin-top: 8px;
-}
-.cb-cat-btn {
-    background: var(--cb-white);
-    border: 1px solid var(--cb-border);
-    color: var(--cb-text);
-    border-radius: 16px;
-    padding: 16px 12px;
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: center;
-    transition: all 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-}
-.cb-cat-btn:hover {
-    background: var(--cb-light);
-    border-color: var(--cb-primary);
-    color: var(--cb-primary);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(181,72,138,0.1);
-}
-.cb-cat-btn:active { transform: scale(0.98); }
-.cb-cat-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
-.cb-cat-emoji { font-size: 26px; }
+      /* ── Grid de categorías ─────────────────────────────────────── */
+      .cb-cat-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        align-self: stretch;
+        animation: cbMsgIn 0.3s ease-out;
+        margin-top: 8px;
+      }
+      .cb-cat-btn {
+        background: var(--cb-white);
+        border: 1px solid var(--cb-border);
+        color: var(--cb-text);
+        border-radius: 16px;
+        padding: 16px 12px;
+        font-size: 13px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      }
+      .cb-cat-btn:hover {
+        background: var(--cb-light);
+        border-color: var(--cb-primary);
+        color: var(--cb-primary);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(181, 72, 138, 0.1);
+      }
+      .cb-cat-btn:active {
+        transform: scale(0.98);
+      }
+      .cb-cat-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+      }
+      .cb-cat-emoji {
+        font-size: 26px;
+      }
 
-/* ── Lista de preguntas ─────────────────────────────────────── */
-.cb-options {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    align-self: stretch;
-    animation: cbMsgIn 0.3s ease-out;
-    margin-top: 8px;
-}
-.cb-opt-btn {
-    background: var(--cb-white);
-    border: 1px solid var(--cb-border);
-    color: var(--cb-text);
-    border-radius: 14px;
-    padding: 14px 16px;
-    font-size: 14px;
-    font-weight: 500;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-}
-.cb-opt-btn i {
-    color: var(--cb-primary);
-    flex-shrink: 0;
-    margin-top: 3px;
-    font-size: 14px;
-}
-.cb-opt-btn:hover {
-    background: var(--cb-light);
-    border-color: var(--cb-primary);
-    transform: translateX(4px);
-}
-.cb-opt-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+      /* ── Lista de preguntas ─────────────────────────────────────── */
+      .cb-options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-self: stretch;
+        animation: cbMsgIn 0.3s ease-out;
+        margin-top: 8px;
+      }
+      .cb-opt-btn {
+        background: var(--cb-white);
+        border: 1px solid var(--cb-border);
+        color: var(--cb-text);
+        border-radius: 14px;
+        padding: 14px 16px;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+      }
+      .cb-opt-btn i {
+        color: var(--cb-primary);
+        flex-shrink: 0;
+        margin-top: 3px;
+        font-size: 14px;
+      }
+      .cb-opt-btn:hover {
+        background: var(--cb-light);
+        border-color: var(--cb-primary);
+        transform: translateX(4px);
+      }
+      .cb-opt-btn:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
 
-/* ── Typing indicator ───────────────────────────────────────── */
-.cb-typing {
-    display: inline-flex;
-    gap: 6px;
-    align-items: center;
-    align-self: flex-start;
-    padding: 14px 20px;
-    background: var(--cb-white);
-    border: 1px solid rgba(0,0,0,0.05);
-    border-radius: 20px;
-    border-bottom-left-radius: 4px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    animation: cbMsgIn 0.2s ease-out;
-}
-.cb-typing span {
-    width: 8px; height: 8px;
-    background: var(--cb-primary);
-    border-radius: 50%;
-    opacity: 0.4;
-    animation: cbDot 1.4s ease-in-out infinite;
-}
-.cb-typing span:nth-child(2) { animation-delay: 0.2s; }
-.cb-typing span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes cbDot {
-    0%,60%,100% { transform: translateY(0); opacity: 0.4; }
-    30%         { transform: translateY(-6px); opacity: 1; }
-}
+      /* ── Typing indicator ───────────────────────────────────────── */
+      .cb-typing {
+        display: inline-flex;
+        gap: 6px;
+        align-items: center;
+        align-self: flex-start;
+        padding: 14px 20px;
+        background: var(--cb-white);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        border-radius: 20px;
+        border-bottom-left-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        animation: cbMsgIn 0.2s ease-out;
+      }
+      .cb-typing span {
+        width: 8px;
+        height: 8px;
+        background: var(--cb-primary);
+        border-radius: 50%;
+        opacity: 0.4;
+        animation: cbDot 1.4s ease-in-out infinite;
+      }
+      .cb-typing span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      .cb-typing span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+      @keyframes cbDot {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.4;
+        }
+        30% {
+          transform: translateY(-6px);
+          opacity: 1;
+        }
+      }
 
-/* ── Barra de acciones inferior ─────────────────────────────── */
-.cb-footer {
-    padding: 12px 16px;
-    border-top: 1px solid rgba(0,0,0,0.05);
-    display: flex;
-    gap: 8px;
-    flex-shrink: 0;
-    background: var(--cb-white);
-    justify-content: space-between;
-}
-.cb-footer-btn {
-    flex: 1;
-    background: #f0f0f0;
-    border: none;
-    color: var(--cb-text);
-    border-radius: 20px;
-    padding: 10px 8px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-}
-.cb-footer-btn:hover {
-    background: var(--cb-primary);
-    color: white;
-}
-.cb-footer-btn.close-btn:hover {
-    background: #e63946;
-    color: white;
-}
-.cb-footer-btn i { font-size: 14px; }
+      /* ── Barra de acciones inferior ─────────────────────────────── */
+      .cb-footer {
+        padding: 12px 16px;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+        background: var(--cb-white);
+        justify-content: space-between;
+      }
+      .cb-footer-btn {
+        flex: 1;
+        background: #f0f0f0;
+        border: none;
+        color: var(--cb-text);
+        border-radius: 20px;
+        padding: 10px 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      .cb-footer-btn:hover {
+        background: var(--cb-primary);
+        color: white;
+      }
+      .cb-footer-btn.close-btn:hover {
+        background: #e63946;
+        color: white;
+      }
+      .cb-footer-btn i {
+        font-size: 14px;
+      }
 
-/* ── Responsive ─────────────────────────────────────────────── */
-@media (max-width: 480px) {
-    .cb-container { right: 20px; bottom: 20px; }
-    .cb-window {
-        width: calc(100vw - 40px);
-        height: calc(100vh - 120px);
-        max-height: none;
-        bottom: 80px;
-    }
-    .cb-toggle-btn { width: 56px; height: 56px; font-size: 22px; }
-}
-</style>
+      /* ── Responsive ─────────────────────────────────────────────── */
+      @media (max-width: 480px) {
+        .cb-container {
+          right: 20px;
+          bottom: 20px;
+        }
+        .cb-window {
+          width: calc(100vw - 40px);
+          height: calc(100vh - 120px);
+          max-height: none;
+          bottom: 80px;
+        }
+        .cb-toggle-btn {
+          width: 56px;
+          height: 56px;
+          font-size: 22px;
+        }
+      }
+    </style>
 
-<!-- HTML del widget -->
-<div class="cb-container" id="cbContainer">
-
-    <!-- Ventana del chat -->
-    <div class="cb-window" id="cbWindow" role="dialog" aria-modal="true" aria-label="Asistente virtual Zumedical">
-
+    <!-- HTML del widget -->
+    <div class="cb-container" id="cbContainer">
+      <!-- Ventana del chat -->
+      <div
+        class="cb-window"
+        id="cbWindow"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Asistente virtual Zumedical"
+      >
         <!-- Header -->
         <div class="cb-header">
-            <div class="cb-avatar">
-                <i class="fa-solid fa-user-nurse"></i>
-            </div>
-            <div class="cb-header-info">
-                <h4>Asistente Zumedical</h4>
-                <p>En línea · Responde al instante</p>
-            </div>
-            <button class="cb-header-close" id="cbCloseBtn" aria-label="Cerrar chat">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
+          <div class="cb-avatar">
+            <i class="fa-solid fa-user-nurse"></i>
+          </div>
+          <div class="cb-header-info">
+            <h4>Asistente Zumedical</h4>
+            <p>En línea · Responde al instante</p>
+          </div>
+          <button
+            class="cb-header-close"
+            id="cbCloseBtn"
+            aria-label="Cerrar chat"
+          >
+            <i class="fa-solid fa-xmark"></i>
+          </button>
         </div>
 
         <!-- Mensajes -->
-        <div class="cb-messages" id="cbMessages" role="log" aria-live="polite"></div>
+        <div
+          class="cb-messages"
+          id="cbMessages"
+          role="log"
+          aria-live="polite"
+        ></div>
 
         <!-- Barra de acciones (visible tras respuesta) -->
-        <div class="cb-footer" id="cbFooter" style="display:none;">
-            <button class="cb-footer-btn" id="cbCatBtn" style="display:none;">
-                <i class="fa-solid fa-arrow-left"></i> Volver
-            </button>
-            <button class="cb-footer-btn" id="cbHomeBtn">
-                <i class="fa-solid fa-house"></i> Inicio
-            </button>
-            <button class="cb-footer-btn close-btn" id="cbFooterCloseBtn">
-                <i class="fa-solid fa-xmark"></i> Cerrar
-            </button>
+        <div class="cb-footer" id="cbFooter" style="display: none">
+          <button class="cb-footer-btn" id="cbCatBtn" style="display: none">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+          </button>
+          <button class="cb-footer-btn" id="cbHomeBtn">
+            <i class="fa-solid fa-house"></i> Inicio
+          </button>
+          <button class="cb-footer-btn close-btn" id="cbFooterCloseBtn">
+            <i class="fa-solid fa-xmark"></i> Cerrar
+          </button>
         </div>
-    </div>
+      </div>
 
-    <!-- Botón flotante -->
-    <button class="cb-toggle-btn" id="cbToggleBtn" aria-label="Abrir asistente virtual Zumedical">
+      <!-- Botón flotante -->
+      <button
+        class="cb-toggle-btn"
+        id="cbToggleBtn"
+        aria-label="Abrir asistente virtual Zumedical"
+      >
         <i class="fa-solid fa-comment-medical" id="cbToggleIcon"></i>
         <span class="cb-badge" id="cbBadge" aria-hidden="true">1</span>
-    </button>
-    <span class="cb-tooltip">¿Necesitas ayuda?</span>
+      </button>
+      <span class="cb-tooltip">¿Necesitas ayuda?</span>
+    </div>
 
-</div>
-
-<script>
-/* ══════════════════════════════════════════════════════════════
+    <script>
+      /* ══════════════════════════════════════════════════════════════
    ZUMEDICAL CHATBOT — JavaScript v2
    ══════════════════════════════════════════════════════════════ */
-(function () {
-    'use strict';
+      (function () {
+        "use strict";
 
-    /* ── Estado ─────────────────────────────────────────────── */
-    const S = {
-        open:        false,
-        loading:     false,
-        started:     false,
-        currentSlug: null,
-        historyStack: [],
-    };
+        /* ── Estado ─────────────────────────────────────────────── */
+        const S = {
+          open: false,
+          loading: false,
+          started: false,
+          currentSlug: null,
+          historyStack: [],
+        };
 
-    /* ── DOM ────────────────────────────────────────────────── */
-    const win        = document.getElementById('cbWindow');
-    const msgs       = document.getElementById('cbMessages');
-    const footer     = document.getElementById('cbFooter');
-    const homeBtn    = document.getElementById('cbHomeBtn');
-    const catBtn     = document.getElementById('cbCatBtn');
-    const footerCloseBtn = document.getElementById('cbFooterCloseBtn');
-    const badge      = document.getElementById('cbBadge');
-    const toggleBtn  = document.getElementById('cbToggleBtn');
-    const toggleIcon = document.getElementById('cbToggleIcon');
-    const closeBtn   = document.getElementById('cbCloseBtn');
+        /* ── DOM ────────────────────────────────────────────────── */
+        const win = document.getElementById("cbWindow");
+        const msgs = document.getElementById("cbMessages");
+        const footer = document.getElementById("cbFooter");
+        const homeBtn = document.getElementById("cbHomeBtn");
+        const catBtn = document.getElementById("cbCatBtn");
+        const footerCloseBtn = document.getElementById("cbFooterCloseBtn");
+        const badge = document.getElementById("cbBadge");
+        const toggleBtn = document.getElementById("cbToggleBtn");
+        const toggleIcon = document.getElementById("cbToggleIcon");
+        const closeBtn = document.getElementById("cbCloseBtn");
 
-    /* ── Utils ──────────────────────────────────────────────── */
-    function esc(s) {
-        return String(s)
-            .replace(/&/g,'&amp;').replace(/</g,'&lt;')
-            .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
+        /* ── Utils ──────────────────────────────────────────────── */
+        function esc(s) {
+          return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+        }
 
-    function now() {
-        return new Date().toLocaleTimeString('es-EC', { hour:'2-digit', minute:'2-digit' });
-    }
+        function now() {
+          return new Date().toLocaleTimeString("es-EC", {
+            hour: "2-digit",
+            minute: "2-digit",
+          });
+        }
 
-    function scrollEnd() {
-        // Smooth scroll sin saltarse la animación del mensaje
-        requestAnimationFrame(function(){
-            msgs.scrollTo({ top: msgs.scrollHeight, behavior: 'smooth' });
-        });
-    }
+        function scrollEnd() {
+          // Smooth scroll sin saltarse la animación del mensaje
+          requestAnimationFrame(function () {
+            msgs.scrollTo({ top: msgs.scrollHeight, behavior: "smooth" });
+          });
+        }
 
-    /* ── Añadir burbuja ─────────────────────────────────────── */
-    function addMsg(html, side) {
-        const el = document.createElement('div');
-        el.className = 'cb-msg ' + side;
-        el.innerHTML = html + '<div class="cb-msg-time">' + now() + '</div>';
-        msgs.appendChild(el);
-        scrollEnd();
-        return el;
-    }
+        /* ── Añadir burbuja ─────────────────────────────────────── */
+        function addMsg(html, side) {
+          const el = document.createElement("div");
+          el.className = "cb-msg " + side;
+          el.innerHTML = html + '<div class="cb-msg-time">' + now() + "</div>";
+          msgs.appendChild(el);
+          scrollEnd();
+          return el;
+        }
 
-    /* ── Typing indicator ───────────────────────────────────── */
-    function showTyping() {
-        const el = document.createElement('div');
-        el.className = 'cb-typing';
-        el.id = 'cbTyping';
-        el.innerHTML = '<span></span><span></span><span></span>';
-        msgs.appendChild(el);
-        scrollEnd();
-    }
-    function hideTyping() {
-        const el = document.getElementById('cbTyping');
-        if (el) el.remove();
-    }
+        /* ── Typing indicator ───────────────────────────────────── */
+        function showTyping() {
+          const el = document.createElement("div");
+          el.className = "cb-typing";
+          el.id = "cbTyping";
+          el.innerHTML = "<span></span><span></span><span></span>";
+          msgs.appendChild(el);
+          scrollEnd();
+        }
+        function hideTyping() {
+          const el = document.getElementById("cbTyping");
+          if (el) el.remove();
+        }
 
-    /* ── Bloquear botones ya pulsados ───────────────────────── */
-    function lockButtons() {
-        msgs.querySelectorAll('button').forEach(function(b){ b.disabled = true; });
-    }
+        /* ── Bloquear botones ya pulsados ───────────────────────── */
+        function lockButtons() {
+          msgs.querySelectorAll("button").forEach(function (b) {
+            b.disabled = true;
+          });
+        }
 
-    /* ── Fetch central ──────────────────────────────────────── */
-    function cbSend(estado, label, isBack = false) {
-        if (S.loading) return;
-        S.loading = true;
+        /* ── Fetch central ──────────────────────────────────────── */
+        function cbSend(estado, label, isBack = false) {
+          if (S.loading) return;
+          S.loading = true;
 
-        if (label) addMsg(esc(label), 'user');
+          if (label) addMsg(esc(label), "user");
 
-        msgs.querySelectorAll('.cb-cat-grid, .cb-options').forEach(function(el) {
-            el.remove();
-        });
+          msgs
+            .querySelectorAll(".cb-cat-grid, .cb-options")
+            .forEach(function (el) {
+              el.remove();
+            });
 
-        if (estado === 'inicio') {
-            S.historyStack = ['inicio'];
-        } else if (!isBack && estado !== 'volver') {
+          if (estado === "inicio") {
+            S.historyStack = ["inicio"];
+          } else if (!isBack && estado !== "volver") {
             S.historyStack.push(estado);
+          }
+
+          lockButtons();
+          footer.style.display = "none";
+          catBtn.style.display = "none";
+
+          showTyping();
+
+          fetch("/chatbot/response/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ estado: estado, canal: "landing" }),
+          })
+            .then(function (r) {
+              return r.json();
+            })
+            .then(function (d) {
+              hideTyping();
+              render(d);
+            })
+            .catch(function () {
+              hideTyping();
+              addMsg(
+                "Lo siento, ocurrió un error de conexión. Por favor intenta nuevamente.",
+                "bot",
+              );
+              footer.style.display = "flex";
+            })
+            .finally(function () {
+              S.loading = false;
+              scrollEnd();
+            });
         }
 
-        lockButtons();
-        footer.style.display  = 'none';
-        catBtn.style.display  = 'none';
-
-        showTyping();
-
-        fetch('/chatbot/response/', {
-            method:  'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ estado: estado, canal: 'landing' }),
-        })
-        .then(function(r){ return r.json(); })
-        .then(function(d){ hideTyping(); render(d); })
-        .catch(function(){
-            hideTyping();
-            addMsg('Lo siento, ocurrió un error de conexión. Por favor intenta nuevamente.', 'bot');
-            footer.style.display = 'flex';
-        })
-        .finally(function(){ S.loading = false; scrollEnd(); });
-    }
-
-    /* ── Renderizar respuesta ───────────────────────────────── */
-    function render(d) {
-        if (d.tipo === 'bienvenida' || d.tipo === 'categorias') {
+        /* ── Renderizar respuesta ───────────────────────────────── */
+        function render(d) {
+          if (d.tipo === "bienvenida" || d.tipo === "categorias") {
             S.currentSlug = null;
-            addMsg(d.mensaje, 'bot');
+            addMsg(d.mensaje, "bot");
             renderGrid(d.categorias);
-
-        } else if (d.tipo === 'preguntas') {
+          } else if (d.tipo === "preguntas") {
             S.currentSlug = d.categoria.slug;
-            const tagHtml = '<div class="cb-cat-tag">🏷 Categoría: ' + esc(d.categoria.nombre) + '</div>';
-            addMsg(tagHtml + '<strong>' + esc(d.categoria.emoji) + ' ' + esc(d.categoria.nombre) + '</strong><br>'
-                + 'Selecciona una pregunta:', 'bot');
+            const tagHtml =
+              '<div class="cb-cat-tag">🏷 Categoría: ' +
+              esc(d.categoria.nombre) +
+              "</div>";
+            addMsg(
+              tagHtml +
+                "<strong>" +
+                esc(d.categoria.emoji) +
+                " " +
+                esc(d.categoria.nombre) +
+                "</strong><br>" +
+                "Selecciona una pregunta:",
+              "bot",
+            );
             renderList(d.preguntas);
-            footer.style.display = 'flex';
-            catBtn.style.display = 'flex';
-
-        } else if (d.tipo === 'respuesta') {
-            const tagHtml = '<div class="cb-cat-tag">🏷 Categoría: ' + esc(d.faq.categoria_nombre) + '</div>';
-            addMsg(tagHtml + '<strong>' + esc(d.faq.pregunta) + '</strong>', 'bot');
-            addMsg(d.mensaje, 'bot');
-            footer.style.display = 'flex';
-            if (S.currentSlug) catBtn.style.display = 'flex';
-
-        } else {
-            addMsg(d.mensaje || 'No pude procesar tu solicitud.', 'bot');
-            footer.style.display = 'flex';
+            footer.style.display = "flex";
+            catBtn.style.display = "flex";
+          } else if (d.tipo === "respuesta") {
+            const tagHtml =
+              '<div class="cb-cat-tag">🏷 Categoría: ' +
+              esc(d.faq.categoria_nombre) +
+              "</div>";
+            addMsg(
+              tagHtml + "<strong>" + esc(d.faq.pregunta) + "</strong>",
+              "bot",
+            );
+            addMsg(d.mensaje, "bot");
+            footer.style.display = "flex";
+            if (S.currentSlug) catBtn.style.display = "flex";
+          } else {
+            addMsg(d.mensaje || "No pude procesar tu solicitud.", "bot");
+            footer.style.display = "flex";
+          }
         }
-    }
 
-    /* ── Grid 2 columnas para categorías ───────────────────── */
-    function renderGrid(cats) {
-        const grid = document.createElement('div');
-        grid.className = 'cb-cat-grid';
-        cats.forEach(function(c) {
-            const b = document.createElement('button');
-            b.className = 'cb-cat-btn';
-            b.setAttribute('aria-label', c.nombre);
-            b.innerHTML = '<span class="cb-cat-emoji">' + c.emoji + '</span>' + esc(c.nombre);
-            b.addEventListener('click', function(){
-                cbSend('cat:' + c.slug, c.emoji + ' ' + c.nombre);
+        /* ── Grid 2 columnas para categorías ───────────────────── */
+        function renderGrid(cats) {
+          const grid = document.createElement("div");
+          grid.className = "cb-cat-grid";
+          cats.forEach(function (c) {
+            const b = document.createElement("button");
+            b.className = "cb-cat-btn";
+            b.setAttribute("aria-label", c.nombre);
+            b.innerHTML =
+              '<span class="cb-cat-emoji">' +
+              c.emoji +
+              "</span>" +
+              esc(c.nombre);
+            b.addEventListener("click", function () {
+              cbSend("cat:" + c.slug, c.emoji + " " + c.nombre);
             });
             grid.appendChild(b);
-        });
-        msgs.appendChild(grid);
-        scrollEnd();
-    }
+          });
+          msgs.appendChild(grid);
+          scrollEnd();
+        }
 
-    /* ── Lista vertical para preguntas ─────────────────────── */
-    function renderList(faqs) {
-        const list = document.createElement('div');
-        list.className = 'cb-options';
-        faqs.forEach(function(f) {
-            const b = document.createElement('button');
-            b.className = 'cb-opt-btn';
-            b.innerHTML = '<i class="fa-regular fa-circle-dot"></i>' + esc(f.pregunta);
-            b.addEventListener('click', function(){
-                cbSend('faq:' + f.id, f.pregunta);
+        /* ── Lista vertical para preguntas ─────────────────────── */
+        function renderList(faqs) {
+          const list = document.createElement("div");
+          list.className = "cb-options";
+          faqs.forEach(function (f) {
+            const b = document.createElement("button");
+            b.className = "cb-opt-btn";
+            b.innerHTML =
+              '<i class="fa-regular fa-circle-dot"></i>' + esc(f.pregunta);
+            b.addEventListener("click", function () {
+              cbSend("faq:" + f.id, f.pregunta);
             });
             list.appendChild(b);
-        });
-        msgs.appendChild(list);
-        scrollEnd();
-    }
+          });
+          msgs.appendChild(list);
+          scrollEnd();
+        }
 
-    /* ── Abrir / cerrar ─────────────────────────────────────── */
-    function open() {
-        S.open = true;
-        win.classList.add('open');
-        toggleIcon.className = 'fa-solid fa-xmark';
-        badge.style.display  = 'none';
-        toggleBtn.setAttribute('aria-expanded', 'true');
-        if (!S.started) {
+        /* ── Abrir / cerrar ─────────────────────────────────────── */
+        function open() {
+          S.open = true;
+          win.classList.add("open");
+          toggleIcon.className = "fa-solid fa-xmark";
+          badge.style.display = "none";
+          toggleBtn.setAttribute("aria-expanded", "true");
+          if (!S.started) {
             S.started = true;
             // Pequeño delay para que la animación termine primero
-            setTimeout(function(){ cbSend('inicio', null); }, 80);
+            setTimeout(function () {
+              cbSend("inicio", null);
+            }, 80);
+          }
         }
-    }
 
-    function close() {
-        S.open = false;
-        win.classList.remove('open');
-        toggleIcon.className = 'fa-solid fa-comment-medical';
-        toggleBtn.setAttribute('aria-expanded', 'false');
-    }
+        function close() {
+          S.open = false;
+          win.classList.remove("open");
+          toggleIcon.className = "fa-solid fa-comment-medical";
+          toggleBtn.setAttribute("aria-expanded", "false");
+        }
 
-    /* ── Eventos ────────────────────────────────────────────── */
-    function confirmClose() {
-        if (!S.open) return;
-        msgs.querySelectorAll('.cb-cat-grid, .cb-options').forEach(function(el) { el.remove(); });
-        addMsg('¿Seguro que deseas salir del chat?', 'bot');
-        const list = document.createElement('div');
-        list.className = 'cb-options';
-        const btnCancel = document.createElement('button');
-        btnCancel.className = 'cb-opt-btn';
-        btnCancel.innerHTML = '<i class="fa-solid fa-xmark"></i> Cancelar';
-        btnCancel.onclick = function() {
+        /* ── Eventos ────────────────────────────────────────────── */
+        function confirmClose() {
+          if (!S.open) return;
+          msgs
+            .querySelectorAll(".cb-cat-grid, .cb-options")
+            .forEach(function (el) {
+              el.remove();
+            });
+          addMsg("¿Seguro que deseas salir del chat?", "bot");
+          const list = document.createElement("div");
+          list.className = "cb-options";
+          const btnCancel = document.createElement("button");
+          btnCancel.className = "cb-opt-btn";
+          btnCancel.innerHTML = '<i class="fa-solid fa-xmark"></i> Cancelar';
+          btnCancel.onclick = function () {
             list.remove();
-            const lastState = S.historyStack.length ? S.historyStack[S.historyStack.length - 1] : 'inicio';
-            cbSend(lastState, 'Cancelar', true);
-        };
-        const btnCloseAction = document.createElement('button');
-        btnCloseAction.className = 'cb-opt-btn';
-        btnCloseAction.innerHTML = '<i class="fa-solid fa-right-from-bracket"></i> Cerrar chat';
-        btnCloseAction.onclick = function() {
+            const lastState = S.historyStack.length
+              ? S.historyStack[S.historyStack.length - 1]
+              : "inicio";
+            cbSend(lastState, "Cancelar", true);
+          };
+          const btnCloseAction = document.createElement("button");
+          btnCloseAction.className = "cb-opt-btn";
+          btnCloseAction.innerHTML =
+            '<i class="fa-solid fa-right-from-bracket"></i> Cerrar chat';
+          btnCloseAction.onclick = function () {
             list.remove();
             close();
+          };
+          list.appendChild(btnCancel);
+          list.appendChild(btnCloseAction);
+          msgs.appendChild(list);
+          scrollEnd();
+        }
+
+        toggleBtn.addEventListener("click", function () {
+          S.open ? confirmClose() : open();
+        });
+        closeBtn.addEventListener("click", confirmClose);
+        if (footerCloseBtn)
+          footerCloseBtn.addEventListener("click", confirmClose);
+        homeBtn.addEventListener("click", function () {
+          cbSend("inicio", "Inicio");
+        });
+        catBtn.addEventListener("click", function () {
+          S.historyStack.pop();
+          const prevState = S.historyStack.length
+            ? S.historyStack[S.historyStack.length - 1]
+            : "inicio";
+          cbSend(prevState, "Volver", true);
+        });
+
+        document.addEventListener("keydown", function (e) {
+          if (e.key === "Escape" && S.open) confirmClose();
+        });
+
+        /* ── Exponer helpers por si algún template los necesita ─── */
+        window.cbToggle = function () {
+          S.open ? close() : open();
         };
-        list.appendChild(btnCancel);
-        list.appendChild(btnCloseAction);
-        msgs.appendChild(list);
-        scrollEnd();
-    }
-
-    toggleBtn.addEventListener('click', function(){ S.open ? confirmClose() : open(); });
-    closeBtn.addEventListener('click',  confirmClose);
-    if(footerCloseBtn) footerCloseBtn.addEventListener('click', confirmClose);
-    homeBtn.addEventListener('click',   function(){ cbSend('inicio', 'Inicio'); });
-    catBtn.addEventListener('click',    function(){
-        S.historyStack.pop(); 
-        const prevState = S.historyStack.length ? S.historyStack[S.historyStack.length - 1] : 'inicio';
-        cbSend(prevState, 'Volver', true);
-    });
-
-    document.addEventListener('keydown', function(e){
-        if (e.key === 'Escape' && S.open) confirmClose();
-    });
-
-    /* ── Exponer helpers por si algún template los necesita ─── */
-    window.cbToggle = function(){ S.open ? close() : open(); };
-    window.cbClose  = close;
-
-})();
-</script>
-
-</body>
+        window.cbClose = close;
+      })();
+    </script>
+  </body>
 </html>

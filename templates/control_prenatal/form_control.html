@@ -92,7 +92,7 @@
 <div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
 <div class="mobile-topbar">
     <div class="mobile-topbar-brand">
-        <div class="mobile-topbar-logo"><img src="{% static 'img/Logo.png' %}" alt="Zumedical"></div>
+        <div class="mobile-topbar-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
         <span>Zumedical</span>
     </div>
     <button type="button" class="hamburger" id="hamburger" onclick="toggleSidebar()">
@@ -102,7 +102,7 @@
 
 <aside class="sidebar" id="sidebar">
     <div class="sidebar-brand">
-        <div class="sidebar-brand-logo"><img src="{% static 'img/Logo.png' %}" alt="Zumedical"></div>
+        <div class="sidebar-brand-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
         <div class="sidebar-brand-text"><h2>Zumedical</h2><span>{% if request.user.rol == 'medico' %}Médico{% elif request.user.rol == 'admin' %}Admin{% else %}Usuario{% endif %}</span></div>
     </div>
     <nav class="sidebar-nav">

@@ -1,313 +1,627 @@
 /* =====================================================
-   sidebar_medico.css — Zumedical
+   sidebar_medico.css — Zumedical (VERSIÓN ROBUSTA v2)
    Estilos UNIFICADOS del sidebar del panel médico.
-   Soporta AMBAS nomenclaturas: sb-* y sidebar-*
-   para máxima compatibilidad con todos los templates.
+   ✅ Soporte AMBAS nomenclaturas: sb-*  y  sidebar-*
+   ✅ !important en TODO para vencer cualquier estilo inline conflictivo
+   ✅ Selectores de ALTA especificidad para romper estilos de user-agent
    ===================================================== */
 
 /* ── Variables (por si el template no las define) ── */
 :root {
-    --mg: #B03580;
-    --mg-l: #CC4D99;
-    --mg-d: #8A2563;
-    --mg-bg: #FBF0F7;
-    --mg-border: #E8AAD4;
-    --text: #2A1020;
-    --muted: #8A6070;
-    --white: #fff;
-    --bg: #FDF5FA;
-    --sw: 260px;
+  --mg: #b03580 !important;
+  --mg-l: #cc4d99 !important;
+  --mg-d: #8a2563 !important;
+  --mg-bg: #fbf0f7 !important;
+  --mg-border: #e8aad4 !important;
+  --text: #2a1020 !important;
+  --muted: #8a6070 !important;
+  --white: #fff !important;
+  --bg: #fdf5fa !important;
+  --sw: 260px !important;
 }
 
-/* ── Layout base ── */
-html { background: var(--bg); height: 100vh; overflow: hidden; }
-body {
-    background: var(--bg);
-    height: 100vh;
-    overflow: hidden;
-    display: flex;
-    font-family: 'DM Sans', sans-serif;
+/* ── ⚠️ SIDEBAR: selectores ULTRA específicos ── */
+body aside.sidebar#sidebar,
+body aside[class*="sidebar"],
+body .sidebar#sidebar,
+body .sidebar {
+  width: var(--sw) !important;
+  min-width: var(--sw) !important;
+  max-width: var(--sw) !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  background: linear-gradient(
+    175deg,
+    #8a2563 0%,
+    #b03580 55%,
+    #cc4d99 100%
+  ) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 99999 !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  box-shadow: 4px 0 24px rgba(138, 37, 99, 0.22) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: white !important;
+  font-family: "DM Sans", sans-serif !important;
 }
 
-.main {
-    margin-left: var(--sw);
-    flex: 1;
-    padding: 2.5rem;
-    height: 100vh;
-    overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
+/* ── Reset de TODOS los elementos dentro del sidebar ── */
+.sidebar *,
+.sidebar *::before,
+.sidebar *::after {
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-/* ── Sidebar (ambas clases: .sidebar y cualquier selector que lo defina) ── */
-.sidebar, aside[class*="sidebar"] {
+.sidebar img {
+  border: none !important;
+  max-width: 100% !important;
+  display: block !important;
+}
+
+/* Reset LINKS dentro del sidebar (evitar azul subrayado feo) */
+.sidebar a,
+.sidebar a:link,
+.sidebar a:visited,
+.sidebar a:hover,
+.sidebar a:active {
+  text-decoration: none !important;
+  outline: none !important;
+  color: inherit !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.sidebar p,
+.sidebar h1,
+.sidebar h2,
+.sidebar h3,
+.sidebar h4,
+.sidebar h5,
+.sidebar h6,
+.sidebar span,
+.sidebar div {
+  color: inherit !important;
+  font-family: inherit !important;
+  line-height: normal !important;
+}
+
+/* ==============================================================
+   BRAND / LOGO  (  .sb-brand  y  .sidebar-brand  )
+   ============================================================== */
+.sidebar .sb-brand,
+.sidebar .sidebar-brand,
+aside#sidebar > .sb-brand:first-of-type,
+aside#sidebar > .sidebar-brand:first-of-type {
+  padding: 2rem 1.5rem 1.5rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.75rem !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+  color: white !important;
+  text-align: left !important;
+}
+
+.sidebar .sb-logo,
+.sidebar .sidebar-brand-logo {
+  width: 44px !important;
+  height: 44px !important;
+  min-width: 44px !important;
+  min-height: 44px !important;
+  max-width: 44px !important;
+  max-height: 44px !important;
+  background: white !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 2px solid rgba(255, 255, 255, 0.15) !important;
+  padding: 2px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.sidebar .sb-logo img,
+.sidebar .sidebar-brand-logo img {
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  max-width: 36px !important;
+  max-height: 36px !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+.sidebar .sb-brand-text,
+.sidebar .sidebar-brand-text {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  color: white !important;
+  background: transparent !important;
+}
+
+.sidebar .sb-brand-text h2,
+.sidebar .sidebar-brand-text h2 {
+  font-family: "Cormorant Garamond", serif !important;
+  font-size: 1.45rem !important;
+  font-weight: 600 !important;
+  color: white !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  letter-spacing: 0.02em !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.sidebar .sb-brand-text span,
+.sidebar .sidebar-brand-text span {
+  font-size: 0.7rem !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  background: transparent !important;
+}
+
+/* ==============================================================
+   BLOQUE DE USUARIO / PERFIL
+   ( .sb-user  y  .sidebar-user )
+   ============================================================== */
+.sidebar .sb-user,
+.sidebar .sidebar-user {
+  padding: 1.2rem 1.5rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.75rem !important;
+  text-decoration: none !important;
+  transition: background 0.2s ease !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  color: white !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+.sidebar .sb-user:hover,
+.sidebar .sidebar-user:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Avatar del usuario (varias clases) */
+.sidebar .sb-av,
+.sidebar .sb-avatar,
+.sidebar .sidebar-user-avatar {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  max-width: 38px !important;
+  max-height: 38px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.35) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  color: white !important;
+  flex-shrink: 0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.02em !important;
+  font-family: "DM Sans", sans-serif !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+
+.sidebar .sb-user-info,
+.sidebar .sidebar-user-info {
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 0.15rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+.sidebar .sb-user-info p,
+.sidebar .sidebar-user-info p {
+  font-size: 0.7rem !important;
+  color: rgba(255, 255, 255, 0.62) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.1em !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  background: transparent !important;
+}
+
+.sidebar .sb-user-info h3,
+.sidebar .sidebar-user-info h3 {
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  color: white !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  background: transparent !important;
+  border: none !important;
+  text-decoration: none !important;
+  font-family: "DM Sans", sans-serif !important;
+  width: 100% !important;
+  text-align: left !important;
+}
+
+/* Flecha del perfil */
+.sidebar .sb-user-arrow,
+.sidebar .sidebar-user-arrow {
+  flex-shrink: 0 !important;
+  opacity: 0.55 !important;
+  transition: opacity 0.2s ease !important;
+  color: white !important;
+  text-decoration: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 14px !important;
+  height: 14px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.sidebar .sb-user:hover .sb-user-arrow,
+.sidebar .sidebar-user:hover .sidebar-user-arrow {
+  opacity: 1 !important;
+}
+
+.sidebar .sb-user-arrow svg,
+.sidebar .sidebar-user-arrow svg {
+  width: 14px !important;
+  height: 14px !important;
+  min-width: 14px !important;
+  min-height: 14px !important;
+  stroke: white !important;
+  fill: none !important;
+  stroke-width: 2 !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* ==============================================================
+   NAVEGACIÓN / MENÚ
+   ( .sb-nav  y  .sidebar-nav )
+   ============================================================== */
+.sidebar .sb-nav,
+.sidebar .sidebar-nav {
+  flex: 1 !important;
+  padding: 1rem 0.75rem !important;
+  overflow-y: visible !important;
+  overflow-x: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  background: transparent !important;
+  width: 100% !important;
+  margin: 0 !important;
+}
+
+.sidebar .nav-lbl,
+.sidebar .nav-label {
+  font-size: 0.68rem !important;
+  color: rgba(255, 255, 255, 0.52) !important;
+  letter-spacing: 0.14em !important;
+  text-transform: uppercase !important;
+  padding: 0.7rem 0.9rem 0.4rem !important;
+  margin: 0 !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  background: transparent !important;
+  display: block !important;
+  width: 100% !important;
+}
+
+/* Items de navegación */
+.sidebar a.nav-item,
+.sidebar .nav-item {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+  margin: 0 0 0.25rem 0 !important;
+  border-radius: 10px !important;
+  color: rgba(255, 255, 255, 0.85) !important;
+  text-decoration: none !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.1s ease !important;
+  position: relative !important;
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  line-height: 1.3 !important;
+  font-family: "DM Sans", sans-serif !important;
+  box-sizing: border-box !important;
+}
+
+.sidebar a.nav-item:link,
+.sidebar a.nav-item:visited {
+  color: rgba(255, 255, 255, 0.85) !important;
+  text-decoration: none !important;
+}
+
+.sidebar a.nav-item:hover,
+.sidebar .nav-item:hover,
+.sidebar a.nav-item.active,
+.sidebar .nav-item.active {
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: white !important;
+  text-decoration: none !important;
+}
+
+.sidebar a.nav-item:active {
+  transform: scale(0.98) !important;
+}
+
+.sidebar .nav-item svg {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.8 !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: inherit !important;
+}
+
+.sidebar .nav-item span:not(.nav-badge) {
+  flex: 1 !important;
+  min-width: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.sidebar .nav-badge {
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: white !important;
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  padding: 0.18rem 0.55rem !important;
+  border-radius: 999px !important;
+  min-width: 22px !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
+  line-height: 1.3 !important;
+  border: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family: "DM Sans", sans-serif !important;
+}
+
+/* Barrita indicadora izquierda de item activo */
+.sidebar .nav-item::after {
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) scaleY(0) !important;
+  transform-origin: center center !important;
+  width: 3px !important;
+  height: 60% !important;
+  min-height: 20px !important;
+  background: white !important;
+  border-radius: 0 3px 3px 0 !important;
+  transition: transform 0.2s ease !important;
+  z-index: 2 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: content-box !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
+}
+
+.sidebar .nav-item:hover::after,
+.sidebar .nav-item.active::after {
+  transform: translateY(-50%) scaleY(1) !important;
+  opacity: 1 !important;
+}
+
+/* ==============================================================
+   FOOTER / LOGOUT
+   ( .sb-footer  y  .sidebar-footer )
+   ============================================================== */
+.sidebar .sb-footer,
+.sidebar .sidebar-footer {
+  padding: 1rem 0.75rem !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+  margin: 0 !important;
+}
+
+.sidebar a.btn-logout,
+.sidebar .btn-logout {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.75rem !important;
+  padding: 0.75rem 1rem !important;
+  border-radius: 10px !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+  text-decoration: none !important;
+  font-size: 0.9rem !important;
+  font-weight: 400 !important;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease !important;
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  line-height: 1.3 !important;
+  font-family: "DM Sans", sans-serif !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+}
+
+.sidebar a.btn-logout:link,
+.sidebar a.btn-logout:visited {
+  color: rgba(255, 255, 255, 0.82) !important;
+  text-decoration: none !important;
+}
+
+.sidebar a.btn-logout:hover,
+.sidebar .btn-logout:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+  text-decoration: none !important;
+}
+
+.sidebar .btn-logout svg {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.8 !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: inherit !important;
+}
+
+/* ==============================================================
+   RESPONSIVE: móvil y tablet
+   ============================================================== */
+@media (max-width: 768px) {
+  body aside.sidebar#sidebar,
+  body aside[class*="sidebar"],
+  body .sidebar#sidebar,
+  body .sidebar {
     width: var(--sw) !important;
     height: 100vh !important;
-    background: linear-gradient(175deg, #8A2563 0%, #B03580 55%, #CC4D99 100%) !important;
-    display: flex !important;
-    flex-direction: column !important;
+    min-height: 100vh !important;
     position: fixed !important;
-    top: 0 !important;
+    top: 64px !important;
     left: 0 !important;
-    z-index: 350 !important;
-    transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    box-shadow: 4px 0 24px rgba(138, 37, 99, .22) !important;
+    right: auto !important;
+    z-index: 99999 !important;
+    padding-top: 0 !important;
+    transform: translateX(-105%) !important;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2) !important;
+  }
+
+  body aside.sidebar#sidebar.open,
+  body .sidebar#sidebar.open,
+  body .sidebar.open {
+    transform: translateX(0) !important;
+  }
 }
 
-/* ── Brand / Logo ── ALIAS: .sb-brand y .sidebar-brand ── */
-.sb-brand,
-.sidebar-brand {
-    padding: 2rem 1.5rem 1.5rem !important;
-    border-bottom: 1px solid rgba(255, 255, 255, .12) !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: .75rem !important;
-    flex-shrink: 0 !important;
+/* ==============================================================
+   BARRA DE SCROLL del sidebar (sutil)
+   ============================================================== */
+.sidebar::-webkit-scrollbar {
+  width: 6px !important;
 }
-
-.sb-logo,
-.sidebar-brand-logo {
-    width: 44px !important;
-    height: 44px !important;
-    background: white !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-    flex-shrink: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+.sidebar::-webkit-scrollbar-track {
+  background: transparent !important;
 }
-
-.sb-logo img,
-.sidebar-brand-logo img {
-    width: 40px !important;
-    height: 40px !important;
-    object-fit: contain !important;
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-radius: 3px !important;
 }
-
-.sb-brand-text h2,
-.sidebar-brand-text h2 {
-    font-family: 'Cormorant Garamond', serif !important;
-    font-size: 1.4rem !important;
-    font-weight: 600 !important;
-    color: white !important;
-    line-height: 1 !important;
-    margin: 0 !important;
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
 }
-
-.sb-brand-text span,
-.sidebar-brand-text span {
-    font-size: .72rem !important;
-    color: rgba(255, 255, 255, .7) !important;
-    letter-spacing: .1em !important;
-    text-transform: uppercase !important;
-}
-
-/* ── User block ── ALIAS: .sb-user y .sidebar-user ── */
-.sb-user,
-.sidebar-user {
-    padding: 1.2rem 1.5rem !important;
-    border-bottom: 1px solid rgba(255, 255, 255, .12) !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: .75rem !important;
-    text-decoration: none !important;
-    transition: background .2s !important;
-    flex-shrink: 0 !important;
-    color: inherit !important;
-}
-
-.sb-user:hover,
-.sidebar-user:hover {
-    background: rgba(255, 255, 255, .1) !important;
-}
-
-.sb-av,
-.sb-avatar,
-.sidebar-user-avatar {
-    width: 38px !important;
-    height: 38px !important;
-    border-radius: 50% !important;
-    background: rgba(255, 255, 255, .2) !important;
-    border: 1px solid rgba(255, 255, 255, .3) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: .85rem !important;
-    font-weight: 500 !important;
-    color: white !important;
-    flex-shrink: 0 !important;
-    text-transform: uppercase !important;
-}
-
-.sb-user-info,
-.sidebar-user-info {
-    flex: 1 !important;
-    min-width: 0 !important;
-}
-
-.sb-user-info p,
-.sidebar-user-info p {
-    font-size: .72rem !important;
-    color: rgba(255, 255, 255, .6) !important;
-    text-transform: uppercase !important;
-    letter-spacing: .08em !important;
-    margin-bottom: .15rem !important;
-    margin-top: 0 !important;
-}
-
-.sb-user-info h3,
-.sidebar-user-info h3 {
-    font-size: .9rem !important;
-    font-weight: 500 !important;
-    color: white !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    margin: 0 !important;
-    text-decoration: none !important;
-    font-family: 'DM Sans', sans-serif !important;
-}
-
-.sb-user-arrow,
-.sidebar-user-arrow {
-    flex-shrink: 0 !important;
-    opacity: .5 !important;
-    transition: opacity .2s !important;
-    color: white !important;
-    text-decoration: none !important;
-}
-
-.sb-user:hover .sb-user-arrow,
-.sidebar-user:hover .sidebar-user-arrow {
-    opacity: 1 !important;
-}
-
-.sb-user-arrow svg,
-.sidebar-user-arrow svg {
-    width: 14px !important;
-    height: 14px !important;
-    stroke: white !important;
-    fill: none !important;
-    stroke-width: 2 !important;
-}
-
-/* ── Nav ── ALIAS: .sb-nav y .sidebar-nav ── */
-.sb-nav,
-.sidebar-nav {
-    flex: 1 !important;
-    padding: 1rem .75rem !important;
-    overflow-y: visible !important;
-}
-
-.nav-lbl,
-.nav-label {
-    font-size: .7rem !important;
-    color: rgba(255, 255, 255, .5) !important;
-    letter-spacing: .1em !important;
-    text-transform: uppercase !important;
-    padding: .5rem .75rem !important;
-    margin-top: .5rem !important;
-    font-weight: 500 !important;
-}
-
-.nav-item {
-    display: flex !important;
-    align-items: center !important;
-    gap: .75rem !important;
-    padding: .75rem 1rem !important;
-    border-radius: 10px !important;
-    color: rgba(255, 255, 255, .85) !important;
-    text-decoration: none !important;
-    font-size: .9rem !important;
-    font-weight: 400 !important;
-    transition: all .2s !important;
-    margin-bottom: .25rem !important;
-    position: relative !important;
-}
-
-.nav-item:hover,
-.nav-item.active {
-    background: rgba(255, 255, 255, .18) !important;
-    color: white !important;
-}
-
-.nav-item svg {
-    width: 18px !important;
-    height: 18px !important;
-    stroke: currentColor !important;
-    fill: none !important;
-    stroke-width: 1.8 !important;
-    flex-shrink: 0 !important;
-}
-
-.nav-badge {
-    margin-left: auto !important;
-    background: rgba(255, 255, 255, .25) !important;
-    color: white !important;
-    font-size: .68rem !important;
-    font-weight: 600 !important;
-    padding: .15rem .5rem !important;
-    border-radius: 999px !important;
-    min-width: 20px !important;
-    text-align: center !important;
-}
-
-/* Indicador de ítem activo */
-.nav-item::after {
-    content: '' !important;
-    position: absolute !important;
-    left: 0 !important;
-    top: 50% !important;
-    transform: translateY(-50%) scaleY(0) !important;
-    width: 3px !important;
-    height: 60% !important;
-    background: white !important;
-    border-radius: 0 3px 3px 0 !important;
-    transition: transform 0.2s ease !important;
-    display: block !important;
-}
-
-.nav-item:hover::after,
-.nav-item.active::after {
-    transform: translateY(-50%) scaleY(1) !important;
-}
-
-/* ── Footer / Logout ── ALIAS: .sb-footer y .sidebar-footer ── */
-.sb-footer,
-.sidebar-footer {
-    padding: 1rem .75rem !important;
-    border-top: 1px solid rgba(255, 255, 255, .12) !important;
-    flex-shrink: 0 !important;
-}
-
-.btn-logout {
-    display: flex !important;
-    align-items: center !important;
-    gap: .75rem !important;
-    padding: .75rem 1rem !important;
-    border-radius: 10px !important;
-    color: rgba(255, 255, 255, .8) !important;
-    text-decoration: none !important;
-    font-size: .9rem !important;
-    transition: all .2s !important;
-    width: 100% !important;
-    background: none !important;
-    border: none !important;
-    cursor: pointer !important;
-    text-align: left !important;
-}
-
-.btn-logout:hover {
-    background: rgba(255, 255, 255, .15) !important;
-    color: white !important;
-}
-
-.btn-logout svg {
-    width: 18px !important;
-    height: 18px !important;
-    stroke: currentColor !important;
-    fill: none !important;
-    stroke-width: 1.8 !important;
+.sidebar {
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent !important;
 }

@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zumedical - {{ titulo }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         :root {
@@ -14,7 +17,7 @@
             --text: #2A1020; --muted: #8A6070; --white: #fff; --bg: #FDF5FA;
             --sw: 260px;
         }
-        body { font-family:'DM Sans',sans-serif; background:var(--bg); min-height:100vh; display:flex; align-items:flex-start; }
+        body { font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background:var(--bg); min-height:100vh; display:flex; align-items:flex-start; }
         @keyframes pageIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
         
         /* SIDEBAR */
@@ -22,7 +25,7 @@
         .sidebar-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
         .sidebar-brand-logo{width:44px;height:44px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .sidebar-brand-logo img{width:40px;height:40px;object-fit:contain}
-        .sidebar-brand-text h2{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:white;line-height:1}
+        .sidebar-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.4rem;font-weight:600;color:white;line-height:1}
         .sidebar-brand-text span{font-size:.72rem;color:rgba(255,255,255,.7);letter-spacing:.1em;text-transform:uppercase}
         .sidebar-nav{flex:1;padding:1rem .75rem}
         .nav-label{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.5rem}
@@ -39,7 +42,7 @@
 
         /* HEADER */
         .page-header { margin-bottom:1.75rem; }
-        .page-header h1 { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--text); margin-bottom:.3rem; }
+        .page-header h1 { font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size:2rem; font-weight:600; color:var(--text); margin-bottom:.3rem; }
         .back-link { display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); text-decoration:none; font-size:.9rem; margin-bottom:1rem; transition:color .2s; }
         .back-link:hover { color:var(--mg); }
         .back-link svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2}
@@ -48,19 +51,19 @@
         .form-card { background:var(--white); border-radius:16px; border:1px solid var(--mg-border); padding:1.75rem; }
         .form-section { margin-bottom:1.5rem; padding-bottom:1.5rem; border-bottom:1px solid var(--mg-border); }
         .form-section:last-of-type { border-bottom:none; margin-bottom:0; padding-bottom:0; }
-        .form-section-title { font-family:'Cormorant Garamond',serif; font-size:1.2rem; font-weight:600; color:var(--text); margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
+        .form-section-title { font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size:1.2rem; font-weight:600; color:var(--text); margin-bottom:1rem; display:flex; align-items:center; gap:.5rem; }
         .form-section-title svg{width:18px;height:18px;stroke:var(--mg);fill:none;stroke-width:1.8}
         .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; }
         @media(max-width:768px) { .form-grid { grid-template-columns:1fr; } }
         .form-group { margin-bottom:1rem; }
         .form-group label { display:block; font-size:.8rem; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.4rem; }
-        .form-control { width:100%; padding:.75rem 1rem; border:1.5px solid var(--mg-border); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.95rem; color:var(--text); background:var(--white); transition:all .2s; }
+        .form-control { width:100%; padding:.75rem 1rem; border:1.5px solid var(--mg-border); border-radius:10px; font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size:.95rem; color:var(--text); background:var(--white); transition:all .2s; }
         .form-control:focus { border-color:var(--mg); box-shadow:0 0 0 3px rgba(176,53,128,.08); outline:none; }
         textarea.form-control { resize:vertical; min-height:100px; }
         .form-actions { display:flex; gap:.75rem; margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--mg-border); }
-        .btn-primary { display:inline-flex; align-items:center; gap:.5rem; padding:.75rem 1.5rem; background:linear-gradient(135deg,var(--mg-d),var(--mg-l)); color:white; border:none; border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:500; cursor:pointer; text-decoration:none; transition:all .2s; }
+        .btn-primary { display:inline-flex; align-items:center; gap:.5rem; padding:.75rem 1.5rem; background:linear-gradient(135deg,var(--mg-d),var(--mg-l)); color:white; border:none; border-radius:10px; font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size:.95rem; font-weight:500; cursor:pointer; text-decoration:none; transition:all .2s; }
         .btn-primary:hover { transform:translateY(-1px); box-shadow:0 4px 14px rgba(176,53,128,.3); }
-        .btn-secondary { display:inline-flex; align-items:center; gap:.5rem; padding:.75rem 1.5rem; background:var(--mg-bg); color:var(--mg); border:1px solid var(--mg-border); border-radius:10px; font-family:'DM Sans',sans-serif; font-size:.95rem; font-weight:500; cursor:pointer; text-decoration:none; transition:all .2s; }
+        .btn-secondary { display:inline-flex; align-items:center; gap:.5rem; padding:.75rem 1.5rem; background:var(--mg-bg); color:var(--mg); border:1px solid var(--mg-border); border-radius:10px; font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size:.95rem; font-weight:500; cursor:pointer; text-decoration:none; transition:all .2s; }
         .btn-secondary:hover { background:var(--mg-border); }
 
         /* MOBILE */
@@ -68,7 +71,7 @@
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
         .mobile-topbar-logo{width:32px;height:32px;background:white;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center}
         .mobile-topbar-logo img{width:28px;height:28px;object-fit:contain}
-        .mobile-topbar-brand span{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:white}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
         .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
         .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
         .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:290;opacity:0;pointer-events:none;transition:opacity .3s ease}

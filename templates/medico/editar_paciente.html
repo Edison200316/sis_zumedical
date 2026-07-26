@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Zumedical — Datos Clínicos</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
     <style>
         *, *::before, *::after {
@@ -57,7 +60,7 @@
         .toast-close svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5}
 
         html { height: 100vh; overflow: hidden; }
-        body { font-family:'DM Sans',sans-serif;background:var(--bg);height:100vh;overflow:hidden;display:flex;opacity:0;animation:pageIn .35s ease .05s forwards }
+        body { font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);height:100vh;overflow:hidden;display:flex;opacity:0;animation:pageIn .35s ease .05s forwards }
 
         /* ── SIDEBAR ── */
         .sidebar {
@@ -78,7 +81,7 @@
         .sidebar-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;flex-shrink:0}
         .sidebar-brand-logo{width:44px;height:44px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .sidebar-brand-logo img{width:40px;height:40px;object-fit:contain}
-        .sidebar-brand-text h2{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:white;line-height:1}
+        .sidebar-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.4rem;font-weight:600;color:white;line-height:1}
         .sidebar-brand-text span{font-size:.72rem;color:rgba(255,255,255,.7);letter-spacing:.1em;text-transform:uppercase}
         .sidebar-user{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;text-decoration:none;transition:background .2s;flex-shrink:0}
         .sidebar-user:hover{background:rgba(255,255,255,.1)}
@@ -120,7 +123,7 @@
         }
         
         .page-header{margin-bottom:2rem;animation:slideDown .4s ease both .1s;opacity:0;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem}
-        .page-header-left h1{font-family:'Cormorant Garamond',serif;font-size:2.3rem;font-weight:600;color:var(--text);margin-bottom:.3rem}
+        .page-header-left h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2.3rem;font-weight:600;color:var(--text);margin-bottom:.3rem}
         .page-header-left p{color:var(--muted);font-size:.9rem;font-weight:300}
 
         /* ── PACIENTE CHIP ── */
@@ -175,7 +178,7 @@
         }
         .form-group input {
             width: 100%; padding: 0.8rem 1rem; border: 1.5px solid var(--mg-border);
-            border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+            border-radius: 12px; font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95rem;
             color: var(--text); background: var(--white); transition: all 0.2s; outline: none;
         }
         .form-group input:focus { border-color: var(--mg); box-shadow: 0 0 0 4px rgba(176, 53, 128, 0.08); }
@@ -185,7 +188,7 @@
         .btn-primary {
             display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1.75rem;
             background: linear-gradient(135deg, var(--mg-d), var(--mg-l)); color: white;
-            border: none; border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+            border: none; border-radius: 12px; font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.95rem;
             font-weight: 500; cursor: pointer; transition: opacity 0.2s; box-shadow: 0 4px 12px rgba(176,53,128,0.2);
         }
         .btn-primary:hover { opacity: 0.9; }
@@ -200,7 +203,7 @@
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
         .mobile-topbar-logo{width:32px;height:32px;background:white;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center}
         .mobile-topbar-logo img{width:28px;height:28px;object-fit:contain}
-        .mobile-topbar-brand span{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:white}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
         
         .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
         .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}

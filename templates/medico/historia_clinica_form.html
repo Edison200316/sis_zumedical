@@ -5,7 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{% if modo == 'crear' %}Nueva{% else %}Editar{% endif %} Historia Clínica — {{ paciente.get_full_name }} — Zumedical</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
   <style>
     :root {
@@ -16,12 +19,12 @@
       --red:#b91c1c;--red-bg:#fef2f2;--red-border:#fca5a5;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:"DM Sans",sans-serif;background:var(--bg);min-height:100vh}
+    body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);min-height:100vh}
     .topbar{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     .topbar-brand{display:flex;align-items:center;gap:.75rem}
     .topbar-logo{width:36px;height:36px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden}
     .topbar-logo img{width:32px;height:32px;object-fit:contain}
-    .topbar-title{font-family:"Cormorant Garamond",serif;font-size:1.35rem;font-weight:600;color:white}
+    .topbar-title{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.35rem;font-weight:600;color:white}
     .topbar-sub{font-size:.78rem;color:rgba(255,255,255,.7)}
     .btn-back{background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);padding:.55rem 1.2rem;border-radius:8px;text-decoration:none;font-size:.88rem;font-weight:500;transition:all .2s}
     .btn-back:hover{background:rgba(255,255,255,.25)}
@@ -30,12 +33,12 @@
     /* Encabezado paciente */
     .pac-header{background:white;border-radius:16px;border:1px solid var(--mg-border);padding:1.5rem 2rem;margin-bottom:2rem;display:flex;align-items:center;gap:1.25rem;box-shadow:0 2px 10px rgba(176,53,128,.05)}
     .pac-avatar{width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;color:white;flex-shrink:0}
-    .pac-info h2{font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:600;color:var(--text)}
+    .pac-info h2{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.5rem;font-weight:600;color:var(--text)}
     .pac-info p{font-size:.85rem;color:var(--muted);margin-top:.2rem}
     
     /* Secciones del formulario */
     .form-section{background:white;border-radius:16px;border:1px solid var(--mg-border);padding:1.75rem 2rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(176,53,128,.04)}
-    .section-title{display:flex;align-items:center;gap:.75rem;font-family:"Cormorant Garamond",serif;font-size:1.25rem;font-weight:600;color:var(--mg-d);margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:2px solid var(--mg-bg)}
+    .section-title{display:flex;align-items:center;gap:.75rem;font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.25rem;font-weight:600;color:var(--mg-d);margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:2px solid var(--mg-bg)}
     .section-icon{width:36px;height:36px;background:var(--mg-bg);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0}
     
     /* Grid de campos */
@@ -48,7 +51,7 @@
     .field-group label{font-size:.78rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
     .field-group input,.field-group select,.field-group textarea{
       width:100%;padding:.65rem .9rem;border:1.5px solid var(--mg-border);border-radius:9px;
-      font-family:"DM Sans",sans-serif;font-size:.875rem;color:var(--text);background:var(--bg);
+      font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.875rem;color:var(--text);background:var(--bg);
       outline:none;transition:border-color .2s,box-shadow .2s;resize:vertical}
     .field-group input:focus,.field-group select:focus,.field-group textarea:focus{
       border-color:var(--mg);box-shadow:0 0 0 3px rgba(176,53,128,.08)}
@@ -64,9 +67,9 @@
     
     /* Botones */
     .actions{display:flex;gap:1rem;justify-content:flex-end;margin-top:2rem;flex-wrap:wrap}
-    .btn-primary{background:var(--mg);color:white;border:none;padding:.75rem 2rem;border-radius:10px;font-family:"DM Sans",sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem}
+    .btn-primary{background:var(--mg);color:white;border:none;padding:.75rem 2rem;border-radius:10px;font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:.5rem}
     .btn-primary:hover{background:var(--mg-d);transform:translateY(-1px);box-shadow:0 4px 14px rgba(176,53,128,.3)}
-    .btn-secondary{background:var(--mg-bg);color:var(--mg);border:1px solid var(--mg-border);padding:.75rem 1.5rem;border-radius:10px;font-family:"DM Sans",sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;text-decoration:none;transition:all .2s;display:flex;align-items:center;gap:.5rem}
+    .btn-secondary{background:var(--mg-bg);color:var(--mg);border:1px solid var(--mg-border);padding:.75rem 1.5rem;border-radius:10px;font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;text-decoration:none;transition:all .2s;display:flex;align-items:center;gap:.5rem}
     .btn-secondary:hover{background:white;border-color:var(--mg)}
     
     /* Mensajes */

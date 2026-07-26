@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zumedical — Registro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -24,7 +27,7 @@
         }
 
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             min-height: 100vh;
             display: flex;
             background: #FDF5FA;
@@ -95,7 +98,7 @@
         .brand-logo img { width: 130px; height: 130px; object-fit: contain; }
 
         .brand h1 {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
             font-size: 2.8rem; font-weight: 600;
             color: white;
             letter-spacing: 0.02em;
@@ -129,7 +132,7 @@
         }
 
         .left-tagline p {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
             font-size: 1.25rem;
             color: rgba(255,255,255,0.85);
             font-style: italic;
@@ -165,7 +168,7 @@
         .register-header { margin-bottom: 2rem; }
 
         .register-header h2 {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
             font-size: 2.2rem; font-weight: 600;
             color: var(--text);
             margin-bottom: 0.5rem;
@@ -217,7 +220,7 @@
             padding: 0.95rem 2.6rem 0.95rem 2.8rem;
             border: 1.5px solid var(--magenta-border);
             border-radius: 12px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 0.95rem;
             color: var(--text);
             background: var(--white);
@@ -361,7 +364,7 @@
             color: white;
             border: none;
             border-radius: 12px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 1rem; font-weight: 500;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -590,7 +593,7 @@
                     <label for="id_genero">Género</label>
                     <div class="input-wrap">
                         <svg class="field-icon" viewBox="0 0 24 24" style="top:50%;transform:translateY(-50%)"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-                        <select id="id_genero" name="genero" style="width:100%;padding:0.95rem 2.6rem 0.95rem 2.8rem;border:1.5px solid var(--magenta-border);border-radius:12px;font-family:'DM Sans',sans-serif;font-size:0.95rem;color:var(--text);background:var(--white);outline:none;appearance:none;transition:border-color 0.2s,box-shadow 0.2s;">
+                        <select id="id_genero" name="genero" style="width:100%;padding:0.95rem 2.6rem 0.95rem 2.8rem;border:1.5px solid var(--magenta-border);border-radius:12px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:0.95rem;color:var(--text);background:var(--white);outline:none;appearance:none;transition:border-color 0.2s,box-shadow 0.2s;">
                             <option value="">Selecciona tu género</option>
                             <option value="femenino" {% if form.genero.value == 'femenino' %}selected{% endif %}>Femenino</option>
                             <option value="masculino" {% if form.genero.value == 'masculino' %}selected{% endif %}>Masculino</option>

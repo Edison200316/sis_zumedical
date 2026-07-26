@@ -4,12 +4,15 @@
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zumedical — Pacientes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         :root{--mg:#B03580;--mg-l:#CC4D99;--mg-d:#8A2563;--mg-bg:#FBF0F7;--mg-border:#E8AAD4;--text:#2A1020;--muted:#8A6070;--white:#fff;--bg:#FDF5FA;--sw:260px}
-        body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+        body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);min-height:100vh;display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
 @keyframes fadeIn{to{opacity:1}}
 
         /* ── SIDEBAR ── */
@@ -17,7 +20,7 @@
         .sb-brand{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:0.75rem}
         .sb-logo{width:42px;height:42px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .sb-logo img{width:38px;height:38px;object-fit:contain}
-        .sb-brand-text h2{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+        .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
         .sb-brand-text span{font-size:0.7rem;color:rgba(255,255,255,0.65);letter-spacing:0.1em;text-transform:uppercase}
         .sb-user{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;transition:background .2s;text-decoration:none}
         .sb-user:hover{background:rgba(255,255,255,.1)}
@@ -43,7 +46,7 @@
         .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300}
 .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
 .mobile-topbar-brand img{width:32px;height:32px;background:white;border-radius:50%;padding:2px;object-fit:contain}
-.mobile-topbar-brand span{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:white}
+.mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
 .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
 .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
 .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -53,7 +56,7 @@
 .sidebar-overlay.active{opacity:1;pointer-events:auto}
 .main{margin-left:var(--sw);flex:1;padding:2.5rem;min-height:100vh}
         .page-header{margin-bottom:2rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
-        .page-header-left h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:0.25rem}
+        .page-header-left h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:0.25rem}
         .page-header-left p{color:var(--muted);font-size:0.88rem;font-weight:300}
         .page-header-actions{display:flex;align-items:center;gap:0.75rem;flex-wrap:wrap}
         .btn-new{display:inline-flex;align-items:center;gap:0.45rem;padding:0.6rem 1.25rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border-radius:9px;text-decoration:none;font-size:0.85rem;font-weight:500;transition:opacity 0.2s,transform 0.15s;white-space:nowrap}
@@ -69,7 +72,7 @@
         .table-search{padding:1.25rem 1.5rem;border-bottom:1px solid var(--mg-border);display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
         .search-wrap{position:relative;flex:1;min-width:200px}
         .search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:1.8}
-        .search-wrap input{width:100%;padding:0.65rem 1rem 0.65rem 2.4rem;border:1.5px solid var(--mg-border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:0.88rem;color:var(--text);outline:none;transition:all 0.2s;background:var(--bg)}
+        .search-wrap input{width:100%;padding:0.65rem 1rem 0.65rem 2.4rem;border:1.5px solid var(--mg-border);border-radius:10px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:0.88rem;color:var(--text);outline:none;transition:all 0.2s;background:var(--bg)}
         .search-wrap input:focus{border-color:var(--mg);box-shadow:0 0 0 3px rgba(176,53,128,0.08);background:var(--white)}
         .search-wrap input::placeholder{color:#C9A8BF}
         .table-count{font-size:0.82rem;color:var(--muted);white-space:nowrap;background:var(--mg-bg);padding:0.35rem 0.85rem;border-radius:20px;border:1px solid var(--mg-border)}
@@ -89,7 +92,7 @@
         .btn-sm{display:inline-flex;align-items:center;gap:0.3rem;padding:0.35rem 0.8rem;border-radius:7px;font-size:0.78rem;font-weight:500;text-decoration:none;transition:all 0.2s;white-space:nowrap;border:1px solid}
         .btn-secondary{background:var(--mg-bg);color:var(--mg-d);border-color:var(--mg-border)}
         .btn-secondary:hover{background:var(--mg);color:white;border-color:var(--mg)}
-        .btn-toggle{font-family:'DM Sans',sans-serif;cursor:pointer;background:#edfaf3;color:#1a7a4a;border-color:#a8dfc0}
+        .btn-toggle{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;cursor:pointer;background:#edfaf3;color:#1a7a4a;border-color:#a8dfc0}
         .btn-toggle:hover{background:#1a7a4a;color:white;border-color:#1a7a4a}
         .btn-toggle.off{background:#fff8ed;color:#8a5a00;border-color:#f0d29a}
         .btn-toggle.off:hover{background:#8a5a00;color:white;border-color:#8a5a00}
@@ -110,10 +113,10 @@
 
         /* header */
         .modal-header{padding:1.5rem 1.75rem 1.25rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--mg-border)}
-        .modal-big-avatar{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase}
+        .modal-big-avatar{width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.5rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase}
         .modal-header-info{flex:1;min-width:0}
         .modal-header-label{font-size:0.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.25rem}
-        .modal-header-name{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:600;color:var(--text);margin-bottom:0.3rem;line-height:1.2}
+        .modal-header-name{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.45rem;font-weight:600;color:var(--text);margin-bottom:0.3rem;line-height:1.2}
         .modal-header-email{font-size:0.82rem;color:var(--muted);font-weight:300}
         .modal-close{background:var(--mg-bg);border:1px solid var(--mg-border);border-radius:50%;width:34px;height:34px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all 0.2s}
         .modal-close:hover{background:var(--mg);border-color:var(--mg)}
@@ -133,14 +136,14 @@
 
         /* fecha parto destacada */
         .modal-item.parto{background:var(--mg-bg);border-color:var(--mg-border)}
-        .modal-item.parto .modal-item-valor{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--mg-d)}
+        .modal-item.parto .modal-item-valor{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:700;color:var(--mg-d)}
 
         /* footer */
         .modal-footer{padding:1rem 1.75rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;border-top:1px solid var(--mg-border)}
-        .modal-btn-editar{display:inline-flex;align-items:center;gap:0.4rem;padding:0.65rem 1.25rem;background:var(--mg-bg);border:1px solid var(--mg-border);color:var(--mg-d);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;text-decoration:none;transition:all 0.2s}
+        .modal-btn-editar{display:inline-flex;align-items:center;gap:0.4rem;padding:0.65rem 1.25rem;background:var(--mg-bg);border:1px solid var(--mg-border);color:var(--mg-d);border-radius:9px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:0.85rem;font-weight:500;text-decoration:none;transition:all 0.2s}
         .modal-btn-editar:hover{background:var(--mg);color:white;border-color:var(--mg)}
         .modal-btn-editar svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2}
-        .modal-btn-cerrar{padding:0.65rem 1.75rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:opacity 0.2s;box-shadow:0 4px 12px rgba(176,53,128,0.25)}
+        .modal-btn-cerrar{padding:0.65rem 1.75rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;border-radius:9px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:opacity 0.2s;box-shadow:0 4px 12px rgba(176,53,128,0.25)}
         .modal-btn-cerrar:hover{opacity:0.9}
 
         @media(max-width:768px){body{flex-direction:column}.sidebar{position:fixed;top:64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);width:var(--sw)}.sidebar.open{transform:translateX(0)}.sidebar-overlay{display:block;z-index:150}.mobile-topbar{display:flex}.main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px)}.modal-fila{grid-template-columns:1fr}.modal-overlay{padding:0.75rem}.modal{max-height:95vh}}
@@ -227,11 +230,11 @@
     <!-- TABS -->
     <div style="display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap;">
         <button onclick="showTab('prenatal')" id="tab-prenatal"
-            style="padding:.55rem 1.25rem;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem;">
+            style="padding:.55rem 1.25rem;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.88rem;font-weight:600;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;transition:all .2s;display:inline-flex;align-items:center;gap:.4rem;">
             <i class="fa-solid fa-baby"></i> Prenatales ({{ pacientes_prenatales|length }})
         </button>
         <button onclick="showTab('general')" id="tab-general"
-            style="padding:.55rem 1.25rem;border-radius:8px;border:1.5px solid var(--mg-border);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;background:white;color:var(--muted);transition:all .2s;display:inline-flex;align-items:center;gap:.4rem;">
+            style="padding:.55rem 1.25rem;border-radius:8px;border:1.5px solid var(--mg-border);cursor:pointer;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.88rem;font-weight:500;background:white;color:var(--muted);transition:all .2s;display:inline-flex;align-items:center;gap:.4rem;">
             <i class="fa-solid fa-user-group"></i> Generales ({{ pacientes_generales|length }})
         </button>
     </div>

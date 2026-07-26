@@ -4,13 +4,16 @@
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zumedical — Controles Prenatales</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
         :root{--mg:#B03580;--mg-l:#CC4D99;--mg-d:#8A2563;--mg-bg:#FBF0F7;--mg-border:#E8AAD4;--text:#2A1020;--muted:#8A6070;--white:#fff;--bg:#FDF5FA;--sw:260px;
               --green:#1a7a4a;--green-bg:#edfaf3;--blue:#1565c0;--blue-bg:#e3f2fd}
-        body{font-family:'DM Sans',sans-serif;background:var(--bg);min-height:100vh;display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+        body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);min-height:100vh;display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
         @keyframes fadeIn{to{opacity:1}}
         @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
@@ -19,7 +22,7 @@
         .sb-brand{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
         .sb-logo{width:42px;height:42px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .sb-logo img{width:38px;height:38px;object-fit:contain}
-        .sb-brand-text h2{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+        .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
         .sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.1em;text-transform:uppercase}
         .sb-user{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.7rem}
         .sb-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:500;color:white;flex-shrink:0;text-transform:uppercase}
@@ -39,7 +42,7 @@
         .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300}
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
         .mobile-topbar-brand img{width:32px;height:32px;background:white;border-radius:50%;padding:2px;object-fit:contain}
-        .mobile-topbar-brand span{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:white}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
         .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
         .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
         .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -51,7 +54,7 @@
         /* ── MAIN ── */
         .main{margin-left:var(--sw);flex:1;padding:2.5rem;min-height:100vh}
         .page-header{margin-bottom:2rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem}
-        .page-header h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
+        .page-header h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
         .page-header p{color:var(--muted);font-size:.88rem;font-weight:300}
         .back-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;background:var(--white);color:var(--mg);border:1.5px solid var(--mg-border);border-radius:10px;text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s;white-space:nowrap}
         .back-btn:hover{background:var(--mg-bg);border-color:var(--mg)}
@@ -70,7 +73,7 @@
         .si-green{background:var(--green-bg);color:var(--green)}
         .si-amber{background:#fff8ed;color:#92600a}
         .stat-info p{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.2rem}
-        .stat-info strong{font-family:'Cormorant Garamond',serif;font-size:1.7rem;font-weight:600;color:var(--text);line-height:1}
+        .stat-info strong{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.7rem;font-weight:600;color:var(--text);line-height:1}
         .stat-info span{font-size:.75rem;color:var(--muted);font-weight:300}
 
         /* ── TABLA ── */
@@ -78,7 +81,7 @@
         .table-toolbar{padding:1.1rem 1.5rem;border-bottom:1px solid var(--mg-border);display:flex;align-items:center;gap:.85rem;flex-wrap:wrap}
         .search-wrap{position:relative;flex:1;min-width:200px}
         .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:13px}
-        .search-wrap input{width:100%;padding:.6rem 1rem .6rem 2.2rem;border:1.5px solid var(--mg-border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.87rem;color:var(--text);outline:none;transition:all .2s;background:var(--bg)}
+        .search-wrap input{width:100%;padding:.6rem 1rem .6rem 2.2rem;border:1.5px solid var(--mg-border);border-radius:10px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.87rem;color:var(--text);outline:none;transition:all .2s;background:var(--bg)}
         .search-wrap input:focus{border-color:var(--mg);background:var(--white);box-shadow:0 0 0 3px rgba(176,53,128,.07)}
         .search-wrap input::placeholder{color:#C9A8BF}
         .count-pill{font-size:.8rem;color:var(--muted);background:var(--mg-bg);padding:.3rem .85rem;border-radius:20px;border:1px solid var(--mg-border);white-space:nowrap}
@@ -115,7 +118,7 @@
         /* MODAL HEADER */
         .modal-header{padding:1.4rem 1.6rem 1.1rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid var(--mg-border)}
         .modal-avatar{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase}
-        .modal-header-info h2{font-family:'Cormorant Garamond',serif;font-size:1.25rem;font-weight:600;color:var(--text);margin-bottom:.15rem}
+        .modal-header-info h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.25rem;font-weight:600;color:var(--text);margin-bottom:.15rem}
         .modal-header-info p{font-size:.8rem;color:var(--muted);font-weight:300}
         .modal-close{background:var(--mg-bg);border:1px solid var(--mg-border);border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-left:auto;transition:all .2s}
         .modal-close:hover{background:var(--mg);border-color:var(--mg)}
@@ -133,15 +136,15 @@
         .modal-item-label{font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem;display:flex;align-items:center;gap:.3rem}
         .modal-item-label i{font-size:10px;color:var(--mg-l)}
         .modal-item-valor{font-size:.9rem;font-weight:500;color:var(--text)}
-        .modal-item-valor.highlight{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:600;color:var(--mg)}
+        .modal-item-valor.highlight{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.3rem;font-weight:600;color:var(--mg)}
         .semanas-bar{margin-top:.5rem;height:6px;background:var(--mg-border);border-radius:3px;overflow:hidden}
         .semanas-fill{height:100%;background:linear-gradient(90deg,var(--mg-d),var(--mg-l));border-radius:3px;transition:width .8s ease}
 
         /* MODAL FOOTER */
         .modal-footer{padding:1rem 1.6rem 1.4rem;display:flex;justify-content:space-between;align-items:center;gap:.55rem}
-        .modal-btn-close{display:inline-flex;align-items:center;padding:.6rem 1.1rem;background:var(--white);color:var(--muted);border:1.5px solid var(--mg-border);border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.83rem;cursor:pointer;transition:all .2s}
+        .modal-btn-close{display:inline-flex;align-items:center;padding:.6rem 1.1rem;background:var(--white);color:var(--muted);border:1.5px solid var(--mg-border);border-radius:9px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.83rem;cursor:pointer;transition:all .2s}
         .modal-btn-close:hover{border-color:var(--mg);color:var(--mg)}
-        .modal-btn-delete{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;background:#FEF0F0;color:#8B2020;border:1.5px solid #F5AAAA;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:.83rem;font-weight:500;text-decoration:none;transition:all .2s}
+        .modal-btn-delete{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;background:#FEF0F0;color:#8B2020;border:1.5px solid #F5AAAA;border-radius:9px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.83rem;font-weight:500;text-decoration:none;transition:all .2s}
         .modal-btn-delete:hover{background:#D63B3B;color:white;border-color:#D63B3B}
 
         /* ── RESPONSIVE ── */

@@ -5,17 +5,20 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>{% if modo == 'editar' %}Editar{% else %}Programar{% endif %} Parto — Zumedical</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
   <style>
     :root{--mg:#b03580;--mg-l:#cc4d99;--mg-d:#8a2563;--mg-bg:#fbf0f7;--mg-border:#e8aad4;--text:#2a1020;--muted:#8a6070;--white:#fff;--bg:#fdf5fa;--sw:260px;--green:#2e7d52;--green-bg:#edfaf3;--red:#b91c1c;--red-bg:#fef2f2;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:"DM Sans",sans-serif;background:var(--bg);display:flex;height:100vh;overflow:hidden;}
+    body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;height:100vh;overflow:hidden;}
     .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8a2563 0%,#b03580 55%,#cc4d99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;overflow-y:auto;}
     .sb-brand{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;}
     .sb-logo{width:40px;height:40px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
     .sb-logo img{width:36px;height:36px;object-fit:contain;}
-    .sb-brand h2{font-family:"Cormorant Garamond",serif;font-size:1.3rem;font-weight:600;color:white;}
+    .sb-brand h2{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.3rem;font-weight:600;color:white;}
     .sb-brand span{font-size:.7rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.1em;}
     .sb-user{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;text-decoration:none;}
     .sb-av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase;}
@@ -31,16 +34,16 @@
     .btn-logout:hover{background:rgba(255,255,255,.15);color:white;}
     .btn-logout svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;}
     .main{margin-left:var(--sw);flex:1;padding:2rem 2.5rem;height:100vh;overflow-y:auto;}
-    .page-title{font-family:"Cormorant Garamond",serif;font-size:1.9rem;font-weight:600;color:var(--text);margin-bottom:.3rem;}
+    .page-title{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.9rem;font-weight:600;color:var(--text);margin-bottom:.3rem;}
     .page-sub{color:var(--muted);font-size:.88rem;margin-bottom:1.75rem;}
     .card{background:white;border-radius:16px;border:1px solid var(--mg-border);padding:1.5rem 2rem;margin-bottom:1.25rem;max-width:700px;}
-    .sec-title{display:flex;align-items:center;gap:.6rem;font-family:"Cormorant Garamond",serif;font-size:1.15rem;font-weight:600;color:var(--mg-d);margin-bottom:1.25rem;padding-bottom:.6rem;border-bottom:2px solid var(--mg-bg);}
+    .sec-title{display:flex;align-items:center;gap:.6rem;font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.15rem;font-weight:600;color:var(--mg-d);margin-bottom:1.25rem;padding-bottom:.6rem;border-bottom:2px solid var(--mg-bg);}
     .sec-icon{width:32px;height:32px;background:var(--mg-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
     .full{grid-column:1/-1;}
     .fg{display:flex;flex-direction:column;gap:.35rem;}
     .fg label{font-size:.75rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
-    .fg input,.fg select,.fg textarea{width:100%;padding:.6rem .85rem;border:1.5px solid var(--mg-border);border-radius:9px;font-family:"DM Sans",sans-serif;font-size:.875rem;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;resize:vertical;}
+    .fg input,.fg select,.fg textarea{width:100%;padding:.6rem .85rem;border:1.5px solid var(--mg-border);border-radius:9px;font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.875rem;color:var(--text);background:var(--bg);outline:none;transition:border-color .2s;resize:vertical;}
     .fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--mg);box-shadow:0 0 0 3px rgba(176,53,128,.07);}
     .fg .hint{font-size:.7rem;color:var(--muted);}
     /* Tipo de parto cards */
@@ -56,7 +59,7 @@
     .info-box strong{color:var(--mg-d);}
     /* Buttons */
     .actions{display:flex;gap:1rem;margin-top:1.5rem;}
-    .btn-primary{background:var(--mg);color:white;border:none;padding:.75rem 2rem;border-radius:10px;font-family:"DM Sans",sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;transition:all .2s;}
+    .btn-primary{background:var(--mg);color:white;border:none;padding:.75rem 2rem;border-radius:10px;font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;transition:all .2s;}
     .btn-primary:hover{background:var(--mg-d);}
     .btn-sec{background:var(--mg-bg);color:var(--mg);border:1px solid var(--mg-border);padding:.75rem 1.5rem;border-radius:10px;font-size:.95rem;font-weight:500;text-decoration:none;transition:all .2s;}
     .btn-sec:hover{background:white;}

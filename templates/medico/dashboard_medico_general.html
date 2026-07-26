@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zumedical — Panel Médico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -21,7 +24,7 @@
             --blue:#1565c0;--blue-bg:#e3f2fd;--blue-border:#90caf9;
         }
         html,body{height:100%}
-        body{font-family:'DM Sans',sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+        body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
         @keyframes fadeIn{to{opacity:1}}
         @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
@@ -31,7 +34,7 @@
         .sb-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
         .sb-logo{width:42px;height:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
         .sb-logo img{width:38px;height:38px;object-fit:contain}
-        .sb-brand-text h2{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+        .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
         .sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.1em;text-transform:uppercase}
         .sb-user{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;text-decoration:none;transition:background .2s}
         .sb-user:hover{background:rgba(255,255,255,.1)}
@@ -57,7 +60,7 @@
         /* ── MOBILE TOPBAR ── */
         .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300}
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
-        .mobile-topbar-brand span{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:white}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
         .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
         .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
         .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -72,7 +75,7 @@
         /* ── TOPBAR ── */
         .topbar{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:2rem;gap:1rem;flex-wrap:wrap}
         .topbar-left .greeting{font-size:.85rem;color:var(--muted);margin-bottom:.3rem;display:flex;align-items:center;gap:.4rem}
-        .topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:600;color:var(--text);line-height:1.1;margin-bottom:.25rem}
+        .topbar-left h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2.2rem;font-weight:600;color:var(--text);line-height:1.1;margin-bottom:.25rem}
         .topbar-left .sub{color:var(--muted);font-size:.85rem}
         .topbar-right{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
         .info-pill{display:flex;align-items:center;gap:.5rem;padding:.55rem 1rem;background:var(--white);border:1px solid var(--mg-border);border-radius:999px;font-size:.82rem;color:var(--text)}
@@ -92,7 +95,7 @@
         .stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.8rem}
         .stat-icon{width:40px;height:40px;background:var(--mg-bg);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mg);font-size:17px}
         .stat-trend{font-size:.72rem;font-weight:600;padding:.2rem .55rem;border-radius:999px}
-        .stat-val{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:600;color:var(--text);line-height:1;margin-bottom:.25rem}
+        .stat-val{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2.4rem;font-weight:600;color:var(--text);line-height:1;margin-bottom:.25rem}
         .stat-lbl{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem}
         .stat-chip{display:inline-flex;align-items:center;gap:.3rem;font-size:.72rem;font-weight:500;padding:.2rem .55rem;border-radius:999px}
         .chip-green{background:var(--green-bg);color:var(--green)}
@@ -107,7 +110,7 @@
         .card-header{padding:1rem 1.4rem;border-bottom:1px solid var(--mg-border);display:flex;align-items:center;justify-content:space-between}
         .card-header-left{display:flex;align-items:center;gap:.65rem}
         .card-header-icon{width:32px;height:32px;background:var(--mg-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mg);font-size:13px}
-        .card-header h3{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--text)}
+        .card-header h3{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.05rem;font-weight:600;color:var(--text)}
         .card-badge{font-size:.72rem;background:var(--mg-bg);color:var(--mg);padding:.2rem .6rem;border-radius:999px;font-weight:500;border:1px solid var(--mg-border)}
         .card-body{padding:1.25rem 1.4rem}
 
@@ -116,13 +119,13 @@
         .hoy-row:last-child{border-bottom:none}
         .hoy-label{font-size:.82rem;color:var(--muted);display:flex;align-items:center;gap:.5rem}
         .hoy-label i{color:var(--mg);font-size:13px;width:16px}
-        .hoy-val{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:var(--text)}
+        .hoy-val{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.4rem;font-weight:600;color:var(--text)}
 
         /* próxima cita destacada */
         .proxima-card{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));border-radius:14px;padding:1.25rem 1.4rem;color:white;position:relative;overflow:hidden}
         .proxima-card::before{content:'';position:absolute;right:-20px;top:-20px;width:120px;height:120px;background:rgba(255,255,255,.07);border-radius:50%}
         .proxima-label{font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;opacity:.75;margin-bottom:.5rem}
-        .proxima-time{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;line-height:1;margin-bottom:.3rem}
+        .proxima-time{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2rem;font-weight:600;line-height:1;margin-bottom:.3rem}
         .proxima-patient{font-size:.88rem;opacity:.9;margin-bottom:.25rem}
         .proxima-esp{font-size:.78rem;opacity:.7}
         .no-proxima{text-align:center;padding:1.5rem;color:var(--muted);font-size:.88rem}
@@ -154,7 +157,7 @@
         .modal-ov.open .modal{transform:translateY(0) scale(1);opacity:1}
         .modal-head{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));padding:1.4rem 1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
         .modal-head-info .modal-tag{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:.35rem}
-        .modal-head-info .modal-pac{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:white;line-height:1.2}
+        .modal-head-info .modal-pac{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.4rem;font-weight:600;color:white;line-height:1.2}
         .modal-head-info .modal-sub{font-size:.82rem;color:rgba(255,255,255,.8);margin-top:.2rem}
         .modal-close{background:rgba(255,255,255,.2);border:none;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;flex-shrink:0;transition:background .2s}
         .modal-close:hover{background:rgba(255,255,255,.35)}
@@ -166,7 +169,7 @@
         .modal-field-val{font-size:.9rem;color:var(--text);font-weight:500}
         .modal-field.full{grid-column:1/-1}
         .modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--mg-border);display:flex;justify-content:flex-end}
-        .btn-cerrar{padding:.65rem 1.4rem;background:var(--mg);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:opacity .2s}
+        .btn-cerrar{padding:.65rem 1.4rem;background:var(--mg);color:white;border:none;border-radius:10px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:opacity .2s}
         .btn-cerrar:hover{opacity:.88}
 
         /* ── RESPONSIVE ── */

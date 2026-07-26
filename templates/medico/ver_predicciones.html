@@ -5,7 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Panel Clínico IA — {{ paciente.get_full_name }} — Zumedical</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
   <style>
     :root {
@@ -19,7 +22,7 @@
       --blue: #0c4a6e; --blue-bg: #f0f9ff; --blue-border: #bae6fd;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "DM Sans", sans-serif; background: var(--bg); min-height: 100vh; }
+    body { font-family: "DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); min-height: 100vh; }
     @keyframes pageIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
     @keyframes slideIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }
     .container { max-width: 1100px; margin: 0 auto; padding: 2rem; animation: pageIn .4s ease; }
@@ -29,7 +32,7 @@
     .topbar-brand { display:flex; align-items:center; gap:.75rem; }
     .topbar-logo { width:36px; height:36px; background:white; border-radius:50%; display:flex; align-items:center; justify-content:center; overflow:hidden; }
     .topbar-logo img { width:32px; height:32px; object-fit:contain; }
-    .topbar-title { font-family:"Cormorant Garamond",serif; font-size:1.35rem; font-weight:600; color:white; }
+    .topbar-title { font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif; font-size:1.35rem; font-weight:600; color:white; }
     .topbar-sub { font-size:.78rem; color:rgba(255,255,255,.7); }
     .btn-back { background:rgba(255,255,255,.15); color:white; border:1px solid rgba(255,255,255,.3); padding:.5rem 1.1rem; border-radius:8px; text-decoration:none; font-size:.85rem; font-weight:500; transition:all .2s; white-space:nowrap; }
     .btn-back:hover { background:rgba(255,255,255,.25); }
@@ -44,7 +47,7 @@
     .ficha-header { background:linear-gradient(135deg,var(--mg-d),var(--mg)); padding:1.4rem 2rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
     .ficha-paciente { display:flex; align-items:center; gap:1rem; }
     .ficha-avatar { width:52px; height:52px; border-radius:50%; background:rgba(255,255,255,.2); border:2px solid rgba(255,255,255,.4); display:flex; align-items:center; justify-content:center; font-size:1.2rem; font-weight:600; color:white; text-transform:uppercase; flex-shrink:0; }
-    .ficha-nombre h2 { font-family:"Cormorant Garamond",serif; font-size:1.55rem; font-weight:700; color:white; }
+    .ficha-nombre h2 { font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif; font-size:1.55rem; font-weight:700; color:white; }
     .ficha-nombre p { font-size:.8rem; color:rgba(255,255,255,.75); margin-top:.15rem; }
     .tendencia-badge { display:flex; align-items:center; gap:.5rem; padding:.45rem 1rem; border-radius:20px; font-size:.84rem; font-weight:600; }
     .tendencia-mejorando { background:var(--green-bg); color:var(--green); border:1px solid var(--green-border); }
@@ -54,8 +57,8 @@
     .stat-item { padding:1rem 1.4rem; border-right:1px solid var(--mg-border); }
     .stat-item:last-child { border-right:none; }
     .stat-label { font-size:.7rem; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:.25rem; }
-    .stat-val { font-family:"Cormorant Garamond",serif; font-size:1.55rem; font-weight:700; color:var(--text); line-height:1; }
-    .stat-val small { font-family:"DM Sans",sans-serif; font-size:.78rem; font-weight:400; color:var(--muted); margin-left:.2rem; }
+    .stat-val { font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif; font-size:1.55rem; font-weight:700; color:var(--text); line-height:1; }
+    .stat-val small { font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size:.78rem; font-weight:400; color:var(--muted); margin-left:.2rem; }
     .delta-chip { display:inline-flex; align-items:center; gap:.25rem; font-size:.75rem; font-weight:600; padding:.15rem .5rem; border-radius:20px; margin-top:.3rem; }
     .delta-up { background:var(--red-bg); color:var(--red); }
     .delta-down { background:var(--green-bg); color:var(--green); }
@@ -72,13 +75,13 @@
     .ultima-header.alto { background:var(--red-bg); }
     .ultima-nivel { display:flex; align-items:center; gap:1rem; }
     .ultima-icono { font-size:2.2rem; line-height:1; }
-    .ultima-titulo h2 { font-family:"Cormorant Garamond",serif; font-size:1.9rem; font-weight:700; }
+    .ultima-titulo h2 { font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif; font-size:1.9rem; font-weight:700; }
     .ultima-titulo p { font-size:.85rem; color:var(--muted); margin-top:.15rem; }
     .bajo .ultima-titulo h2 { color:var(--green); }
     .medio .ultima-titulo h2 { color:var(--yellow); }
     .alto .ultima-titulo h2 { color:var(--red); }
     .prob-ring { text-align:center; min-width:100px; }
-    .prob-ring .num { font-family:"Cormorant Garamond",serif; font-size:3.2rem; font-weight:700; line-height:1; }
+    .prob-ring .num { font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif; font-size:3.2rem; font-weight:700; line-height:1; }
     .bajo .prob-ring .num { color:var(--green); }
     .medio .prob-ring .num { color:var(--yellow); }
     .alto .prob-ring .num { color:var(--red); }
@@ -134,7 +137,7 @@
 
     /* TIMELINE */
     .evolucion-card { background:var(--white); border-radius:16px; border:1px solid var(--mg-border); padding:1.75rem 2rem; margin-bottom:1.75rem; box-shadow:0 2px 10px rgba(176,53,128,.05); }
-    .evolucion-title { font-family:"Cormorant Garamond",serif; font-size:1.45rem; font-weight:600; color:var(--text); margin-bottom:1.25rem; }
+    .evolucion-title { font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif; font-size:1.45rem; font-weight:600; color:var(--text); margin-bottom:1.25rem; }
     .timeline { position:relative; padding-left:2.5rem; }
     .timeline::before { content:''; position:absolute; left:10px; top:12px; bottom:12px; width:2px; background:var(--mg-border); }
     .timeline-item { position:relative; margin-bottom:1.1rem; }
@@ -157,7 +160,7 @@
     /* EMPTY */
     .empty-state { text-align:center; padding:3rem; color:var(--muted); }
     .empty-state .ei { font-size:2.8rem; margin-bottom:.75rem; }
-    .empty-state h3 { font-family:"Cormorant Garamond",serif; font-size:1.35rem; color:var(--text); margin-bottom:.4rem; }
+    .empty-state h3 { font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif; font-size:1.35rem; color:var(--text); margin-bottom:.4rem; }
 
     @media(max-width:900px) {
       .datos-grid { grid-template-columns:repeat(3,1fr); }

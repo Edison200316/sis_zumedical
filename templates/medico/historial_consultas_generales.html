@@ -5,20 +5,23 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Historial Consultas Generales — Zumedical</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
   <style>
     :root{--mg:#b03580;--mg-l:#cc4d99;--mg-d:#8a2563;--mg-bg:#fbf0f7;--mg-border:#e8aad4;--text:#2a1020;--muted:#8a6070;--white:#fff;--bg:#fdf5fa;--sw:260px;--green:#2e7d52;--green-bg:#edfaf3;--green-border:#a8dfc0;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%}
-    body{font-family:"DM Sans",sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+    body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
     @keyframes fadeIn{to{opacity:1}}
     /* ── SIDEBAR ── */
     .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8a2563 0%,#b03580 55%,#cc4d99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:4px 0 24px rgba(138,37,99,.22);transition:transform .3s ease;overflow-y:auto;}
     .sb-brand{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;}
     .sb-logo{width:40px;height:40px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
     .sb-logo img{width:36px;height:36px;object-fit:contain;}
-    .sb-brand h2{font-family:"Cormorant Garamond",serif;font-size:1.3rem;font-weight:600;color:white;}
+    .sb-brand h2{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.3rem;font-weight:600;color:white;}
     .sb-brand span{font-size:.7rem;color:rgba(255,255,255,.7);text-transform:uppercase;letter-spacing:.1em;}
     .sb-user{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;text-decoration:none;}
     .sb-av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase;}
@@ -38,7 +41,7 @@
     .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
     .mobile-topbar-logo{width:32px;height:32px;background:white;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
     .mobile-topbar-logo img{width:28px;height:28px;object-fit:contain}
-    .mobile-topbar-brand span{font-family:"Cormorant Garamond",serif;font-size:1.2rem;font-weight:600;color:white}
+    .mobile-topbar-brand span{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.2rem;font-weight:600;color:white}
     .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
     .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
     .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -58,13 +61,13 @@
       .main{margin-left:0;padding:1.1rem;padding-top:calc(1.1rem + 64px);height:auto;overflow-y:visible}
     }
     .top-row{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:1.75rem;flex-wrap:wrap;gap:1rem;}
-    .page-title{font-family:"Cormorant Garamond",serif;font-size:1.9rem;font-weight:600;color:var(--text);}
+    .page-title{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.9rem;font-weight:600;color:var(--text);}
     .page-sub{color:var(--muted);font-size:.88rem;margin-top:.2rem;}
     .btn-primary{background:var(--mg);color:white;border:none;padding:.65rem 1.4rem;border-radius:10px;font-size:.9rem;font-weight:500;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:.5rem;}
     .btn-primary:hover{background:var(--mg-d);}
     /* Filter */
     .filter-bar{background:white;border:1px solid var(--mg-border);border-radius:14px;padding:.9rem 1.25rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;margin-bottom:1.25rem;}
-    .filter-bar select,.filter-bar input{padding:.55rem .9rem;border:1.5px solid var(--mg-border);border-radius:9px;font-family:"DM Sans",sans-serif;font-size:.85rem;background:var(--bg);color:var(--text);outline:none;}
+    .filter-bar select,.filter-bar input{padding:.55rem .9rem;border:1.5px solid var(--mg-border);border-radius:9px;font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.85rem;background:var(--bg);color:var(--text);outline:none;}
     .filter-bar select:focus,.filter-bar input:focus{border-color:var(--mg);}
     .btn-filter{background:var(--mg-bg);color:var(--mg);border:1px solid var(--mg-border);padding:.55rem 1.1rem;border-radius:9px;font-size:.85rem;font-weight:500;cursor:pointer;text-decoration:none;}
     .btn-filter:hover{background:var(--mg);color:white;}

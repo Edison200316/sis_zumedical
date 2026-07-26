@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zumedical — Ver Citas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -46,7 +49,7 @@
 
         html { height: 100%; }
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg);
             height: 100vh;
             overflow: hidden;
@@ -60,7 +63,7 @@
         .sb-brand { padding: 1.75rem 1.5rem 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; gap: 0.75rem; }
         .sb-logo { width: 42px; height: 42px; background: white; border-radius: 50%; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
         .sb-logo img { width: 38px; height: 38px; object-fit: contain; }
-        .sb-brand-text h2 { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 600; color: white; line-height: 1; }
+        .sb-brand-text h2 { font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size: 1.35rem; font-weight: 600; color: white; line-height: 1; }
         .sb-brand-text span { font-size: 0.7rem; color: rgba(255,255,255,0.65); letter-spacing: 0.1em; text-transform: uppercase; }
         .sb-user { padding: 1.2rem 1.5rem; border-bottom: 1px solid rgba(255,255,255,0.12); display: flex; align-items: center; gap: 0.75rem; transition: background 0.2s; text-decoration: none; }
         .sb-user:hover { background: rgba(255,255,255,0.1); }
@@ -82,7 +85,7 @@
         /* ── MAIN ── */
         .main { flex: 1; padding: 2.5rem 2.5rem 4rem; height: 100vh; overflow-y: auto; margin-left: var(--sw); }
         .page-header { margin-bottom: 2rem; display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-        .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
+        .page-header h1 { font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size: 2rem; font-weight: 600; color: var(--text); margin-bottom: 0.3rem; }
         .page-header p { color: var(--text-muted); font-size: 0.9rem; font-weight: 300; }
 
         .btn-nueva-cita { display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.65rem 1.4rem; background: linear-gradient(135deg, var(--magenta-dark), var(--magenta-light)); color: white; border-radius: 9px; text-decoration: none; font-size: 0.875rem; font-weight: 500; transition: opacity 0.2s, transform 0.15s; white-space: nowrap; }
@@ -111,23 +114,23 @@
         .filtro-input {
             width: 100%; padding: 0.55rem 0.85rem 0.55rem 2rem;
             border: 1px solid var(--magenta-border); border-radius: 9px;
-            font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--text);
+            font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.85rem; color: var(--text);
             background: var(--bg); outline: none; transition: border-color 0.2s, box-shadow 0.2s;
         }
         .filtro-input:focus { border-color: var(--magenta); box-shadow: 0 0 0 3px rgba(176,53,128,0.1); }
         .filtro-select {
             padding: 0.55rem 2rem 0.55rem 0.85rem;
             border: 1px solid var(--magenta-border); border-radius: 9px;
-            font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--text);
+            font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.85rem; color: var(--text);
             background: var(--bg); outline: none; cursor: pointer; appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238A6070' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: right 8px center;
             transition: border-color 0.2s;
         }
         .filtro-select:focus { border-color: var(--magenta); }
-        .filtro-fecha { padding: 0.55rem 0.85rem; border: 1px solid var(--magenta-border); border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.2s; }
+        .filtro-fecha { padding: 0.55rem 0.85rem; border: 1px solid var(--magenta-border); border-radius: 9px; font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.85rem; color: var(--text); background: var(--bg); outline: none; transition: border-color 0.2s; }
         .filtro-fecha:focus { border-color: var(--magenta); }
-        .btn-limpiar { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.55rem 1rem; border: 1px solid var(--magenta-border); border-radius: 9px; background: transparent; color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+        .btn-limpiar { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.55rem 1rem; border: 1px solid var(--magenta-border); border-radius: 9px; background: transparent; color: var(--text-muted); font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.82rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
         .btn-limpiar:hover { background: var(--magenta-bg); color: var(--magenta); border-color: var(--magenta); }
         .btn-limpiar svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
 
@@ -139,19 +142,19 @@
         .mes-grupo { margin-bottom: 2rem; }
         .mes-titulo {
             display: flex; align-items: center; gap: 0.7rem;
-            font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 600;
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size: 1.05rem; font-weight: 600;
             color: var(--magenta-dark); margin-bottom: 0.75rem; padding-bottom: 0.5rem;
             border-bottom: 1px solid var(--magenta-border);
         }
         .mes-titulo .mes-count {
             background: var(--magenta-bg); color: var(--magenta); border: 1px solid var(--magenta-border);
-            border-radius: 20px; font-family: 'DM Sans', sans-serif;
+            border-radius: 20px; font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 0.72rem; font-weight: 500; padding: 0.15rem 0.65rem;
         }
         /* Panel generales — encabezado de mes */
         .mes-encabezado {
             display: flex; align-items: center; gap: 0.7rem;
-            font-family: 'Cormorant Garamond', serif; font-size: 1.05rem; font-weight: 600;
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size: 1.05rem; font-weight: 600;
             color: var(--magenta-dark); padding: 0.75rem 1.25rem;
             border-bottom: 1px solid var(--magenta-border);
             background: var(--magenta-bg);
@@ -160,7 +163,7 @@
         .mes-nombre { flex: 1; }
         .mes-badge {
             background: white; color: var(--magenta); border: 1px solid var(--magenta-border);
-            border-radius: 20px; font-family: 'DM Sans', sans-serif;
+            border-radius: 20px; font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 0.72rem; font-weight: 500; padding: 0.15rem 0.65rem;
         }
 
@@ -212,7 +215,7 @@
         .empty-state { padding: 4rem 2rem; text-align: center; }
         .empty-icon { width: 56px; height: 56px; background: var(--magenta-bg); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; }
         .empty-icon svg { width: 26px; height: 26px; stroke: var(--magenta); fill: none; stroke-width: 1.6; }
-        .empty-state h3 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
+        .empty-state h3 { font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size: 1.3rem; font-weight: 600; color: var(--text); margin-bottom: 0.4rem; }
         .empty-state p { color: var(--text-muted); font-size: 0.875rem; font-weight: 300; margin-bottom: 1.5rem; }
 
         /* sin resultados inline */
@@ -241,7 +244,7 @@
         .modal-fecha-bloque.completada { background: var(--blue-bg);   border: 1.5px solid var(--blue-border); }
         .modal-fecha-bloque.atendido   { background: var(--green-bg);  border: 1.5px solid var(--green-border); }
 
-        .modal-dia  { font-family: 'Cormorant Garamond', serif; font-size: 1.9rem; font-weight: 700; line-height: 1; }
+        .modal-dia  { font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size: 1.9rem; font-weight: 700; line-height: 1; }
         .modal-fecha-bloque.pendiente  .modal-dia  { color: #a06800; }
         .modal-fecha-bloque.confirmada .modal-dia  { color: var(--green); }
         .modal-fecha-bloque.cancelada  .modal-dia  { color: var(--red); }
@@ -259,7 +262,7 @@
 
         .modal-header-info { flex: 1; min-width: 0; }
         .modal-label  { font-size: 0.72rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.3rem; }
-        .modal-motivo { font-family: 'Cormorant Garamond', serif; font-size: 1.45rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; line-height: 1.2; }
+        .modal-motivo { font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size: 1.45rem; font-weight: 600; color: var(--text); margin-bottom: 0.5rem; line-height: 1.2; }
 
         .modal-badge { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.3rem 0.8rem; border-radius: 30px; font-size: 0.75rem; font-weight: 500; border: 1px solid; }
         .modal-badge .bdot { width: 7px; height: 7px; border-radius: 50%; }
@@ -293,16 +296,16 @@
 
         .modal-footer { padding: 1rem 1.75rem 1.5rem; display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; border-top: 1px solid var(--magenta-border); flex-wrap: wrap; }
 
-        .modal-btn-reprogramar { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.65rem 1.25rem; background: var(--magenta-bg); border: 1px solid var(--magenta-border); color: var(--magenta-dark); border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; text-decoration: none; transition: all 0.2s; }
+        .modal-btn-reprogramar { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.65rem 1.25rem; background: var(--magenta-bg); border: 1px solid var(--magenta-border); color: var(--magenta-dark); border-radius: 9px; font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.85rem; font-weight: 500; text-decoration: none; transition: all 0.2s; }
         .modal-btn-reprogramar:hover { background: var(--magenta); color: white; border-color: var(--magenta); }
         .modal-btn-reprogramar svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
 
         /* ── BOTÓN PDF ── */
-        .modal-btn-pdf { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.65rem 1.25rem; background: #fff7f0; border: 1px solid #f5c8a0; color: #a04010; border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+        .modal-btn-pdf { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.65rem 1.25rem; background: #fff7f0; border: 1px solid #f5c8a0; color: #a04010; border-radius: 9px; font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; }
         .modal-btn-pdf:hover { background: #a04010; color: white; border-color: #a04010; }
         .modal-btn-pdf svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2; }
 
-        .modal-btn-cerrar { padding: 0.65rem 1.75rem; background: linear-gradient(135deg, var(--magenta-dark), var(--magenta-light)); color: white; border: none; border-radius: 9px; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s; box-shadow: 0 4px 12px rgba(176,53,128,0.25); }
+        .modal-btn-cerrar { padding: 0.65rem 1.75rem; background: linear-gradient(135deg, var(--magenta-dark), var(--magenta-light)); color: white; border: none; border-radius: 9px; font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size: 0.88rem; font-weight: 500; cursor: pointer; transition: opacity 0.2s; box-shadow: 0 4px 12px rgba(176,53,128,0.25); }
         .modal-btn-cerrar:hover { opacity: 0.9; }
 
         /* animaciones filas */
@@ -312,7 +315,7 @@
         .mobile-topbar{display:none;position:fixed;top:0;left:0;right:0;height:56px;background:linear-gradient(90deg,#8A2563,#B03580);align-items:center;justify-content:space-between;padding:0 1rem;z-index:300;}
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem;}
         .mobile-topbar-brand img{width:32px;height:32px;border-radius:50%;object-fit:contain;background:white;padding:2px;}
-        .mobile-topbar-brand span{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:600;color:#fff;}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.1rem;font-weight:600;color:#fff;}
         .hamburger{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:5px;padding:4px;}
         .hamburger span{display:block;width:22px;height:2px;background:#fff;border-radius:2px;transition:all .25s;}
         .hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
@@ -416,12 +419,12 @@
     <!-- TABS PRENATALES / GENERALES -->
     <div style="display:flex;gap:.6rem;margin-bottom:1.5rem;flex-wrap:wrap;">
         <button onclick="showTabCitas('prenatal')" id="tab-citas-prenatal"
-            style="padding:.6rem 1.35rem;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;background:linear-gradient(135deg,#8A2563,#CC4D99);color:white;box-shadow:0 4px 12px rgba(176,53,128,.25);display:inline-flex;align-items:center;gap:.45rem;transition:all .2s;">
+            style="padding:.6rem 1.35rem;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.88rem;font-weight:600;background:linear-gradient(135deg,#8A2563,#CC4D99);color:white;box-shadow:0 4px 12px rgba(176,53,128,.25);display:inline-flex;align-items:center;gap:.45rem;transition:all .2s;">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
             Prenatales <span style="background:rgba(255,255,255,.25);padding:.1rem .5rem;border-radius:999px;font-size:.75rem;">{{ total_prenatales }}</span>
         </button>
         <button onclick="showTabCitas('general')" id="tab-citas-general"
-            style="padding:.6rem 1.35rem;border-radius:10px;border:1.5px solid var(--magenta-border);cursor:pointer;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;background:white;color:var(--text-muted);display:inline-flex;align-items:center;gap:.45rem;transition:all .2s;">
+            style="padding:.6rem 1.35rem;border-radius:10px;border:1.5px solid var(--magenta-border);cursor:pointer;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.88rem;font-weight:500;background:white;color:var(--text-muted);display:inline-flex;align-items:center;gap:.45rem;transition:all .2s;">
             <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
             Generales <span style="background:rgba(0,0,0,.06);padding:.1rem .5rem;border-radius:999px;font-size:.75rem;">{{ total_generales }}</span>
         </button>

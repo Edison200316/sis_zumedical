@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zumedical — Pacientes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
@@ -20,7 +23,7 @@
             --red:#b03030;--red-bg:#fdf0f0;
         }
         html,body{height:100%}
-        body{font-family:'DM Sans',sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+        body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
         @keyframes fadeIn{to{opacity:1}}
         @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
@@ -30,7 +33,7 @@
         .sb-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
         .sb-logo{width:42px;height:42px;background:white;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
         .sb-logo img{width:38px;height:38px;object-fit:contain}
-        .sb-brand-text h2{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+        .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
         .sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.1em;text-transform:uppercase}
         .sb-user{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;text-decoration:none;transition:background .2s}
         .sb-user:hover{background:rgba(255,255,255,.1)}
@@ -58,7 +61,7 @@
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
         .mobile-topbar-logo{width:32px;height:32px;background:white;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
         .mobile-topbar-logo img{width:28px;height:28px;object-fit:contain}
-        .mobile-topbar-brand span{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:white}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
         .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
         .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
         .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -73,7 +76,7 @@
         /* ── PAGE HEADER ── */
         .page-header{margin-bottom:1.75rem;animation:slideUp .4s ease .05s both}
         .page-header-top{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;flex-wrap:wrap}
-        .page-header h1{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
+        .page-header h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
         .page-header p{color:var(--muted);font-size:.88rem}
 
         /* ── STATS RÁPIDAS ── */
@@ -81,15 +84,15 @@
         .stat-mini{background:var(--white);border:1px solid var(--mg-border);border-radius:12px;padding:.75rem 1.1rem;display:flex;align-items:center;gap:.65rem;flex:1;min-width:130px}
         .stat-mini-icon{width:32px;height:32px;background:var(--mg-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mg);font-size:13px;flex-shrink:0}
         .stat-mini-info p{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.1rem}
-        .stat-mini-info strong{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:var(--text);line-height:1}
+        .stat-mini-info strong{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.4rem;font-weight:600;color:var(--text);line-height:1}
 
         /* ── TOOLBAR ── */
         .toolbar{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-bottom:1.25rem;background:var(--white);border:1px solid var(--mg-border);border-radius:14px;padding:1rem 1.25rem;animation:slideUp .4s ease .15s both}
         .search-wrap{position:relative;flex:1;min-width:180px}
         .search-wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:14px;pointer-events:none}
-        .search-input{width:100%;padding:.65rem 1rem .65rem 2.2rem;border:1.5px solid var(--mg-border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border .2s;background:var(--bg)}
+        .search-input{width:100%;padding:.65rem 1rem .65rem 2.2rem;border:1.5px solid var(--mg-border);border-radius:10px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border .2s;background:var(--bg)}
         .search-input:focus{border-color:var(--mg);background:var(--white)}
-        .filter-btn{display:flex;align-items:center;gap:.4rem;padding:.65rem .9rem;border:1.5px solid var(--mg-border);border-radius:10px;background:var(--bg);color:var(--muted);font-family:'DM Sans',sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;white-space:nowrap}
+        .filter-btn{display:flex;align-items:center;gap:.4rem;padding:.65rem .9rem;border:1.5px solid var(--mg-border);border-radius:10px;background:var(--bg);color:var(--muted);font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.82rem;cursor:pointer;transition:all .2s;white-space:nowrap}
         .filter-btn:hover,.filter-btn.active{border-color:var(--mg);color:var(--mg);background:var(--mg-bg)}
         .filter-btn i{font-size:12px}
         .results-count{font-size:.8rem;color:var(--muted);white-space:nowrap}
@@ -127,10 +130,10 @@
         .modal{background:var(--white);border-radius:20px;width:100%;max-width:460px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 64px rgba(138,37,99,.22);transform:translateY(16px) scale(.98);transition:transform .28s cubic-bezier(.34,1.56,.64,1),opacity .2s;opacity:0}
         .modal-ov.open .modal{transform:translateY(0) scale(1);opacity:1}
         .modal-head{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));padding:1.4rem 1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
-        .modal-avatar{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase;border:2px solid rgba(255,255,255,.4)}
+        .modal-avatar{width:48px;height:48px;border-radius:50%;background:rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase;border:2px solid rgba(255,255,255,.4)}
         .modal-head-info{flex:1;min-width:0}
         .modal-tag{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:.3rem}
-        .modal-pac{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;color:white;line-height:1.2}
+        .modal-pac{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.4rem;font-weight:600;color:white;line-height:1.2}
         .modal-close{background:rgba(255,255,255,.2);border:none;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;flex-shrink:0;transition:background .2s}
         .modal-close:hover{background:rgba(255,255,255,.35)}
         .modal-body{padding:1.5rem}
@@ -141,7 +144,7 @@
         .modal-field-label i{color:var(--mg);font-size:11px}
         .modal-field-val{font-size:.9rem;color:var(--text);font-weight:500}
         .modal-footer{padding:1rem 1.5rem;border-top:1px solid var(--mg-border);display:flex;justify-content:flex-end}
-        .btn-cerrar{padding:.65rem 1.4rem;background:var(--mg);color:white;border:none;border-radius:10px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:opacity .2s}
+        .btn-cerrar{padding:.65rem 1.4rem;background:var(--mg);color:white;border:none;border-radius:10px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:opacity .2s}
         .btn-cerrar:hover{opacity:.88}
 
         /* ── RESPONSIVE ── */

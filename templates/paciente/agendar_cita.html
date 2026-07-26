@@ -5,7 +5,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Agendar Cita — Zumedical</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{% static 'css/sidebar_paciente.css' %}">
   <style>
     :root{
@@ -16,7 +19,7 @@
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html,body{height:100%;}
-    body{font-family:"DM Sans",sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards;}
+    body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards;}
     @keyframes fadeIn{to{opacity:1;}}
 
     /* SIDEBAR */
@@ -24,7 +27,7 @@
     .sb-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;}
     .sb-logo{width:44px;height:44px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
     .sb-logo img{width:40px;height:40px;object-fit:contain;}
-    .sb-brand h2{font-family:"Cormorant Garamond",serif;font-size:1.4rem;font-weight:600;color:white;line-height:1;}
+    .sb-brand h2{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.4rem;font-weight:600;color:white;line-height:1;}
     .sb-brand span{font-size:.72rem;color:rgba(255,255,255,.7);letter-spacing:.1em;text-transform:uppercase;}
     .sb-user{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;text-decoration:none;}
     .sb-av{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:500;color:white;text-transform:uppercase;flex-shrink:0;}
@@ -43,7 +46,7 @@
     .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem;}
     .mobile-topbar-logo{width:36px;height:36px;background:white;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
     .mobile-topbar-logo img{width:32px;height:32px;object-fit:contain;}
-    .mobile-topbar-brand span{font-family:"Cormorant Garamond",serif;font-size:1.2rem;font-weight:600;color:white;}
+    .mobile-topbar-brand span{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.2rem;font-weight:600;color:white;}
     .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px;}
     .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s;}
     .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
@@ -56,7 +59,7 @@
     .main{margin-left:var(--sw);flex:1;padding:2.5rem;height:100vh;overflow-y:auto;}
     .page-header{margin-bottom:2rem;}
     .page-header .sub{font-size:.85rem;color:var(--muted);font-weight:300;margin-bottom:.3rem;}
-    .page-header h1{font-family:"Cormorant Garamond",serif;font-size:2.2rem;font-weight:600;color:var(--text);}
+    .page-header h1{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:2.2rem;font-weight:600;color:var(--text);}
 
     /* MENSAJES */
     .msg{display:flex;align-items:center;gap:.65rem;padding:.9rem 1.2rem;border-radius:12px;font-size:.88rem;font-weight:500;margin-bottom:.75rem;}
@@ -66,7 +69,7 @@
     /* CARD FORMULARIO */
     .card{background:var(--white);border-radius:16px;border:1px solid var(--mg-border);overflow:hidden;box-shadow:0 2px 12px rgba(176,53,128,.06);}
     .card-header{padding:1.5rem 2rem;border-bottom:1px solid var(--mg-border);background:var(--mg-bg);display:flex;align-items:center;gap:.75rem;}
-    .card-header h2{font-family:"Cormorant Garamond",serif;font-size:1.4rem;font-weight:600;color:var(--text);}
+    .card-header h2{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.4rem;font-weight:600;color:var(--text);}
     .card-body{padding:2rem;}
 
     /* STEPS */
@@ -92,7 +95,7 @@
     .form-group label{display:block;font-size:.82rem;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.45rem;}
     .form-group input,.form-group select,.form-group textarea{
       width:100%;padding:.8rem 1rem;border:1.5px solid var(--mg-border);
-      border-radius:10px;font-family:"DM Sans",sans-serif;font-size:.93rem;
+      border-radius:10px;font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.93rem;
       color:var(--text);background:white;outline:none;transition:all .2s;
     }
     .form-group input:focus,.form-group select:focus,.form-group textarea:focus{
@@ -111,7 +114,7 @@
 
     /* ACCIONES */
     .form-actions{display:flex;gap:1rem;align-items:center;margin-top:1.5rem;flex-wrap:wrap;}
-    .btn-primary{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;padding:.9rem 2rem;border-radius:10px;font-size:.95rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:"DM Sans",sans-serif;}
+    .btn-primary{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;padding:.9rem 2rem;border-radius:10px;font-size:.95rem;font-weight:500;cursor:pointer;transition:all .2s;font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;}
     .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(176,53,128,.25);}
     .btn-primary:disabled{opacity:.6;cursor:not-allowed;transform:none;}
     .btn-secondary{background:white;color:var(--mg);border:1px solid var(--mg-border);padding:.9rem 1.5rem;border-radius:10px;text-decoration:none;font-size:.9rem;font-weight:500;display:inline-flex;align-items:center;}

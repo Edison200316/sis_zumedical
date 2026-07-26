@@ -5,17 +5,20 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Consulta — {{ consulta.paciente.get_full_name }} — Zumedical</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
   <style>
     :root{--mg:#b03580;--mg-l:#cc4d99;--mg-d:#8a2563;--mg-bg:#fbf0f7;--mg-border:#e8aad4;--text:#2a1020;--muted:#8a6070;--white:#fff;--bg:#fdf5fa;--green:#2e7d52;--green-bg:#edfaf3;--green-border:#a8dfc0;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:"DM Sans",sans-serif;background:var(--bg);min-height:100vh;}
+    body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);min-height:100vh;}
     .topbar{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
     .topbar-brand{display:flex;align-items:center;gap:.75rem;}
     .topbar-logo{width:36px;height:36px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
     .topbar-logo img{width:32px;height:32px;object-fit:contain;}
-    .topbar-title{font-family:"Cormorant Garamond",serif;font-size:1.3rem;font-weight:600;color:white;}
+    .topbar-title{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.3rem;font-weight:600;color:white;}
     .topbar-sub{font-size:.75rem;color:rgba(255,255,255,.7);}
     .btn-back{background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);padding:.5rem 1.1rem;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s;}
     .btn-back:hover{background:rgba(255,255,255,.25);}
@@ -23,11 +26,11 @@
     /* Patient header */
     .pac-header{background:linear-gradient(135deg,var(--mg-d),var(--mg));border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;display:flex;align-items:center;gap:1.25rem;}
     .pac-av{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:700;color:white;flex-shrink:0;text-transform:uppercase;}
-    .pac-info h2{font-family:"Cormorant Garamond",serif;font-size:1.6rem;font-weight:700;color:white;}
+    .pac-info h2{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.6rem;font-weight:700;color:white;}
     .pac-info p{font-size:.85rem;color:rgba(255,255,255,.8);margin-top:.2rem;}
     /* Cards */
     .card{background:white;border-radius:16px;border:1px solid var(--mg-border);padding:1.5rem 2rem;margin-bottom:1.25rem;box-shadow:0 2px 8px rgba(176,53,128,.04);}
-    .sec-title{display:flex;align-items:center;gap:.6rem;font-family:"Cormorant Garamond",serif;font-size:1.15rem;font-weight:600;color:var(--mg-d);margin-bottom:1.25rem;padding-bottom:.6rem;border-bottom:2px solid var(--mg-bg);}
+    .sec-title{display:flex;align-items:center;gap:.6rem;font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.15rem;font-weight:600;color:var(--mg-d);margin-bottom:1.25rem;padding-bottom:.6rem;border-bottom:2px solid var(--mg-bg);}
     .sec-icon{width:32px;height:32px;background:var(--mg-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
     .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;}

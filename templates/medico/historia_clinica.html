@@ -5,7 +5,10 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Historia Clínica — {{ paciente.get_full_name }} — Zumedical</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <style>
@@ -18,19 +21,19 @@
       --red:#b91c1c;--red-bg:#fef2f2;--red-border:#fca5a5;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    body{font-family:"DM Sans",sans-serif;background:var(--bg);min-height:100vh}
+    body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);min-height:100vh}
     .topbar{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     .topbar-brand{display:flex;align-items:center;gap:.75rem}
     .topbar-logo{width:36px;height:36px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden}
     .topbar-logo img{width:32px;height:32px;object-fit:contain}
-    .topbar-title{font-family:"Cormorant Garamond",serif;font-size:1.35rem;font-weight:600;color:white}
+    .topbar-title{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.35rem;font-weight:600;color:white}
     .topbar-sub{font-size:.78rem;color:rgba(255,255,255,.7)}
     .btn-nav{background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);padding:.5rem 1rem;border-radius:8px;text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s}
     .btn-nav:hover{background:rgba(255,255,255,.25)}
     .btn-nav.primary{background:rgba(255,255,255,.3)}
     .container{max-width:1100px;margin:0 auto;padding:2.5rem}
     .card{background:white;border-radius:16px;border:1px solid var(--mg-border);padding:1.75rem 2rem;margin-bottom:1.5rem;box-shadow:0 2px 8px rgba(176,53,128,.04)}
-    .card-title{display:flex;align-items:center;gap:.75rem;font-family:"Cormorant Garamond",serif;font-size:1.35rem;font-weight:600;color:var(--mg-d);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:2px solid var(--mg-bg)}
+    .card-title{display:flex;align-items:center;gap:.75rem;font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.35rem;font-weight:600;color:var(--mg-d);margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:2px solid var(--mg-bg)}
     .card-icon{width:36px;height:36px;background:var(--mg-bg);border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1.1rem}
     .card-actions{margin-left:auto}
     .btn-edit{background:var(--mg-bg);color:var(--mg);border:1px solid var(--mg-border);padding:.4rem .9rem;border-radius:8px;text-decoration:none;font-size:.82rem;font-weight:500;transition:all .2s}
@@ -39,7 +42,7 @@
     .pac-header{background:linear-gradient(135deg,var(--mg-d),var(--mg));border-radius:16px;padding:1.5rem 2rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem}
     .pac-left{display:flex;align-items:center;gap:1rem}
     .pac-avatar{width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.2);border:2px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:1.4rem;font-weight:700;color:white;flex-shrink:0}
-    .pac-info h2{font-family:"Cormorant Garamond",serif;font-size:1.8rem;font-weight:700;color:white}
+    .pac-info h2{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.8rem;font-weight:700;color:white}
     .pac-info p{font-size:.85rem;color:rgba(255,255,255,.8);margin-top:.2rem}
     .pac-badges{display:flex;gap:.5rem;margin-top:.5rem;flex-wrap:wrap}
     .badge{display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .75rem;border-radius:20px;font-size:.75rem;font-weight:600}
@@ -56,7 +59,7 @@
     .stat-icon.yellow{background:var(--yellow-bg)}
     .stat-icon.red{background:var(--red-bg)}
     .stat-label{font-size:.72rem;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.2rem}
-    .stat-val{font-family:"Cormorant Garamond",serif;font-size:1.5rem;font-weight:700;color:var(--text);line-height:1}
+    .stat-val{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.5rem;font-weight:700;color:var(--text);line-height:1}
     /* Grid datos */
     .dato-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
     .dato-item{background:var(--bg);border-radius:10px;padding:.85rem 1rem}
@@ -80,7 +83,7 @@
     /* Empty */
     .empty{text-align:center;padding:3rem;color:var(--muted)}
     .empty .e-icon{font-size:2.5rem;margin-bottom:.75rem}
-    .empty h3{font-family:"Cormorant Garamond",serif;font-size:1.25rem;color:var(--text);margin-bottom:.35rem}
+    .empty h3{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.25rem;color:var(--text);margin-bottom:.35rem}
     .btn-crear{display:inline-flex;align-items:center;gap:.5rem;margin-top:1rem;background:var(--mg);color:white;padding:.65rem 1.4rem;border-radius:10px;text-decoration:none;font-size:.9rem;font-weight:500;transition:all .2s}
     .btn-crear:hover{background:var(--mg-d)}
     /* Chart */

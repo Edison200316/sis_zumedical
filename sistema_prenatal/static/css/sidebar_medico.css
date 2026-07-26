@@ -54,7 +54,15 @@ body .sidebar {
   margin: 0 !important;
   padding: 0 !important;
   color: white !important;
-  font-family: "DM Sans", sans-serif !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  scrollbar-gutter: stable !important;
+  -ms-overflow-style: -ms-autohiding-scrollbar !important;
 }
 
 /* ── Reset de TODOS los elementos dentro del sidebar ── */
@@ -172,7 +180,8 @@ aside#sidebar > .sidebar-brand:first-of-type {
 
 .sidebar .sb-brand-text h2,
 .sidebar .sidebar-brand-text h2 {
-  font-family: "Cormorant Garamond", serif !important;
+  font-family:
+    "Cormorant Garamond", Georgia, "Times New Roman", serif !important;
   font-size: 1.45rem !important;
   font-weight: 600 !important;
   color: white !important;
@@ -253,7 +262,13 @@ aside#sidebar > .sidebar-brand:first-of-type {
   flex-shrink: 0 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.02em !important;
-  font-family: "DM Sans", sans-serif !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
   padding: 0 !important;
   margin: 0 !important;
   line-height: 1 !important;
@@ -300,7 +315,13 @@ aside#sidebar > .sidebar-brand:first-of-type {
   background: transparent !important;
   border: none !important;
   text-decoration: none !important;
-  font-family: "DM Sans", sans-serif !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
   width: 100% !important;
   text-align: left !important;
 }
@@ -404,7 +425,13 @@ aside#sidebar > .sidebar-brand:first-of-type {
   text-align: left !important;
   cursor: pointer !important;
   line-height: 1.3 !important;
-  font-family: "DM Sans", sans-serif !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
   box-sizing: border-box !important;
 }
 
@@ -472,7 +499,13 @@ aside#sidebar > .sidebar-brand:first-of-type {
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font-family: "DM Sans", sans-serif !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
 }
 
 /* Barrita indicadora izquierda de item activo */
@@ -543,7 +576,13 @@ aside#sidebar > .sidebar-brand:first-of-type {
   cursor: pointer !important;
   text-align: left !important;
   line-height: 1.3 !important;
-  font-family: "DM Sans", sans-serif !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
   box-sizing: border-box !important;
   margin: 0 !important;
 }
@@ -606,22 +645,29 @@ aside#sidebar > .sidebar-brand:first-of-type {
 }
 
 /* ==============================================================
-   BARRA DE SCROLL del sidebar (sutil)
+   BARRA DE SCROLL del sidebar (sutil y consistente en producción)
    ============================================================== */
 .sidebar::-webkit-scrollbar {
   width: 6px !important;
+  height: 6px !important;
 }
 .sidebar::-webkit-scrollbar-track {
   background: transparent !important;
+  border: none !important;
 }
 .sidebar::-webkit-scrollbar-thumb {
   background: rgba(255, 255, 255, 0.18) !important;
   border-radius: 3px !important;
+  border: none !important;
 }
 .sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.3) !important;
+  background: rgba(255, 255, 255, 0.35) !important;
+}
+.sidebar::-webkit-scrollbar-corner {
+  background: transparent !important;
 }
 .sidebar {
   scrollbar-width: thin !important;
   scrollbar-color: rgba(255, 255, 255, 0.18) transparent !important;
+  -ms-overflow-style: none !important;
 }

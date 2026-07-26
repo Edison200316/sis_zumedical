@@ -7,16 +7,16 @@
 
 /* ── Variables (por si el template no las define) ── */
 :root {
-    --mg: #B03580 !important;
-    --mg-l: #CC4D99 !important;
-    --mg-d: #8A2563 !important;
-    --mg-bg: #FBF0F7 !important;
-    --mg-border: #E8AAD4 !important;
-    --text: #2A1020 !important;
-    --muted: #8A6070 !important;
-    --white: #fff !important;
-    --bg: #FDF5FA !important;
-    --sw: 260px !important;
+  --mg: #b03580 !important;
+  --mg-l: #cc4d99 !important;
+  --mg-d: #8a2563 !important;
+  --mg-bg: #fbf0f7 !important;
+  --mg-border: #e8aad4 !important;
+  --text: #2a1020 !important;
+  --muted: #8a6070 !important;
+  --white: #fff !important;
+  --bg: #fdf5fa !important;
+  --sw: 260px !important;
 }
 
 /* ── ⚠️ SIDEBAR: selectores ULTRA específicos ── */
@@ -24,43 +24,60 @@ body aside.sidebar#sidebar,
 body aside[class*="sidebar"],
 body .sidebar#sidebar,
 body .sidebar {
-    width: var(--sw) !important;
-    min-width: var(--sw) !important;
-    max-width: var(--sw) !important;
-    height: 100vh !important;
-    min-height: 100vh !important;
-    background: linear-gradient(175deg, #8A2563 0%, #B03580 55%, #CC4D99 100%) !important;
-    display: flex !important;
-    flex-direction: column !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: auto !important;
-    bottom: auto !important;
-    z-index: 99999 !important;
-    transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    overflow-x: hidden !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
-    box-shadow: 4px 0 24px rgba(138, 37, 99, .22) !important;
-    border: none !important;
-    border-radius: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    color: white !important;
-    font-family: 'DM Sans', sans-serif !important;
+  width: var(--sw) !important;
+  min-width: var(--sw) !important;
+  max-width: var(--sw) !important;
+  height: 100vh !important;
+  min-height: 100vh !important;
+  background: linear-gradient(
+    175deg,
+    #8a2563 0%,
+    #b03580 55%,
+    #cc4d99 100%
+  ) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 99999 !important;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch !important;
+  box-shadow: 4px 0 24px rgba(138, 37, 99, 0.22) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: white !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  scrollbar-gutter: stable !important;
+  -ms-overflow-style: -ms-autohiding-scrollbar !important;
 }
 
 /* ── Reset de TODOS los elementos dentro del sidebar ── */
 .sidebar *,
 .sidebar *::before,
 .sidebar *::after {
-    box-sizing: border-box !important;
-    margin: 0 !important;
-    padding: 0 !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.sidebar img { border: none !important; max-width: 100% !important; display: block !important; }
+.sidebar img {
+  border: none !important;
+  max-width: 100% !important;
+  display: block !important;
+}
 
 /* Reset LINKS dentro del sidebar (evitar azul subrayado feo) */
 .sidebar a,
@@ -68,577 +85,646 @@ body .sidebar {
 .sidebar a:visited,
 .sidebar a:hover,
 .sidebar a:active {
-    text-decoration: none !important;
-    outline: none !important;
-    color: inherit !important;
-    background: none !important;
-    border: none !important;
-    box-shadow: none !important;
+  text-decoration: none !important;
+  outline: none !important;
+  color: inherit !important;
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
 .sidebar p,
-.sidebar h1, .sidebar h2, .sidebar h3, .sidebar h4, .sidebar h5, .sidebar h6,
-.sidebar span, .sidebar div {
-    color: inherit !important;
-    font-family: inherit !important;
-    line-height: normal !important;
+.sidebar h1,
+.sidebar h2,
+.sidebar h3,
+.sidebar h4,
+.sidebar h5,
+.sidebar h6,
+.sidebar span,
+.sidebar div {
+  color: inherit !important;
+  font-family: inherit !important;
+  line-height: normal !important;
 }
 
 /* ── BRAND / LOGO ── */
 .sidebar .sb-brand,
 aside#sidebar > .sb-brand:first-of-type {
-    padding: 1.75rem 1.5rem 1.25rem !important;
-    border-bottom: 1px solid rgba(255, 255, 255, .12) !important;
-    border-top: none !important;
-    border-left: none !important;
-    border-right: none !important;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: .75rem !important;
-    flex-shrink: 0 !important;
-    width: 100% !important;
-    background: transparent !important;
-    color: white !important;
-    text-align: left !important;
-    text-decoration: none !important;
+  padding: 1.75rem 1.5rem 1.25rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.75rem !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+  color: white !important;
+  text-align: left !important;
+  text-decoration: none !important;
 }
 
 .sidebar .sb-logo {
-    width: 42px !important;
-    height: 42px !important;
-    min-width: 42px !important;
-    min-height: 42px !important;
-    max-width: 42px !important;
-    max-height: 42px !important;
-    background: white !important;
-    border-radius: 50% !important;
-    overflow: hidden !important;
-    flex-shrink: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    border: 2px solid rgba(255, 255, 255, .4) !important;
-    padding: 2px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, .15) !important;
+  width: 42px !important;
+  height: 42px !important;
+  min-width: 42px !important;
+  min-height: 42px !important;
+  max-width: 42px !important;
+  max-height: 42px !important;
+  background: white !important;
+  border-radius: 50% !important;
+  overflow: hidden !important;
+  flex-shrink: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 2px solid rgba(255, 255, 255, 0.4) !important;
+  padding: 2px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
 }
 
 .sidebar .sb-logo img {
-    width: 36px !important;
-    height: 36px !important;
-    min-width: 36px !important;
-    min-height: 36px !important;
-    max-width: 36px !important;
-    max-height: 36px !important;
-    object-fit: contain !important;
-    display: block !important;
-    margin: 0 auto !important;
+  width: 36px !important;
+  height: 36px !important;
+  min-width: 36px !important;
+  min-height: 36px !important;
+  max-width: 36px !important;
+  max-height: 36px !important;
+  object-fit: contain !important;
+  display: block !important;
+  margin: 0 auto !important;
 }
 
 .sidebar .sb-brand-text {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    justify-content: center !important;
-    gap: .25rem !important;
-    flex: 1 !important;
-    min-width: 0 !important;
-    color: white !important;
-    background: transparent !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 0.25rem !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  color: white !important;
+  background: transparent !important;
 }
 
 .sidebar .sb-brand-text h2 {
-    font-family: 'Cormorant Garamond', serif !important;
-    font-size: 1.35rem !important;
-    font-weight: 600 !important;
-    color: white !important;
-    line-height: 1 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    background: transparent !important;
-    border: none !important;
+  font-family:
+    "Cormorant Garamond", Georgia, "Times New Roman", serif !important;
+  font-size: 1.35rem !important;
+  font-weight: 600 !important;
+  color: white !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
 }
 
 .sidebar .sb-brand-text span {
-    font-size: .7rem !important;
-    color: rgba(255, 255, 255, .65) !important;
-    letter-spacing: .1em !important;
-    text-transform: uppercase !important;
-    font-weight: 500 !important;
-    line-height: 1 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    display: block !important;
-    background: transparent !important;
+  font-size: 0.7rem !important;
+  color: rgba(255, 255, 255, 0.65) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: block !important;
+  background: transparent !important;
 }
 
 /* ── BLOQUE DE USUARIO / PERFIL ── */
 .sidebar .sb-user {
-    padding: 1rem 1.5rem !important;
-    border-bottom: 1px solid rgba(255, 255, 255, .12) !important;
-    border-top: none !important;
-    border-left: none !important;
-    border-right: none !important;
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: .7rem !important;
-    text-decoration: none !important;
-    transition: background .2s ease !important;
-    flex-shrink: 0 !important;
-    width: 100% !important;
-    color: white !important;
-    background: transparent !important;
-    cursor: pointer !important;
-    text-align: left !important;
-    margin: 0 !important;
-    border-radius: 0 !important;
+  padding: 1rem 1.5rem !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.7rem !important;
+  text-decoration: none !important;
+  transition: background 0.2s ease !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  color: white !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
 }
 
 .sidebar .sb-user:hover {
-    background: rgba(255, 255, 255, .1) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
 }
 
 .sidebar .sb-avatar,
 .sidebar .sb-user-avatar {
-    width: 38px !important;
-    height: 38px !important;
-    min-width: 38px !important;
-    min-height: 38px !important;
-    max-width: 38px !important;
-    max-height: 38px !important;
-    border-radius: 50% !important;
-    background: rgba(255, 255, 255, .2) !important;
-    border: 1px solid rgba(255, 255, 255, .3) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: .82rem !important;
-    font-weight: 600 !important;
-    color: white !important;
-    flex-shrink: 0 !important;
-    text-transform: uppercase !important;
-    letter-spacing: .02em !important;
-    font-family: 'DM Sans', sans-serif !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    line-height: 1 !important;
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  max-width: 38px !important;
+  max-height: 38px !important;
+  border-radius: 50% !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 0.82rem !important;
+  font-weight: 600 !important;
+  color: white !important;
+  flex-shrink: 0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.02em !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  line-height: 1 !important;
 }
 
 .sidebar .sb-user-info {
-    flex: 1 !important;
-    min-width: 0 !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    justify-content: center !important;
-    gap: .1rem !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    background: transparent !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 0.1rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
 }
 
 .sidebar .sb-user-info p {
-    font-size: .7rem !important;
-    color: rgba(255, 255, 255, .55) !important;
-    text-transform: uppercase !important;
-    letter-spacing: .08em !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    font-weight: 500 !important;
-    line-height: 1 !important;
-    background: transparent !important;
+  font-size: 0.7rem !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.08em !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  background: transparent !important;
 }
 
 .sidebar .sb-user-info h3 {
-    font-size: .88rem !important;
-    font-weight: 500 !important;
-    color: white !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 1.2 !important;
-    background: transparent !important;
-    border: none !important;
-    text-decoration: none !important;
-    font-family: 'DM Sans', sans-serif !important;
-    width: 100% !important;
-    text-align: left !important;
+  font-size: 0.88rem !important;
+  font-weight: 500 !important;
+  color: white !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.2 !important;
+  background: transparent !important;
+  border: none !important;
+  text-decoration: none !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  width: 100% !important;
+  text-align: left !important;
 }
 
 /* ── NAVEGACIÓN / MENÚ ── */
 .sidebar .sb-nav {
-    flex: 1 !important;
-    padding: 1rem .75rem !important;
-    overflow-y: auto !important;
-    overflow-x: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: stretch !important;
-    justify-content: flex-start !important;
-    gap: 0 !important;
-    background: transparent !important;
-    width: 100% !important;
-    margin: 0 !important;
+  flex: 1 !important;
+  padding: 1rem 0.75rem !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: stretch !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+  background: transparent !important;
+  width: 100% !important;
+  margin: 0 !important;
 }
 
 .sidebar .nav-lbl {
-    font-size: .68rem !important;
-    color: rgba(255, 255, 255, .45) !important;
-    letter-spacing: .1em !important;
-    text-transform: uppercase !important;
-    padding: .5rem .75rem !important;
-    margin-top: .75rem !important;
-    font-weight: 500 !important;
-    line-height: 1 !important;
-    background: transparent !important;
-    display: block !important;
-    width: 100% !important;
+  font-size: 0.68rem !important;
+  color: rgba(255, 255, 255, 0.45) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  padding: 0.5rem 0.75rem !important;
+  margin-top: 0.75rem !important;
+  font-weight: 500 !important;
+  line-height: 1 !important;
+  background: transparent !important;
+  display: block !important;
+  width: 100% !important;
 }
 
 /* Items de navegación */
 .sidebar a.nav-item,
 .sidebar .nav-item {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: .7rem !important;
-    padding: .72rem 1rem !important;
-    margin: 0 0 .2rem 0 !important;
-    border-radius: 10px !important;
-    color: rgba(255, 255, 255, .82) !important;
-    text-decoration: none !important;
-    font-size: .88rem !important;
-    font-weight: 400 !important;
-    transition: background .2s ease, color .2s ease, transform .1s ease !important;
-    position: relative !important;
-    width: 100% !important;
-    background: transparent !important;
-    border: none !important;
-    text-align: left !important;
-    cursor: pointer !important;
-    line-height: 1.3 !important;
-    font-family: 'DM Sans', sans-serif !important;
-    box-sizing: border-box !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.7rem !important;
+  padding: 0.72rem 1rem !important;
+  margin: 0 0 0.2rem 0 !important;
+  border-radius: 10px !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+  text-decoration: none !important;
+  font-size: 0.88rem !important;
+  font-weight: 400 !important;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    transform 0.1s ease !important;
+  position: relative !important;
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  line-height: 1.3 !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  box-sizing: border-box !important;
 }
 
 .sidebar a.nav-item:link,
 .sidebar a.nav-item:visited {
-    color: rgba(255, 255, 255, .82) !important;
-    text-decoration: none !important;
+  color: rgba(255, 255, 255, 0.82) !important;
+  text-decoration: none !important;
 }
 
 .sidebar a.nav-item:hover,
 .sidebar .nav-item:hover,
 .sidebar a.nav-item.active,
 .sidebar .nav-item.active {
-    background: rgba(255, 255, 255, .18) !important;
-    color: white !important;
-    text-decoration: none !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  color: white !important;
+  text-decoration: none !important;
 }
 
 .sidebar a.nav-item:active {
-    transform: scale(.98) !important;
+  transform: scale(0.98) !important;
 }
 
 .sidebar .nav-item svg {
-    width: 18px !important;
-    height: 18px !important;
-    min-width: 18px !important;
-    min-height: 18px !important;
-    max-width: 18px !important;
-    max-height: 18px !important;
-    stroke: currentColor !important;
-    fill: none !important;
-    stroke-width: 1.8 !important;
-    flex-shrink: 0 !important;
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    color: inherit !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  max-width: 18px !important;
+  max-height: 18px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.8 !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: inherit !important;
 }
 
 .sidebar .nav-item i {
-    width: 18px !important;
-    min-width: 18px !important;
-    max-width: 18px !important;
-    text-align: center !important;
-    font-size: 15px !important;
-    flex-shrink: 0 !important;
-    display: inline-block !important;
-    color: inherit !important;
-    line-height: 1.5 !important;
+  width: 18px !important;
+  min-width: 18px !important;
+  max-width: 18px !important;
+  text-align: center !important;
+  font-size: 15px !important;
+  flex-shrink: 0 !important;
+  display: inline-block !important;
+  color: inherit !important;
+  line-height: 1.5 !important;
 }
 
 .sidebar .nav-item span:not(.nav-badge) {
-    flex: 1 !important;
-    min-width: 0 !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    line-height: 1.2 !important;
-    padding: 0 !important;
-    margin: 0 !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  line-height: 1.2 !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .sidebar .nav-badge {
-    margin-left: auto !important;
-    margin-right: 0 !important;
-    background: #e74c3c !important;
-    color: white !important;
-    font-size: .68rem !important;
-    font-weight: 600 !important;
-    padding: .15rem .5rem !important;
-    border-radius: 999px !important;
-    min-width: 20px !important;
-    text-align: center !important;
-    flex-shrink: 0 !important;
-    line-height: 1.3 !important;
-    border: none !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-family: 'DM Sans', sans-serif !important;
+  margin-left: auto !important;
+  margin-right: 0 !important;
+  background: #e74c3c !important;
+  color: white !important;
+  font-size: 0.68rem !important;
+  font-weight: 600 !important;
+  padding: 0.15rem 0.5rem !important;
+  border-radius: 999px !important;
+  min-width: 20px !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
+  line-height: 1.3 !important;
+  border: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
 }
 
 /* Barrita indicadora izquierda */
 .sidebar .nav-item::after {
-    content: '' !important;
-    display: block !important;
-    position: absolute !important;
-    left: 0 !important;
-    top: 50% !important;
-    transform: translateY(-50%) scaleY(0) !important;
-    transform-origin: center center !important;
-    width: 3px !important;
-    height: 60% !important;
-    min-height: 20px !important;
-    background: white !important;
-    border-radius: 0 3px 3px 0 !important;
-    transition: transform 0.2s ease !important;
-    z-index: 2 !important;
-    padding: 0 !important;
-    margin: 0 !important;
-    box-sizing: content-box !important;
-    opacity: 1 !important;
-    pointer-events: none !important;
+  content: "" !important;
+  display: block !important;
+  position: absolute !important;
+  left: 0 !important;
+  top: 50% !important;
+  transform: translateY(-50%) scaleY(0) !important;
+  transform-origin: center center !important;
+  width: 3px !important;
+  height: 60% !important;
+  min-height: 20px !important;
+  background: white !important;
+  border-radius: 0 3px 3px 0 !important;
+  transition: transform 0.2s ease !important;
+  z-index: 2 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: content-box !important;
+  opacity: 1 !important;
+  pointer-events: none !important;
 }
 
 .sidebar .nav-item:hover::after,
 .sidebar .nav-item.active::after {
-    transform: translateY(-50%) scaleY(1) !important;
-    opacity: 1 !important;
+  transform: translateY(-50%) scaleY(1) !important;
+  opacity: 1 !important;
 }
 
 /* ── FOOTER / LOGOUT ── */
 .sidebar .sb-footer {
-    padding: 1rem .75rem !important;
-    border-top: 1px solid rgba(255, 255, 255, .12) !important;
-    border-bottom: none !important;
-    border-left: none !important;
-    border-right: none !important;
-    flex-shrink: 0 !important;
-    width: 100% !important;
-    background: transparent !important;
-    margin: 0 !important;
+  padding: 1rem 0.75rem !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+  border-bottom: none !important;
+  border-left: none !important;
+  border-right: none !important;
+  flex-shrink: 0 !important;
+  width: 100% !important;
+  background: transparent !important;
+  margin: 0 !important;
 }
 
 .sidebar a.btn-logout,
 .sidebar .btn-logout {
-    display: flex !important;
-    flex-direction: row !important;
-    align-items: center !important;
-    justify-content: flex-start !important;
-    gap: .7rem !important;
-    padding: .72rem 1rem !important;
-    border-radius: 10px !important;
-    color: rgba(255, 255, 255, .75) !important;
-    text-decoration: none !important;
-    font-size: .88rem !important;
-    font-weight: 400 !important;
-    transition: background .2s ease, color .2s ease !important;
-    width: 100% !important;
-    background: transparent !important;
-    border: none !important;
-    cursor: pointer !important;
-    text-align: left !important;
-    line-height: 1.3 !important;
-    font-family: 'DM Sans', sans-serif !important;
-    box-sizing: border-box !important;
-    margin: 0 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0.7rem !important;
+  padding: 0.72rem 1rem !important;
+  border-radius: 10px !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  text-decoration: none !important;
+  font-size: 0.88rem !important;
+  font-weight: 400 !important;
+  transition:
+    background 0.2s ease,
+    color 0.2s ease !important;
+  width: 100% !important;
+  background: transparent !important;
+  border: none !important;
+  cursor: pointer !important;
+  text-align: left !important;
+  line-height: 1.3 !important;
+  font-family:
+    "DM Sans",
+    "Segoe UI",
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
 }
 
 .sidebar a.btn-logout:link,
 .sidebar a.btn-logout:visited {
-    color: rgba(255, 255, 255, .75) !important;
-    text-decoration: none !important;
+  color: rgba(255, 255, 255, 0.75) !important;
+  text-decoration: none !important;
 }
 
 .sidebar a.btn-logout:hover,
 .sidebar .btn-logout:hover {
-    background: rgba(255, 255, 255, .15) !important;
-    color: white !important;
-    text-decoration: none !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+  text-decoration: none !important;
 }
 
 .sidebar .btn-logout svg {
-    width: 18px !important;
-    height: 18px !important;
-    min-width: 18px !important;
-    min-height: 18px !important;
-    stroke: currentColor !important;
-    fill: none !important;
-    stroke-width: 1.8 !important;
-    flex-shrink: 0 !important;
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    color: inherit !important;
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  stroke: currentColor !important;
+  fill: none !important;
+  stroke-width: 1.8 !important;
+  flex-shrink: 0 !important;
+  display: block !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  color: inherit !important;
 }
 
 .sidebar .btn-logout i {
-    width: 18px !important;
-    min-width: 18px !important;
-    max-width: 18px !important;
-    text-align: center !important;
-    font-size: 15px !important;
-    flex-shrink: 0 !important;
-    display: inline-block !important;
-    color: inherit !important;
-    line-height: 1.5 !important;
+  width: 18px !important;
+  min-width: 18px !important;
+  max-width: 18px !important;
+  text-align: center !important;
+  font-size: 15px !important;
+  flex-shrink: 0 !important;
+  display: inline-block !important;
+  color: inherit !important;
+  line-height: 1.5 !important;
 }
 
 /* ── OVERLAY MÓVIL ── */
 .sidebar-overlay {
-    position: fixed !important;
-    inset: 0 !important;
-    background: rgba(0, 0, 0, .4) !important;
-    z-index: 99998 !important;
-    opacity: 0 !important;
-    pointer-events: none !important;
-    transition: opacity .3s ease !important;
-    display: none !important;
+  position: fixed !important;
+  inset: 0 !important;
+  background: rgba(0, 0, 0, 0.4) !important;
+  z-index: 99998 !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.3s ease !important;
+  display: none !important;
 }
 .sidebar-overlay.active {
-    opacity: 1 !important;
-    pointer-events: auto !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
 }
 
 /* ── MOBILE TOPBAR ── */
 .mobile-topbar {
-    display: none !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    padding: 1rem 1.25rem !important;
-    background: linear-gradient(135deg, #8A2563, #CC4D99) !important;
-    position: fixed !important;
-    top: 0 !important; left: 0 !important; right: 0 !important;
-    z-index: 99999 !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, .1) !important;
-    height: 64px !important;
+  display: none !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 1rem 1.25rem !important;
+  background: linear-gradient(135deg, #8a2563, #cc4d99) !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 99999 !important;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+  height: 64px !important;
 }
 .mobile-topbar-brand {
-    display: flex !important;
-    align-items: center !important;
-    gap: .6rem !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
 }
 .mobile-topbar-brand img {
-    width: 32px !important;
-    height: 32px !important;
-    background: white !important;
-    border-radius: 50% !important;
-    padding: 2px !important;
-    object-fit: contain !important;
-    border: none !important;
-    display: block !important;
+  width: 32px !important;
+  height: 32px !important;
+  background: white !important;
+  border-radius: 50% !important;
+  padding: 2px !important;
+  object-fit: contain !important;
+  border: none !important;
+  display: block !important;
 }
 .mobile-topbar-brand span {
-    font-family: 'Cormorant Garamond', serif !important;
-    font-size: 1.2rem !important;
-    font-weight: 600 !important;
-    color: white !important;
-    line-height: 1 !important;
+  font-family:
+    "Cormorant Garamond", Georgia, "Times New Roman", serif !important;
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+  color: white !important;
+  line-height: 1 !important;
 }
 .hamburger {
-    background: rgba(255, 255, 255, .15) !important;
-    border: none !important;
-    border-radius: 8px !important;
-    padding: .5rem .65rem !important;
-    cursor: pointer !important;
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 4px !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 0.5rem 0.65rem !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;
 }
 .hamburger span {
-    display: block !important;
-    width: 20px !important;
-    height: 2px !important;
-    background: white !important;
-    border-radius: 2px !important;
-    transition: all .3s !important;
+  display: block !important;
+  width: 20px !important;
+  height: 2px !important;
+  background: white !important;
+  border-radius: 2px !important;
+  transition: all 0.3s !important;
 }
-.hamburger.open span:nth-child(1) { transform: translateY(6px) rotate(45deg) !important; }
-.hamburger.open span:nth-child(2) { opacity: 0 !important; }
-.hamburger.open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg) !important; }
+.hamburger.open span:nth-child(1) {
+  transform: translateY(6px) rotate(45deg) !important;
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0 !important;
+}
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-6px) rotate(-45deg) !important;
+}
 
 /* ── RESPONSIVE: móvil y tablet ── */
 @media (max-width: 768px) {
-    html, body { height: auto !important; overflow-x: hidden !important; overflow-y: auto !important; }
-    body { flex-direction: column !important; }
+  html,
+  body {
+    height: auto !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+  }
+  body {
+    flex-direction: column !important;
+  }
 
-    body aside.sidebar#sidebar,
-    body aside[class*="sidebar"],
-    body .sidebar#sidebar,
-    body .sidebar {
-        position: fixed !important;
-        top: 64px !important;
-        left: 0 !important;
-        height: calc(100vh - 64px) !important;
-        min-height: calc(100vh - 64px) !important;
-        padding-top: 0 !important;
-        transform: translateX(-105%) !important;
-        z-index: 99999 !important;
-        overflow-y: auto !important;
-    }
-    body aside.sidebar#sidebar.open,
-    body .sidebar#sidebar.open,
-    body .sidebar.open {
-        transform: translateX(0) !important;
-    }
-    .sidebar-overlay { display: block !important; }
-    .mobile-topbar { display: flex !important; }
-    .main {
-        margin-left: 0 !important;
-        padding-top: calc(1.25rem + 64px) !important;
-        height: auto !important;
-        min-height: calc(100vh - 64px) !important;
-        overflow: visible !important;
-        display: block !important;
-    }
+  body aside.sidebar#sidebar,
+  body aside[class*="sidebar"],
+  body .sidebar#sidebar,
+  body .sidebar {
+    position: fixed !important;
+    top: 64px !important;
+    left: 0 !important;
+    height: calc(100vh - 64px) !important;
+    min-height: calc(100vh - 64px) !important;
+    padding-top: 0 !important;
+    transform: translateX(-105%) !important;
+    z-index: 99999 !important;
+    overflow-y: auto !important;
+  }
+  body aside.sidebar#sidebar.open,
+  body .sidebar#sidebar.open,
+  body .sidebar.open {
+    transform: translateX(0) !important;
+  }
+  .sidebar-overlay {
+    display: block !important;
+  }
+  .mobile-topbar {
+    display: flex !important;
+  }
+  .main {
+    margin-left: 0 !important;
+    padding-top: calc(1.25rem + 64px) !important;
+    height: auto !important;
+    min-height: calc(100vh - 64px) !important;
+    overflow: visible !important;
+    display: block !important;
+  }
 }
 
 /* ==============================================================
-   BARRA DE SCROLL del sidebar (sutil)
+   BARRA DE SCROLL del sidebar (sutil y consistente en producción)
    ============================================================== */
 .sidebar::-webkit-scrollbar {
-    width: 6px !important;
+  width: 6px !important;
+  height: 6px !important;
 }
 .sidebar::-webkit-scrollbar-track {
-    background: transparent !important;
+  background: transparent !important;
+  border: none !important;
 }
 .sidebar::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, .18) !important;
-    border-radius: 3px !important;
+  background: rgba(255, 255, 255, 0.18) !important;
+  border-radius: 3px !important;
+  border: none !important;
 }
 .sidebar::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, .3) !important;
+  background: rgba(255, 255, 255, 0.35) !important;
+}
+.sidebar::-webkit-scrollbar-corner {
+  background: transparent !important;
 }
 .sidebar {
-    scrollbar-width: thin !important;
-    scrollbar-color: rgba(255, 255, 255, .18) transparent !important;
+  scrollbar-width: thin !important;
+  scrollbar-color: rgba(255, 255, 255, 0.18) transparent !important;
+  -ms-overflow-style: none !important;
 }

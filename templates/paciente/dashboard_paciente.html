@@ -5,7 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zumedical - Mi Embarazo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="{% static 'css/sidebar_paciente.css' %}">
     <style>
@@ -21,7 +24,7 @@
             --blue:#1565c0;--blue-bg:#e3f2fd;--blue-border:#90caf9;
         }
         html,body{height:100%}
-        body{font-family:'DM Sans',sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+        body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
         @keyframes fadeIn{to{opacity:1}}
         @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
@@ -31,7 +34,7 @@
         .sb-brand{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
         .sb-logo{width:42px;height:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
         .sb-logo img{width:38px;height:38px;object-fit:contain}
-        .sb-brand-text h2{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+        .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
         .sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.12em;text-transform:uppercase}
         .sb-user{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.7rem;text-decoration:none;transition:background .2s;cursor:pointer}
         .sb-user:hover{background:rgba(255,255,255,.1)}
@@ -52,7 +55,7 @@
         .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300}
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
         .mobile-topbar-brand img{width:30px;height:30px;background:white;border-radius:50%;padding:2px;object-fit:contain}
-        .mobile-topbar-brand span{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:white}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
         .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
         .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
         .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -69,7 +72,7 @@
         .topbar-left .greeting{margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
         .greeting-badge{display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(135deg,var(--mg-bg),#fff);border:1px solid var(--mg-border);border-radius:999px;padding:.3rem .9rem;font-size:.78rem;font-weight:500;color:var(--mg);box-shadow:0 2px 8px rgba(176,53,128,.08)}
         .greeting-emoji{font-size:1rem;line-height:1}
-        .topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--text);line-height:1.1;margin-bottom:.3rem}
+        .topbar-left h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2.2rem;font-weight:700;color:var(--text);line-height:1.1;margin-bottom:.3rem}
         .topbar-left .sub{color:var(--muted);font-size:.82rem;display:flex;align-items:center;gap:.4rem}
         .topbar-right{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
         .info-pill{display:flex;align-items:center;gap:.5rem;padding:.55rem 1rem;background:var(--white);border:1px solid var(--mg-border);border-radius:999px;font-size:.82rem;color:var(--text)}
@@ -81,9 +84,9 @@
         .hero::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:rgba(255,255,255,.08);border-radius:50%}
         .hero::after{content:'';position:absolute;right:60px;bottom:-60px;width:150px;height:150px;background:rgba(255,255,255,.05);border-radius:50%}
         .hero-label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.8;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
-        .hero-title{font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:600;line-height:1.2;margin-bottom:.5rem}
+        .hero-title{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.75rem;font-weight:600;line-height:1.2;margin-bottom:.5rem}
         .hero-sub{font-size:.88rem;opacity:.85;margin-bottom:1.25rem}
-        .hero-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.3rem;background:white;color:var(--mg-d);border-radius:999px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;text-decoration:none;transition:all .2s;border:none;cursor:pointer}
+        .hero-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.3rem;background:white;color:var(--mg-d);border-radius:999px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.88rem;font-weight:600;text-decoration:none;transition:all .2s;border:none;cursor:pointer}
         .hero-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.18)}
         .hero-icon{font-size:56px;opacity:.15;flex-shrink:0}
 
@@ -102,7 +105,7 @@
         .chip-amber{background:var(--amber-bg);color:var(--amber)}
         .chip-blue{background:var(--blue-bg);color:var(--blue)}
         .chip-mg{background:var(--mg-bg);color:var(--mg)}
-        .stat-val{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:600;color:var(--text);line-height:1;margin-bottom:.2rem}
+        .stat-val{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2.4rem;font-weight:600;color:var(--text);line-height:1;margin-bottom:.2rem}
         .stat-lbl{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 
         /* ── DOS COLUMNAS ── */
@@ -112,7 +115,7 @@
         .proxima-card{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));border-radius:14px;padding:1.25rem 1.4rem;color:white;position:relative;overflow:hidden;min-height:140px}
         .proxima-card::before{content:'';position:absolute;right:-15px;top:-15px;width:100px;height:100px;background:rgba(255,255,255,.08);border-radius:50%}
         .proxima-lbl{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;opacity:.72;margin-bottom:.5rem}
-        .proxima-time{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;line-height:1;margin-bottom:.3rem}
+        .proxima-time{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2rem;font-weight:600;line-height:1;margin-bottom:.3rem}
         .proxima-pac{font-size:.86rem;opacity:.9;margin-bottom:.2rem}
         .proxima-esp{font-size:.76rem;opacity:.68}
         .no-proxima{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1.5rem;color:var(--muted);min-height:120px;gap:.5rem}
@@ -123,7 +126,7 @@
         .card-header{padding:1rem 1.4rem;border-bottom:1px solid var(--mg-border);display:flex;align-items:center;justify-content:space-between}
         .card-header-left{display:flex;align-items:center;gap:.65rem}
         .card-header-icon{width:36px;height:36px;background:var(--mg-bg);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--mg);font-size:14px}
-        .card-header h3{font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:600;color:var(--text)}
+        .card-header h3{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.05rem;font-weight:600;color:var(--text)}
         .card-badge{font-size:.72rem;background:var(--mg-bg);color:var(--mg);padding:.2rem .6rem;border-radius:999px;border:1px solid var(--mg-border);text-decoration:none}
         .card-body{padding:1.1rem 1.4rem}
 
@@ -133,7 +136,7 @@
         .cita-item:last-child{border-bottom:none}
         .cita-item:hover{background:var(--mg-bg)}
         .cita-fecha-box{width:48px;height:52px;background:linear-gradient(135deg,var(--mg-d),var(--mg));border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;flex-shrink:0}
-        .cita-fecha-box .dia{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;line-height:1}
+        .cita-fecha-box .dia{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.4rem;font-weight:600;line-height:1}
         .cita-fecha-box .mes{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;opacity:.85}
         .cita-info{flex:1;min-width:0}
         .cita-esp{font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:.15rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -164,7 +167,7 @@
         .modal-ov.open .modal{transform:translateY(0) scale(1);opacity:1}
         .modal-head{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));padding:1.4rem 1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
         .modal-head-tag{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.72);margin-bottom:.3rem}
-        .modal-head-title{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:white;line-height:1.2}
+        .modal-head-title{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1.2}
         .modal-head-sub{font-size:.82rem;color:rgba(255,255,255,.8);margin-top:.2rem}
         .modal-close{background:rgba(255,255,255,.2);border:none;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;flex-shrink:0;transition:background .2s}
         .modal-close:hover{background:rgba(255,255,255,.35)}
@@ -176,9 +179,9 @@
         .modal-field-val{font-size:.9rem;color:var(--text);font-weight:500}
         .modal-field.full{grid-column:1/-1}
         .modal-foot{padding:1rem 1.4rem;border-top:1px solid var(--mg-border);display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
-        .btn-agendar{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.3rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;text-decoration:none;transition:opacity .2s}
+        .btn-agendar{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.3rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;border-radius:999px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;text-decoration:none;transition:opacity .2s}
         .btn-agendar:hover{opacity:.88}
-        .btn-cerrar{padding:.65rem 1.2rem;background:var(--white);color:var(--muted);border:1px solid var(--mg-border);border-radius:999px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
+        .btn-cerrar{padding:.65rem 1.2rem;background:var(--white);color:var(--muted);border:1px solid var(--mg-border);border-radius:999px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
         .btn-cerrar:hover{color:var(--red);border-color:var(--red-border)}
 
         /* ── RESPONSIVE ── */

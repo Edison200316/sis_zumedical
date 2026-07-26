@@ -5,13 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zumedical — Agendar Cita</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+
     <style>
         .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;overflow:hidden;transition:transform .3s ease;box-shadow:4px 0 24px rgba(138,37,99,.2)}
         .sb-brand{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:0.75rem}
         .sb-logo{width:42px;height:42px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .sb-logo img{width:38px;height:38px;object-fit:contain}
-        .sb-brand-text h2{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+        .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
         .sb-brand-text span{font-size:0.7rem;color:rgba(255,255,255,0.65);letter-spacing:0.1em;text-transform:uppercase}
         .sb-user{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:0.75rem;transition:background 0.2s;text-decoration:none}
         .sb-user:hover{background:rgba(255,255,255,0.1)}
@@ -48,7 +51,7 @@
         @keyframes pageIn { from{opacity:0} to{opacity:1} }
 
         body {
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg);
             min-height: 100vh;
             display: flex;
@@ -154,7 +157,7 @@
         }
  
         .page-header h1 {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
             font-size: 2rem; font-weight: 600;
             color: var(--text);
             margin-bottom: 0.3rem;
@@ -186,7 +189,7 @@
         }
  
         .form-card-title {
-            font-family: 'Cormorant Garamond', serif;
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
             font-size: 1.25rem;
             font-weight: 600;
             color: var(--text);
@@ -225,7 +228,7 @@
             padding: 0.65rem 0.9rem;
             border-radius: 8px;
             border: 1px solid var(--magenta-border);
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 0.9rem;
             color: var(--text);
             background: var(--white);
@@ -354,7 +357,7 @@
             padding: 0.35rem 0.75rem; border-radius: 20px;
             border: 1px solid var(--magenta-border); background: var(--white);
             font-size: 0.8rem; color: var(--text); cursor: pointer;
-            transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+            transition: all 0.2s; font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         .hora-chip:hover { border-color: var(--magenta-light); background: var(--magenta-bg); color: var(--magenta); }
@@ -409,7 +412,7 @@
             color: white;
             border: none;
             border-radius: 9px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: 'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 0.9rem;
             font-weight: 500;
             cursor: pointer;
@@ -478,7 +481,7 @@
         .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300}
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
         .mobile-topbar-brand img{width:32px;height:32px;background:white;border-radius:50%;padding:2px;object-fit:contain}
-        .mobile-topbar-brand span{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:white}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
         .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
         .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
         .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}

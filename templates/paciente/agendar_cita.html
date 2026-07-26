@@ -18,6 +18,15 @@
       --sw:260px;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+      html {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
     html,body{height:100%;}
     body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards;}
     @keyframes fadeIn{to{opacity:1;}}

@@ -19,6 +19,15 @@
       --red:#b91c1c;--red-bg:#fef2f2;--red-border:#fca5a5;
     }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+      html {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
     body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);min-height:100vh}
     .topbar{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));padding:1rem 2.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
     .topbar-brand{display:flex;align-items:center;gap:.75rem}

@@ -22,6 +22,15 @@
       --blue: #0c4a6e; --blue-bg: #f0f9ff; --blue-border: #bae6fd;
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      html {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
     body { font-family: "DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); min-height: 100vh; }
     @keyframes pageIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
     @keyframes slideIn { from{opacity:0;transform:translateY(-8px)} to{opacity:1;transform:translateY(0)} }

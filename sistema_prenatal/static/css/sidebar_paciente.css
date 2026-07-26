@@ -19,6 +19,20 @@
   --sw: 260px !important;
 }
 
+/* ── Reset global: consistencia de tamaño ENTORNOS ── */
+html {
+  font-size: 16px !important;
+  -webkit-text-size-adjust: 100% !important;
+  -ms-text-size-adjust: 100% !important;
+  text-size-adjust: 100% !important;
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+body {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+}
+
 /* ── ⚠️ SIDEBAR: selectores ULTRA específicos ── */
 body aside.sidebar#sidebar,
 body aside[class*="sidebar"],

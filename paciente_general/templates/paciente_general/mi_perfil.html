@@ -182,7 +182,7 @@
         </div>
     </a>
     <nav class="sb-nav">
-        <div class="nav-lbl">Menú</div>
+        <div class="nav-lbl">General</div>
         <a href="{% url 'paciente_general_dashboard' %}" class="nav-item">
             <i class="fa-solid fa-house"></i> Inicio
         </a>
@@ -192,6 +192,9 @@
         <a href="{% url 'paciente_general_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Mis Citas
             {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
+        </a>
+        <a href="{% url 'paciente_general_consultas' %}" class="nav-item">
+            <i class="fa-solid fa-file-medical"></i> Mis Consultas
         </a>
         {% if request.user.paciente.estado_embarazo == 'ACTIVO' %}
         <a href="{% url 'paciente_dashboard' %}" class="nav-item" style="margin-top: 1.5rem;">

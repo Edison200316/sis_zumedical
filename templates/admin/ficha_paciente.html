@@ -1,0 +1,201 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ficha del Paciente — Zumedical Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/sidebar_paciente.css' %}">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --mg:#B03580; --mg-d:#8A2563; --mg-l:#CC4D99;
+            --mg-bg:#FBF0F7; --mg-border:#E8AAD4;
+            --text:#2A1020; --muted:#8A6070; --white:#fff; --bg:#FDF5FA;
+            --green:#1a7a4a; --green-bg:#edfaf3; --green-border:#a8dfc0;
+            --sw:260px;
+        }
+        body { font-family: 'DM Sans', sans-serif; background: var(--bg); display: flex; }
+        .main { margin-left: var(--sw); flex: 1; padding: 2.5rem; height: 100vh; overflow-y: auto; }
+        
+        .page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .page-header h1 { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; color: var(--text); }
+        .btn { padding: 0.6rem 1.3rem; background: linear-gradient(135deg, var(--mg-d), var(--mg-l)); color: white; border: none; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .btn:hover { opacity: 0.88; }
+
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+        .card { background: var(--white); border: 1px solid var(--mg-border); border-radius: 16px; padding: 1.5rem; }
+        .card h2 { font-size: 1.1rem; color: var(--mg-d); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .card h2 i { font-size: 1.3rem; }
+
+        .info-row { display: flex; justify-content: space-between; padding: 0.8rem 0; border-bottom: 1px solid var(--mg-border); }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { font-size: 0.85rem; color: var(--muted); font-weight: 600; }
+        .info-value { font-size: 0.9rem; color: var(--text); font-weight: 500; }
+
+        .embarazo-card { background: linear-gradient(135deg, #fce7f3, #fbf0f7); border: 1px solid var(--mg-border); border-radius: 12px; padding: 1.2rem; margin-bottom: 1rem; }
+        .embarazo-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem; }
+        .embarazo-year { font-size: 1.1rem; font-weight: 700; color: var(--mg-d); }
+        .embarazo-status { display: inline-block; padding: 0.3rem 0.8rem; border-radius: 12px; font-size: 0.75rem; font-weight: 600; }
+        .status-active { background: var(--green-bg); color: var(--green); }
+        .status-finished { background: #e0e7ff; color: #3730a3; }
+
+        .embarazo-details { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+        .embarazo-actions { display: flex; gap: 0.6rem; margin-top: 1rem; }
+        .btn-small { padding: 0.5rem 1rem; font-size: 0.8rem; }
+        .btn-danger { background: #dc2626; }
+
+        .consultas-list { max-height: 400px; overflow-y: auto; }
+        .consulta-item { padding: 1rem; background: var(--mg-bg); border-radius: 8px; margin-bottom: 0.8rem; font-size: 0.9rem; }
+        .consulta-fecha { font-weight: 600; color: var(--mg-d); margin-bottom: 0.3rem; }
+        .consulta-medico { color: var(--muted); font-size: 0.85rem; }
+
+        @media(max-width:1024px) { .grid-2 { grid-template-columns: 1fr; } .main { margin-left: 0; } }
+    </style>
+</head>
+<body>
+
+{% include "admin/sidebar_admin.html" %}
+
+<main class="main">
+    <div class="page-header">
+        <div>
+            <h1>{{ paciente.usuario.get_full_name }}</h1>
+            <p style="font-size: 0.9rem; color: var(--muted); margin-top: 0.5rem;">Cédula: {{ paciente.cedula }}</p>
+        </div>
+        <a href="{% url 'buscar_paciente' %}" class="btn">
+            <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+    </div>
+
+    <div class="grid-2">
+        <!-- INFORMACIÓN PERSONAL -->
+        <div class="card">
+            <h2><i class="fa-solid fa-user"></i> Información Personal</h2>
+            <div class="info-row">
+                <span class="info-label">Nombre</span>
+                <span class="info-value">{{ paciente.usuario.get_full_name }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ paciente.usuario.email }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Teléfono</span>
+                <span class="info-value">{{ paciente.telefono|default:"No especificado" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Dirección</span>
+                <span class="info-value">{{ paciente.direccion|default:"No especificado" }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Edad</span>
+                <span class="info-value">{{ paciente.edad|default:"No especificado" }}</span>
+            </div>
+        </div>
+
+        <!-- ESTADO ACTUAL -->
+        <div class="card">
+            <h2><i class="fa-solid fa-heartbeat"></i> Estado Actual</h2>
+            <div class="info-row">
+                <span class="info-label">Estado Embarazo</span>
+                <span class="info-value">{{ paciente.get_estado_embarazo_display }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Total Consultas</span>
+                <span class="info-value">{{ total_consultas }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Total Embarazos</span>
+                <span class="info-value">{{ total_embarazos }}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Registro</span>
+                <span class="info-value">{{ paciente.fecha_registro|date:"d/m/Y" }}</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- EMBARAZOS -->
+    <div class="card">
+        <h2><i class="fa-solid fa-person-pregnant"></i> Gestión de Embarazos</h2>
+        
+        {% if embarazo_activo %}
+        <div style="background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 10px; padding: 1rem; margin-bottom: 1.5rem;">
+            <p style="color: var(--green); font-size: 0.9rem; font-weight: 600;"><i class="fa-solid fa-circle-check"></i> Embarazo Activo</p>
+        </div>
+        {% endif %}
+
+        {% if embarazos %}
+            {% for embarazo in embarazos %}
+            <div class="embarazo-card">
+                <div class="embarazo-header">
+                    <div>
+                        <div class="embarazo-year">Embarazo {{ embarazo.fecha_inicio|date:"Y" }}</div>
+                        <span class="embarazo-status {% if embarazo.estado == 'Activo' %}status-active{% else %}status-finished{% endif %}">
+                            {{ embarazo.estado }}
+                        </span>
+                    </div>
+                    <div style="text-align: right; font-size: 0.9rem; color: var(--muted);">
+                        {% if embarazo.estado == 'Activo' %}
+                            <div>Semanas: {{ embarazo.semanas_gestacion_inicio }}</div>
+                        {% else %}
+                            <div>Duración: {{ embarazo.semanas_gestacion_fin }} semanas</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="embarazo-details">
+                    <p><strong>Inicio:</strong> {{ embarazo.fecha_inicio|date:"d/m/Y" }}</p>
+                    {% if embarazo.fecha_fin %}
+                    <p><strong>Parto:</strong> {{ embarazo.fecha_fin|date:"d/m/Y" }}</p>
+                    <p><strong>Tipo:</strong> {{ embarazo.get_tipo_parto_display }}</p>
+                    {% endif %}
+                    <p><strong>Médico:</strong> {{ embarazo.medico_prenatal.get_full_name }}</p>
+                </div>
+
+                <div class="embarazo-actions">
+                    {% if embarazo.estado == 'Activo' and user.rol == 'medico' %}
+                    <a href="{% url 'finalizar_embarazo' embarazo.id %}" class="btn btn-small btn-danger">
+                        <i class="fa-solid fa-check"></i> Finalizar Embarazo
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p style="color: var(--muted); text-align: center; padding: 2rem;">Sin embarazos registrados</p>
+        {% endif %}
+
+        {% if paciente.estado_embarazo == 'NINGUNO' and user.rol == 'medico' %}
+        <a href="{% url 'activar_embarazo_nuevo' paciente.id %}" class="btn" style="width: 100%; justify-content: center;">
+            <i class="fa-solid fa-plus"></i> Activar Nuevo Embarazo
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- ÚLTIMAS CONSULTAS -->
+    <div class="card">
+        <h2><i class="fa-solid fa-file-medical"></i> Últimas Consultas Generales</h2>
+        <div class="consultas-list">
+            {% if consultas_generales %}
+                {% for consulta in consultas_generales %}
+                <div class="consulta-item">
+                    <div class="consulta-fecha">{{ consulta.fecha|date:"d/m/Y" }}</div>
+                    <div class="consulta-medico">
+                        <strong>Dr(a). {{ consulta.medico.get_full_name }}</strong>
+                    </div>
+                    <div class="consulta-medico">{{ consulta.motivo_consulta|truncatewords:10 }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="color: var(--muted); text-align: center; padding: 1rem;">Sin consultas generales registradas</p>
+            {% endif %}
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>

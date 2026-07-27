@@ -1,0 +1,265 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Consultas — Zumedical</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/sidebar_paciente.css' %}">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html {font-size: 16px !important;-webkit-text-size-adjust: 100%;-ms-text-size-adjust: 100%;text-size-adjust: 100%;-webkit-font-smoothing: antialiased;-moz-osx-font-smoothing: grayscale;}
+        :root{--mg:#B03580;--mg-l:#CC4D99;--mg-d:#8A2563;--mg-bg:#FBF0F7;--mg-border:#E8AAD4;--text:#2A1020;--muted:#8A6070;--white:#fff;--bg:#FDF5FA;--sw:260px;--green:#1a7a4a;--green-bg:#edfaf3;--green-border:#a8dfc0;--amber:#b06a00;--amber-bg:#fff8ed;--amber-border:#f5d08a;--red:#b03030;--red-bg:#fdf0f0;--red-border:#f0b8b8;--blue:#1565c0;--blue-bg:#e3f2fd;--blue-border:#90caf9;}
+        html,body{height:100%}
+        body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+        @keyframes fadeIn{to{opacity:1}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+        /* SIDEBAR */
+        .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:4px 0 24px rgba(138,37,99,.22);transition:transform .3s ease;overflow:hidden}
+        .sb-brand{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
+        .sb-logo{width:42px;height:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+        .sb-logo img{width:38px;height:38px;object-fit:contain}
+        .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+        .sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.1em;text-transform:uppercase}
+        .sb-user{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.7rem;text-decoration:none;transition:background .2s;cursor:pointer}
+        .sb-user:hover{background:rgba(255,255,255,.1)}
+        .sb-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase}
+        .sb-user-info p{font-size:.7rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.1rem}
+        .sb-user-info h3{font-size:.88rem;font-weight:500;color:white}
+        .sb-nav{flex:1;padding:1rem .75rem;overflow-y:auto}
+        .nav-lbl{font-size:.68rem;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.75rem}
+        .nav-item{display:flex;align-items:center;gap:.7rem;padding:.72rem 1rem;border-radius:10px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.88rem;transition:all .2s;margin-bottom:.2rem}
+        .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white}
+        .nav-item i{width:18px;text-align:center;font-size:15px}
+        .nav-badge{margin-left:auto;background:#e74c3c;color:white;font-size:.68rem;font-weight:600;padding:.15rem .5rem;border-radius:999px;min-width:20px;text-align:center}
+        .sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12)}
+        .btn-logout{display:flex;align-items:center;gap:.7rem;padding:.72rem 1rem;border-radius:10px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;transition:all .2s}
+        .btn-logout:hover{background:rgba(255,255,255,.15);color:white}
+
+        /* MAIN */
+        .main{margin-left:var(--sw);flex:1;padding:2.5rem;height:100vh;overflow-y:auto}
+
+        /* PAGE HEADER */
+        .page-header{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:1rem;margin-bottom:2rem;}
+        .page-header h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2.2rem;font-weight:700;color:var(--text);line-height:1.1;}
+        .page-header .sub{color:var(--muted);font-size:.82rem;margin-top:.5rem;}
+        .btn-agendar{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.3rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;border-radius:999px;font-size:.85rem;font-weight:500;cursor:pointer;text-decoration:none;transition:opacity .2s}
+        .btn-agendar:hover{opacity:.88}
+
+        /* STATS GRID */
+        .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:2rem;}
+        .stat-card{background:var(--white);border-radius:16px;padding:1.4rem 1.3rem;border:1px solid var(--mg-border);position:relative;overflow:hidden;transition:all .25s;animation:slideUp .4s ease both}
+        .stat-card:nth-child(1){animation-delay:.1s}
+        .stat-card:nth-child(2){animation-delay:.15s}
+        .stat-card:nth-child(3){animation-delay:.2s}
+        .stat-card:hover{transform:translateY(-3px);box-shadow:0 10px 28px rgba(176,53,128,.1)}
+        .stat-card::after{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--mg-d),var(--mg-l))}
+        .stat-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:.8rem}
+        .stat-icon{width:40px;height:40px;background:var(--mg-bg);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--mg);font-size:17px}
+        .stat-val{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2.4rem;font-weight:600;color:var(--text);line-height:1;margin-bottom:.2rem}
+        .stat-lbl{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+
+        /* FILTROS */
+        .filtros{background:var(--white);border:1px solid var(--mg-border);border-radius:14px;padding:1.5rem;margin-bottom:2rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end;}
+        .filtro-group{display:flex;flex-direction:column;gap:.4rem}
+        .filtro-group label{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+        .filtro-group select{padding:.6rem .8rem;border:1px solid var(--mg-border);border-radius:8px;font-size:.88rem;background:var(--white);color:var(--text);cursor:pointer}
+        .btn-filtrar{padding:.6rem 1.2rem;background:var(--mg);color:white;border:none;border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+        .btn-filtrar:hover{background:var(--mg-d)}
+        .btn-limpiar{padding:.6rem 1.2rem;background:var(--white);color:var(--muted);border:1px solid var(--mg-border);border-radius:8px;font-size:.85rem;font-weight:600;cursor:pointer;transition:all .2s}
+        .btn-limpiar:hover{color:var(--text)}
+
+        /* CONSULTAS LIST */
+        .consultas-card{background:var(--white);border-radius:16px;border:1px solid var(--mg-border);overflow:hidden;animation:slideUp .4s ease .3s both}
+        .consulta-item{display:flex;align-items:center;gap:1.2rem;padding:1.4rem;border-bottom:1px solid rgba(232,170,212,.25);transition:all .25s;cursor:pointer}
+        .consulta-item:last-child{border-bottom:none}
+        .consulta-item:hover{background:var(--mg-bg);transform:translateX(4px)}
+        .consulta-fecha-box{width:60px;height:60px;background:linear-gradient(135deg,var(--mg-d),var(--mg));border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;flex-shrink:0}
+        .consulta-fecha-box .dia{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.6rem;font-weight:700;line-height:1}
+        .consulta-fecha-box .mes{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;opacity:.85}
+        .consulta-info{flex:1;min-width:0}
+        .consulta-medico{font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:.2rem}
+        .consulta-motivo{font-size:.85rem;color:var(--muted);margin-bottom:.3rem;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden}
+        .consulta-meta{font-size:.75rem;color:var(--muted);display:flex;gap:.5rem;flex-wrap:wrap}
+        .consulta-actions{display:flex;align-items:center;gap:.6rem;flex-shrink:0}
+        .btn-ver{padding:.5rem 1rem;background:var(--blue-bg);color:var(--blue);border:none;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s}
+        .btn-ver:hover{background:var(--blue);color:white}
+        .btn-pdf{padding:.5rem 1rem;background:var(--red-bg);color:var(--red);border:none;border-radius:6px;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s}
+        .btn-pdf:hover{background:var(--red);color:white}
+
+        /* EMPTY STATE */
+        .empty-state{text-align:center;padding:4rem 2rem;background:linear-gradient(135deg,#fce7f3 0%,#fbf0f7 100%);border:2px dashed var(--mg-border);border-radius:16px;}
+        .empty-state i{font-size:3.5rem;color:var(--mg-border);display:block;margin-bottom:1rem}
+        .empty-state h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.8rem;font-weight:700;color:var(--mg-d);margin-bottom:.5rem}
+        .empty-state p{font-size:.95rem;color:var(--muted);line-height:1.6}
+
+        /* RESPONSIVE */
+        @media(max-width:768px){
+            .main{margin-left:0;padding:1.25rem}
+            .page-header{flex-direction:column}
+            .stats-grid{grid-template-columns:1fr 1fr;gap:.75rem}
+            .filtros{flex-direction:column;gap:.8rem}
+            .filtro-group{width:100%}
+            .consulta-item{flex-direction:column;align-items:flex-start;gap:.8rem}
+            .consulta-actions{width:100%;justify-content:flex-start}
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+        <div class="sb-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
+        <div class="sb-brand-text"><h2>Zumedical</h2><span>Paciente</span></div>
+    </div>
+    <a href="{% url 'paciente_general_perfil' %}" class="sb-user">
+        <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}U{% endif %}</div>
+        <div class="sb-user-info">
+            <p>Mi perfil</p>
+            <h3>{{ user.get_full_name|default:user.username }}</h3>
+        </div>
+    </a>
+    <nav class="sb-nav">
+        <div class="nav-lbl">General</div>
+        <a href="{% url 'paciente_general_dashboard' %}" class="nav-item">
+            <i class="fa-solid fa-house"></i> Inicio
+        </a>
+        <a href="{% url 'paciente_general_citas' %}" class="nav-item">
+            <i class="fa-regular fa-calendar-check"></i> Mis Citas
+            {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
+        </a>
+        <a href="{% url 'paciente_general_agendar' %}" class="nav-item">
+            <i class="fa-regular fa-calendar-plus"></i> Agendar Cita
+        </a>
+        <a href="{% url 'paciente_general_consultas' %}" class="nav-item active">
+            <i class="fa-solid fa-file-medical"></i> Mis Consultas
+        </a>
+    </nav>
+    <div class="sb-footer">
+        <a href="{% url 'logout' %}" class="btn-logout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+    <div class="page-header">
+        <div>
+            <h1>Mis Consultas</h1>
+            <p class="sub">Historial de todas tus consultas médicas</p>
+        </div>
+        <a href="{% url 'paciente_general_agendar' %}" class="btn-agendar">
+            <i class="fa-regular fa-calendar-plus"></i> Agendar Nueva Cita
+        </a>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon"><i class="fa-solid fa-file-medical"></i></div>
+            </div>
+            <div class="stat-val">{{ total_consultas }}</div>
+            <div class="stat-lbl">Consultas Totales</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon"><i class="fa-solid fa-stethoscope"></i></div>
+            </div>
+            <div class="stat-val">{{ medicos_unicos|length }}</div>
+            <div class="stat-lbl">Médicos</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-top">
+                <div class="stat-icon"><i class="fa-regular fa-calendar-check"></i></div>
+            </div>
+            <div class="stat-val">{{ citas_pendientes }}</div>
+            <div class="stat-lbl">Citas Pendientes</div>
+        </div>
+    </div>
+
+    <!-- FILTROS -->
+    <form method="GET" class="filtros">
+        <div class="filtro-group" style="flex:1;min-width:200px">
+            <label>Médico</label>
+            <select name="medico_id">
+                <option value="">Todos los médicos</option>
+                {% for med_id, med_nombre, med_apellido in medicos_unicos %}
+                <option value="{{ med_id }}" {% if filtro_medico|add:"" == med_id|add:"" %}selected{% endif %}>
+                    {{ med_nombre }} {{ med_apellido }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="filtro-group" style="flex:1;min-width:150px">
+            <label>Mes</label>
+            <select name="mes">
+                <option value="">Todos los meses</option>
+                <option value="">Enero</option>
+                <option value="">Febrero</option>
+                <option value="">Marzo</option>
+                <option value="">Abril</option>
+                <option value="">Mayo</option>
+                <option value="">Junio</option>
+                <option value="">Julio</option>
+                <option value="">Agosto</option>
+                <option value="">Septiembre</option>
+                <option value="">Octubre</option>
+                <option value="">Noviembre</option>
+                <option value="">Diciembre</option>
+            </select>
+        </div>
+        <button type="submit" class="btn-filtrar"><i class="fa-solid fa-filter"></i> Filtrar</button>
+        <a href="{% url 'paciente_general_consultas' %}" class="btn-limpiar"><i class="fa-solid fa-times"></i> Limpiar</a>
+    </form>
+
+    <!-- CONSULTAS LIST -->
+    {% if consultas %}
+    <div class="consultas-card">
+        {% for consulta in consultas %}
+        <div class="consulta-item" onclick="window.location='{% url 'paciente_general_ver_consulta' consulta.id %}'">
+            <div class="consulta-fecha-box">
+                <div class="dia">{{ consulta.fecha|date:"d" }}</div>
+                <div class="mes">{{ consulta.fecha|date:"b" }}</div>
+            </div>
+            <div class="consulta-info">
+                <div class="consulta-medico">Dr(a). {{ consulta.medico.get_full_name|default:"N/A" }}</div>
+                <div class="consulta-motivo">{{ consulta.motivo_consulta|truncatewords:10 }}</div>
+                <div class="consulta-meta">
+                    {% if consulta.diagnosticos %}<span><i class="fa-solid fa-diagnoses"></i> {{ consulta.diagnosticos|length }} diagnóstico(s)</span>{% endif %}
+                    <span>IMC: {{ consulta.imc|default:"N/A" }}</span>
+                </div>
+            </div>
+            <div class="consulta-actions">
+                <a href="{% url 'paciente_general_ver_consulta' consulta.id %}" class="btn-ver" onclick="event.stopPropagation()">
+                    <i class="fa-solid fa-eye"></i> Ver
+                </a>
+                <a href="{% url 'paciente_general_descargar_consulta' consulta.id %}" class="btn-pdf" onclick="event.stopPropagation()">
+                    <i class="fa-solid fa-download"></i> PDF
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <i class="fa-solid fa-file-medical"></i>
+        <h2>No Hay Consultas</h2>
+        <p>Aún no tienes consultas registradas. Agenda una cita con un médico para comenzar tu historial.</p>
+        <a href="{% url 'paciente_general_agendar' %}" style="display:inline-flex;align-items:center;gap:.6rem;margin-top:1.5rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;padding:1rem 2rem;border-radius:10px;text-decoration:none;font-size:.9rem;font-weight:600;transition:opacity .2s">
+            <i class="fa-regular fa-calendar-plus"></i> Agendar Primera Cita
+        </a>
+    </div>
+    {% endif %}
+
+</main>
+
+</body>
+</html>

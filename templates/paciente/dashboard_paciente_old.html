@@ -4,12 +4,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zumedical — Mi Panel</title>
+    <title>Zumedical - Mi Embarazo</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/sidebar_paciente.css' %}">
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+      html {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
         :root{
             --mg:#B03580;--mg-l:#CC4D99;--mg-d:#8A2563;
             --mg-bg:#FBF0F7;--mg-border:#E8AAD4;
@@ -21,19 +32,18 @@
             --blue:#1565c0;--blue-bg:#e3f2fd;--blue-border:#90caf9;
         }
         html,body{height:100%}
-        body{font-family:'DM Sans',sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+        body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
         @keyframes fadeIn{to{opacity:1}}
         @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
-        @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 
         /* ── SIDEBAR ── */
         .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:4px 0 24px rgba(138,37,99,.22);transition:transform .3s ease;overflow:hidden}
         .sb-brand{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
         .sb-logo{width:42px;height:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
         .sb-logo img{width:38px;height:38px;object-fit:contain}
-        .sb-brand-text h2{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
-        .sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.1em;text-transform:uppercase}
+        .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+        .sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.12em;text-transform:uppercase}
         .sb-user{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.7rem;text-decoration:none;transition:background .2s;cursor:pointer}
         .sb-user:hover{background:rgba(255,255,255,.1)}
         .sb-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase}
@@ -44,7 +54,7 @@
         .nav-item{display:flex;align-items:center;gap:.7rem;padding:.72rem 1rem;border-radius:10px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.88rem;transition:all .2s;margin-bottom:.2rem}
         .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white}
         .nav-item i{width:18px;text-align:center;font-size:15px}
-        .nav-badge{margin-left:auto;background:#e74c3c;color:white;font-size:.68rem;font-weight:600;padding:.15rem .5rem;border-radius:999px;min-width:20px;text-align:center}
+        .nav-badge{margin-left:auto;background:#e74c3c;color:white;font-size:.68rem;font-weight:600;padding:.2rem .55rem;border-radius:999px;min-width:20px;text-align:center}
         .sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12)}
         .btn-logout{display:flex;align-items:center;gap:.7rem;padding:.72rem 1rem;border-radius:10px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;transition:all .2s}
         .btn-logout:hover{background:rgba(255,255,255,.15);color:white}
@@ -53,7 +63,7 @@
         .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300}
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
         .mobile-topbar-brand img{width:30px;height:30px;background:white;border-radius:50%;padding:2px;object-fit:contain}
-        .mobile-topbar-brand span{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:600;color:white}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
         .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
         .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
         .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
@@ -70,7 +80,7 @@
         .topbar-left .greeting{margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
         .greeting-badge{display:inline-flex;align-items:center;gap:.4rem;background:linear-gradient(135deg,var(--mg-bg),#fff);border:1px solid var(--mg-border);border-radius:999px;padding:.3rem .9rem;font-size:.78rem;font-weight:500;color:var(--mg);box-shadow:0 2px 8px rgba(176,53,128,.08)}
         .greeting-emoji{font-size:1rem;line-height:1}
-        .topbar-left h1{font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;color:var(--text);line-height:1.1;margin-bottom:.3rem}
+        .topbar-left h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2.2rem;font-weight:700;color:var(--text);line-height:1.1;margin-bottom:.3rem}
         .topbar-left .sub{color:var(--muted);font-size:.82rem;display:flex;align-items:center;gap:.4rem}
         .topbar-right{display:flex;align-items:center;gap:.65rem;flex-wrap:wrap}
         .info-pill{display:flex;align-items:center;gap:.5rem;padding:.55rem 1rem;background:var(--white);border:1px solid var(--mg-border);border-radius:999px;font-size:.82rem;color:var(--text)}
@@ -78,15 +88,15 @@
         .live-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 2s infinite;flex-shrink:0}
 
         /* ── HERO BANNER ── */
-        .hero{background:linear-gradient(135deg,var(--mg-d) 0%,var(--mg) 60%,var(--mg-l) 100%);border-radius:20px;padding:2rem 2rem 2rem 2.5rem;color:white;margin-bottom:1.75rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;position:relative;overflow:hidden;animation:slideUp .4s ease .1s both}
-        .hero::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:rgba(255,255,255,.06);border-radius:50%}
-        .hero::after{content:'';position:absolute;right:60px;bottom:-60px;width:150px;height:150px;background:rgba(255,255,255,.04);border-radius:50%}
-        .hero-label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.75;margin-bottom:.5rem}
-        .hero-title{font-family:'Cormorant Garamond',serif;font-size:1.75rem;font-weight:600;line-height:1.2;margin-bottom:.5rem}
-        .hero-sub{font-size:.88rem;opacity:.8;margin-bottom:1.25rem}
-        .hero-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.4rem;background:white;color:var(--mg-d);border-radius:999px;font-family:'DM Sans',sans-serif;font-size:.88rem;font-weight:600;text-decoration:none;transition:all .2s;border:none;cursor:pointer}
-        .hero-btn:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.15)}
-        .hero-icon{font-size:56px;opacity:.18;flex-shrink:0}
+        .hero{background:linear-gradient(135deg,#8A2563 0%,#B03580 50%,#CC4D99 100%);border-radius:20px;padding:2rem 2rem 2rem 2.5rem;color:white;margin-bottom:1.75rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;position:relative;overflow:hidden;animation:slideUp .4s ease .1s both}
+        .hero::before{content:'';position:absolute;right:-40px;top:-40px;width:200px;height:200px;background:rgba(255,255,255,.08);border-radius:50%}
+        .hero::after{content:'';position:absolute;right:60px;bottom:-60px;width:150px;height:150px;background:rgba(255,255,255,.05);border-radius:50%}
+        .hero-label{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;opacity:.8;margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+        .hero-title{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.75rem;font-weight:600;line-height:1.2;margin-bottom:.5rem}
+        .hero-sub{font-size:.88rem;opacity:.85;margin-bottom:1.25rem}
+        .hero-btn{display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.3rem;background:white;color:var(--mg-d);border-radius:999px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.88rem;font-weight:600;text-decoration:none;transition:all .2s;border:none;cursor:pointer}
+        .hero-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.18)}
+        .hero-icon{font-size:56px;opacity:.15;flex-shrink:0}
 
         /* ── STATS ── */
         .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.75rem}
@@ -103,7 +113,7 @@
         .chip-amber{background:var(--amber-bg);color:var(--amber)}
         .chip-blue{background:var(--blue-bg);color:var(--blue)}
         .chip-mg{background:var(--mg-bg);color:var(--mg)}
-        .stat-val{font-family:'Cormorant Garamond',serif;font-size:2.4rem;font-weight:600;color:var(--text);line-height:1;margin-bottom:.2rem}
+        .stat-val{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2.4rem;font-weight:600;color:var(--text);line-height:1;margin-bottom:.2rem}
         .stat-lbl{font-size:.74rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
 
         /* ── DOS COLUMNAS ── */
@@ -113,7 +123,7 @@
         .proxima-card{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));border-radius:14px;padding:1.25rem 1.4rem;color:white;position:relative;overflow:hidden;min-height:140px}
         .proxima-card::before{content:'';position:absolute;right:-15px;top:-15px;width:100px;height:100px;background:rgba(255,255,255,.08);border-radius:50%}
         .proxima-lbl{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;opacity:.72;margin-bottom:.5rem}
-        .proxima-time{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:600;line-height:1;margin-bottom:.3rem}
+        .proxima-time{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2rem;font-weight:600;line-height:1;margin-bottom:.3rem}
         .proxima-pac{font-size:.86rem;opacity:.9;margin-bottom:.2rem}
         .proxima-esp{font-size:.76rem;opacity:.68}
         .no-proxima{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1.5rem;color:var(--muted);min-height:120px;gap:.5rem}
@@ -123,9 +133,9 @@
         .card{background:var(--white);border-radius:16px;border:1px solid var(--mg-border);overflow:hidden;animation:slideUp .4s ease .25s both}
         .card-header{padding:1rem 1.4rem;border-bottom:1px solid var(--mg-border);display:flex;align-items:center;justify-content:space-between}
         .card-header-left{display:flex;align-items:center;gap:.65rem}
-        .card-header-icon{width:30px;height:30px;background:var(--mg-bg);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--mg);font-size:12px}
-        .card-header h3{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;color:var(--text)}
-        .card-badge{font-size:.72rem;background:var(--mg-bg);color:var(--mg);padding:.2rem .6rem;border-radius:999px;border:1px solid var(--mg-border)}
+        .card-header-icon{width:36px;height:36px;background:var(--mg-bg);border-radius:9px;display:flex;align-items:center;justify-content:center;color:var(--mg);font-size:14px}
+        .card-header h3{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.05rem;font-weight:600;color:var(--text)}
+        .card-badge{font-size:.72rem;background:var(--mg-bg);color:var(--mg);padding:.2rem .6rem;border-radius:999px;border:1px solid var(--mg-border);text-decoration:none}
         .card-body{padding:1.1rem 1.4rem}
 
         /* ── CITAS LIST ── */
@@ -134,7 +144,7 @@
         .cita-item:last-child{border-bottom:none}
         .cita-item:hover{background:var(--mg-bg)}
         .cita-fecha-box{width:48px;height:52px;background:linear-gradient(135deg,var(--mg-d),var(--mg));border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;flex-shrink:0}
-        .cita-fecha-box .dia{font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;line-height:1}
+        .cita-fecha-box .dia{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.4rem;font-weight:600;line-height:1}
         .cita-fecha-box .mes{font-size:.6rem;text-transform:uppercase;letter-spacing:.08em;opacity:.85}
         .cita-info{flex:1;min-width:0}
         .cita-esp{font-size:.88rem;font-weight:600;color:var(--text);margin-bottom:.15rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -148,13 +158,13 @@
         .empty-state i{font-size:2rem;color:var(--mg-border);display:block;margin-bottom:.75rem}
 
         /* ── ACCIONES RÁPIDAS ── */
-        .acciones-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-bottom:1.5rem}
+        .acciones-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-bottom:0}
         .accion-btn{background:var(--white);border:1px solid var(--mg-border);border-radius:14px;padding:1.25rem 1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.65rem;text-decoration:none;color:var(--text);transition:all .2s;text-align:center;animation:slideUp .4s ease both}
         .accion-btn:nth-child(1){animation-delay:.2s}
         .accion-btn:nth-child(2){animation-delay:.25s}
         .accion-btn:nth-child(3){animation-delay:.3s}
-        .accion-btn:hover{background:var(--mg-bg);border-color:var(--mg);transform:translateY(-2px);box-shadow:0 6px 18px rgba(176,53,128,.1)}
-        .accion-ico{width:44px;height:44px;background:var(--mg-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--mg);font-size:18px;transition:all .2s}
+        .accion-btn:hover{background:var(--mg-bg);border-color:var(--mg);transform:translateY(-3px);box-shadow:0 8px 24px rgba(176,53,128,.12)}
+        .accion-ico{width:46px;height:46px;background:var(--mg-bg);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--mg);font-size:19px;transition:all .2s}
         .accion-btn:hover .accion-ico{background:var(--mg);color:white}
         .accion-lbl{font-size:.8rem;font-weight:500;color:var(--text)}
 
@@ -165,7 +175,7 @@
         .modal-ov.open .modal{transform:translateY(0) scale(1);opacity:1}
         .modal-head{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));padding:1.4rem 1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:1rem}
         .modal-head-tag{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.72);margin-bottom:.3rem}
-        .modal-head-title{font-family:'Cormorant Garamond',serif;font-size:1.35rem;font-weight:600;color:white;line-height:1.2}
+        .modal-head-title{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1.2}
         .modal-head-sub{font-size:.82rem;color:rgba(255,255,255,.8);margin-top:.2rem}
         .modal-close{background:rgba(255,255,255,.2);border:none;border-radius:8px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;flex-shrink:0;transition:background .2s}
         .modal-close:hover{background:rgba(255,255,255,.35)}
@@ -173,13 +183,13 @@
         .modal-body{padding:1.4rem}
         .modal-grid{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}
         .modal-field{background:var(--bg);border:1px solid var(--mg-border);border-radius:11px;padding:.85rem 1rem}
-        .modal-field-lbl{font-size:.67rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem;font-weight:500}
+        .modal-field-label{font-size:.67rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem;font-weight:500}
         .modal-field-val{font-size:.9rem;color:var(--text);font-weight:500}
         .modal-field.full{grid-column:1/-1}
         .modal-foot{padding:1rem 1.4rem;border-top:1px solid var(--mg-border);display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
-        .btn-agendar{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.3rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;border-radius:999px;font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;text-decoration:none;transition:opacity .2s}
+        .btn-agendar{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.3rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;border-radius:999px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.85rem;font-weight:500;cursor:pointer;text-decoration:none;transition:opacity .2s}
         .btn-agendar:hover{opacity:.88}
-        .btn-cerrar{padding:.65rem 1.2rem;background:var(--white);color:var(--muted);border:1px solid var(--mg-border);border-radius:999px;font-family:'DM Sans',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
+        .btn-cerrar{padding:.65rem 1.2rem;background:var(--white);color:var(--muted);border:1px solid var(--mg-border);border-radius:999px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
         .btn-cerrar:hover{color:var(--red);border-color:var(--red-border)}
 
         /* ── RESPONSIVE ── */
@@ -232,35 +242,41 @@
 <aside class="sidebar" id="sidebar">
     <div class="sb-brand">
         <div class="sb-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
-        <div class="sb-brand-text"><h2>Zumedical</h2><span>Paciente</span></div>
+        <div class="sb-brand-text"><h2>Zumedical</h2><span>Embarazo</span></div>
     </div>
     <a href="{% url 'paciente_general_perfil' %}" class="sb-user">
-        <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+        <div class="sb-avatar">U</div>
         <div class="sb-user-info">
             <p>Mi perfil</p>
-            <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+            <h3>{{ user.get_full_name|default:user.username }}</h3>
         </div>
     </a>
     <nav class="sb-nav">
-        <div class="nav-lbl">General</div>
-        <a href="{% url 'paciente_general_dashboard' %}" class="nav-item active">
-            <i class="fa-solid fa-house"></i> Inicio
+        <div class="nav-lbl">Embarazo</div>
+        <a href="{% url 'paciente_dashboard' %}" class="nav-item active">
+            <i class="fa-solid fa-house"></i> Inicio Embarazo
         </a>
-        <a href="{% url 'paciente_general_agendar' %}" class="nav-item">
+        <a href="{% url 'agendar_cita' %}" class="nav-item">
             <i class="fa-regular fa-calendar-plus"></i> Agendar Cita
         </a>
-        <a href="{% url 'paciente_general_citas' %}" class="nav-item">
+        <a href="{% url 'mis_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Mis Citas
             {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
         </a>
-        <a href="{% url 'paciente_general_consultas' %}" class="nav-item">
-            <i class="fa-solid fa-file-medical"></i> Mis Consultas
+        <a href="{% url 'controles' %}" class="nav-item">
+            <i class="fa-solid fa-heart-pulse"></i> Controles Prenatales
         </a>
-        {% if request.user.paciente.estado_embarazo == 'ACTIVO' %}
-        <a href="{% url 'paciente_dashboard' %}" class="nav-item" style="margin-top: 1.5rem;">
-            <i class="fa-solid fa-person-pregnant"></i> Mi embarazo
+        <div class="nav-lbl">Inteligencia Artificial</div>
+        <a href="{% url 'chatbot_page' %}" class="nav-item">
+            <i class="fa-solid fa-comments"></i> Asistente Virtual
         </a>
-        {% endif %}
+        <a href="{% url 'evaluar_riesgo' %}" class="nav-item">
+            <i class="fa-solid fa-dna"></i> Evaluación de Riesgo
+        </a>
+        <div class="nav-lbl" style="margin-top:1.2rem">General</div>
+        <a href="{% url 'paciente_general_dashboard' %}" class="nav-item">
+            <i class="fa-solid fa-user"></i> Inicio General
+        </a>
     </nav>
     <div class="sb-footer">
         <a href="{% url 'logout' %}" class="btn-logout">
@@ -288,7 +304,7 @@
                 &nbsp;•&nbsp;
                 <i class="fa-regular fa-clock" style="color:var(--mg)"></i>
                 <span id="reloj">--:--</span>
-                &nbsp;•&nbsp; Zumedical
+                &nbsp;•&nbsp; Zumedical Embarazo
             </p>
         </div>
         <div class="topbar-right">
@@ -306,14 +322,14 @@
     <!-- HERO BANNER -->
     <div class="hero">
         <div>
-            <div class="hero-label"><i class="fa-solid fa-hospital"></i> &nbsp;Centro Médico Zumedical</div>
-            <div class="hero-title">Tu salud,<br>nuestra prioridad</div>
-            <div class="hero-sub">Agenda tu próxima consulta en segundos</div>
-            <a href="{% url 'paciente_general_agendar' %}" class="hero-btn">
-                <i class="fa-regular fa-calendar-plus"></i> Agendar nueva cita
+            <div class="hero-label"><i class="fa-solid fa-baby"></i> &nbsp;Embarazo Saludable</div>
+            <div class="hero-title">Tu camino<br>hacia la maternidad</div>
+            <div class="hero-sub">Gestiona tu embarazo, agenda citas y recibe consejos personalizados</div>
+            <a href="{% url 'agendar_cita' %}" class="hero-btn">
+                <i class="fa-regular fa-calendar-plus"></i> Agendar Control
             </a>
         </div>
-        <i class="fa-solid fa-stethoscope hero-icon"></i>
+        <i class="fa-solid fa-person-pregnant hero-icon"></i>
     </div>
 
     <!-- STATS -->
@@ -324,7 +340,7 @@
                 <span class="stat-chip chip-blue">Total</span>
             </div>
             <div class="stat-val">{{ total_citas }}</div>
-            <div class="stat-lbl">Citas registradas</div>
+            <div class="stat-lbl">Citas Totales</div>
         </div>
         <div class="stat-card">
             <div class="stat-top">
@@ -332,15 +348,15 @@
                 <span class="stat-chip chip-amber">Próximas</span>
             </div>
             <div class="stat-val">{{ citas_pendientes }}</div>
-            <div class="stat-lbl">Pendientes</div>
+            <div class="stat-lbl">Citas Pendientes</div>
         </div>
         <div class="stat-card">
             <div class="stat-top">
-                <div class="stat-icon"><i class="fa-solid fa-circle-check"></i></div>
-                <span class="stat-chip chip-green">OK</span>
+                <div class="stat-icon"><i class="fa-solid fa-heart"></i></div>
+                <span class="stat-chip chip-green">Salud</span>
             </div>
-            <div class="stat-val" style="font-size:1.4rem;padding-top:.4rem">Activo</div>
-            <div class="stat-lbl">Estado de cuenta</div>
+            <div class="stat-val" style="font-size:1.5rem;padding-top:.35rem">Embarazo Activo</div>
+            <div class="stat-lbl">Estado</div>
         </div>
     </div>
 
@@ -350,22 +366,22 @@
             <div class="card-header">
                 <div class="card-header-left">
                     <div class="card-header-icon"><i class="fa-solid fa-bolt"></i></div>
-                    <h3>Próxima cita</h3>
+                    <h3>Próximo Control</h3>
                 </div>
             </div>
             <div class="card-body" style="padding:1rem 1.4rem">
                 {% if proxima_cita %}
                 <div class="proxima-card">
-                    <div class="proxima-lbl"><i class="fa-regular fa-clock"></i> &nbsp;Próxima pendiente</div>
+                    <div class="proxima-lbl"><i class="fa-regular fa-clock"></i> &nbsp;Próxima cita</div>
                     <div class="proxima-time">{{ proxima_cita.hora|time:"H:i" }}</div>
                     <div class="proxima-pac"><i class="fa-solid fa-user-doctor"></i> &nbsp;{{ proxima_cita.medico.get_full_name|default:proxima_cita.medico }}</div>
-                    <div class="proxima-esp">{{ proxima_cita.fecha|date:"d/m/Y" }} &nbsp;·&nbsp; {{ proxima_cita.especialidad|default:"General" }}</div>
+                    <div class="proxima-esp">{{ proxima_cita.fecha|date:"d/m/Y" }} &nbsp;•&nbsp; {{ proxima_cita.especialidad|default:"Control Prenatal" }}</div>
                 </div>
                 {% else %}
                 <div class="no-proxima">
                     <i class="fa-regular fa-calendar-xmark"></i>
-                    <span style="font-size:.85rem">Sin citas próximas</span>
-                    <a href="{% url 'paciente_general_agendar' %}" style="font-size:.8rem;color:var(--mg);font-weight:500;text-decoration:none">+ Agendar ahora</a>
+                    <span style="font-size:.85rem">Sin controles próximos</span>
+                    <a href="{% url 'agendar_cita' %}" style="font-size:.8rem;color:var(--mg);font-weight:500;text-decoration:none">+ Agendar ahora</a>
                 </div>
                 {% endif %}
             </div>
@@ -374,23 +390,23 @@
         <div class="card">
             <div class="card-header">
                 <div class="card-header-left">
-                    <div class="card-header-icon"><i class="fa-solid fa-house"></i></div>
-                    <h3>Acciones rápidas</h3>
+                    <div class="card-header-icon"><i class="fa-solid fa-star"></i></div>
+                    <h3>Acciones Rápidas</h3>
                 </div>
             </div>
             <div class="card-body">
-                <div class="acciones-grid" style="margin-bottom:0">
-                    <a href="{% url 'paciente_general_agendar' %}" class="accion-btn">
+                <div class="acciones-grid">
+                    <a href="{% url 'agendar_cita' %}" class="accion-btn">
                         <div class="accion-ico"><i class="fa-regular fa-calendar-plus"></i></div>
-                        <span class="accion-lbl">Agendar cita</span>
+                        <span class="accion-lbl">Agendar Cita</span>
                     </a>
-                    <a href="{% url 'paciente_general_citas' %}" class="accion-btn">
+                    <a href="{% url 'mis_citas' %}" class="accion-btn">
                         <div class="accion-ico"><i class="fa-regular fa-calendar-check"></i></div>
-                        <span class="accion-lbl">Mis citas</span>
+                        <span class="accion-lbl">Mis Citas</span>
                     </a>
-                    <a href="{% url 'paciente_general_perfil' %}" class="accion-btn">
-                        <div class="accion-ico"><i class="fa-regular fa-user"></i></div>
-                        <span class="accion-lbl">Mi perfil</span>
+                    <a href="{% url 'controles' %}" class="accion-btn">
+                        <div class="accion-ico"><i class="fa-solid fa-heart-pulse"></i></div>
+                        <span class="accion-lbl">Controles</span>
                     </a>
                 </div>
             </div>
@@ -402,15 +418,15 @@
         <div class="card-header">
             <div class="card-header-left">
                 <div class="card-header-icon"><i class="fa-regular fa-clock-rotate-left"></i></div>
-                <h3>Últimas citas</h3>
+                <h3>Últimas Citas</h3>
             </div>
-            <a href="{% url 'paciente_general_citas' %}" class="card-badge" style="text-decoration:none">Ver todas →</a>
+            <a href="{% url 'mis_citas' %}" class="card-badge">Ver todas →</a>
         </div>
 
         {% if ultimas_citas %}
             {% for cita in ultimas_citas %}
             <div class="cita-item"
-                data-esp="{{ cita.especialidad|default:'General' }}"
+                data-esp="{{ cita.especialidad|default:'Control Prenatal' }}"
                 data-fecha="{{ cita.fecha|date:'d/m/Y' }}"
                 data-hora="{{ cita.hora|time:'H:i' }}"
                 data-medico="{{ cita.medico.get_full_name|default:cita.medico }}"
@@ -421,8 +437,8 @@
                     <span class="mes">{{ cita.fecha|date:"M" }}</span>
                 </div>
                 <div class="cita-info">
-                    <div class="cita-esp">{{ cita.especialidad|default:"General" }}</div>
-                    <div class="cita-meta">Dr(a). {{ cita.medico.get_full_name|default:cita.medico }} &nbsp;·&nbsp; {{ cita.hora|time:"H:i" }}</div>
+                    <div class="cita-esp">{{ cita.especialidad|default:"Control Prenatal" }}</div>
+                    <div class="cita-meta">Dr(a). {{ cita.medico.get_full_name|default:cita.medico }} &nbsp;•&nbsp; {{ cita.hora|time:"H:i" }}</div>
                 </div>
                 <span class="badge badge-{{ cita.estado }}">{{ cita.get_estado_display|default:cita.estado }}</span>
             </div>
@@ -431,36 +447,6 @@
         <div class="empty-state">
             <i class="fa-regular fa-calendar-xmark"></i>
             <p>No tienes citas registradas aún.</p>
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- ÚLTIMAS CONSULTAS -->
-    <div class="citas-card">
-        <div class="card-header">
-            <div class="card-header-left">
-                <div class="card-header-icon"><i class="fa-solid fa-file-medical"></i></div>
-                <h3>Mis Consultas</h3>
-            </div>
-            <a href="{% url 'paciente_general_consultas' %}" class="card-badge" style="text-decoration:none">Ver todas →</a>
-        </div>
-
-        {% if ultima_consulta %}
-            <div class="cita-item">
-                <div class="cita-fecha-box">
-                    <span class="dia">{{ ultima_consulta.fecha|date:"d" }}</span>
-                    <span class="mes">{{ ultima_consulta.fecha|date:"M" }}</span>
-                </div>
-                <div class="cita-info">
-                    <div class="cita-esp">{{ ultima_consulta.medico.get_full_name|default:"Médico" }}</div>
-                    <div class="cita-meta">{{ ultima_consulta.motivo_consulta|truncatewords:5 }}</div>
-                </div>
-                <span class="badge" style="background:var(--green-bg);color:var(--green)">{{ total_consultas }} consulta{{ total_consultas|pluralize }}</span>
-            </div>
-        {% else %}
-        <div class="empty-state">
-            <i class="fa-solid fa-file-medical"></i>
-            <p>Aún no tienes consultas registradas.</p>
         </div>
         {% endif %}
     </div>
@@ -481,31 +467,31 @@
         <div class="modal-body">
             <div class="modal-grid">
                 <div class="modal-field">
-                    <div class="modal-field-lbl"><i class="fa-regular fa-calendar"></i> Fecha</div>
+                    <div class="modal-field-label"><i class="fa-regular fa-calendar"></i> Fecha</div>
                     <div class="modal-field-val" id="m-fecha">—</div>
                 </div>
                 <div class="modal-field">
-                    <div class="modal-field-lbl"><i class="fa-regular fa-clock"></i> Hora</div>
+                    <div class="modal-field-label"><i class="fa-regular fa-clock"></i> Hora</div>
                     <div class="modal-field-val" id="m-hora">—</div>
                 </div>
                 <div class="modal-field">
-                    <div class="modal-field-lbl"><i class="fa-solid fa-user-doctor"></i> Médico</div>
+                    <div class="modal-field-label"><i class="fa-solid fa-user-doctor"></i> Médico</div>
                     <div class="modal-field-val" id="m-medico">—</div>
                 </div>
                 <div class="modal-field">
-                    <div class="modal-field-lbl"><i class="fa-solid fa-circle-dot"></i> Estado</div>
+                    <div class="modal-field-label"><i class="fa-solid fa-circle-dot"></i> Estado</div>
                     <div class="modal-field-val" id="m-estado">—</div>
                 </div>
                 <div class="modal-field full">
-                    <div class="modal-field-lbl"><i class="fa-regular fa-comment"></i> Motivo de consulta</div>
+                    <div class="modal-field-label"><i class="fa-regular fa-comment"></i> Motivo</div>
                     <div class="modal-field-val" id="m-motivo">—</div>
                 </div>
             </div>
         </div>
         <div class="modal-foot">
             <button class="btn-cerrar" onclick="closeModal()">Cerrar</button>
-            <a href="{% url 'paciente_general_citas' %}" class="btn-agendar">
-                <i class="fa-regular fa-calendar-check"></i> Ver todas las citas
+            <a href="{% url 'mis_citas' %}" class="btn-agendar">
+                <i class="fa-regular fa-calendar-check"></i> Ver todas
             </a>
         </div>
     </div>
@@ -556,7 +542,7 @@ document.querySelectorAll('.cita-item').forEach(function(item) {
     item.addEventListener('click', function() {
         const d = item.dataset;
         document.getElementById('m-esp').textContent       = d.esp;
-        document.getElementById('m-fecha-sub').textContent = d.fecha + ' · ' + d.hora;
+        document.getElementById('m-fecha-sub').textContent = d.fecha + ' • ' + d.hora;
         document.getElementById('m-fecha').textContent     = d.fecha;
         document.getElementById('m-hora').textContent      = d.hora;
         document.getElementById('m-medico').textContent    = 'Dr(a). ' + d.medico;

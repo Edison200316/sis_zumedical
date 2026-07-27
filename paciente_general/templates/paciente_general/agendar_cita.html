@@ -180,10 +180,20 @@
         <div class="sb-user-info"><p>Mi perfil</p><h3>{{ request.user.first_name }} {{ request.user.last_name }}</h3></div>
     </a>
     <nav class="sb-nav">
-        <div class="nav-lbl">Menú</div>
-        <a href="{% url 'paciente_general_dashboard' %}" class="nav-item"><i class="fa-solid fa-house"></i> Inicio</a>
-        <a href="{% url 'paciente_general_agendar' %}" class="nav-item active"><i class="fa-regular fa-calendar-plus"></i> Agendar Cita</a>
-        <a href="{% url 'paciente_general_citas' %}" class="nav-item"><i class="fa-regular fa-calendar-check"></i> Mis Citas
+        <div class="nav-lbl">General</div>
+        <a href="{% url 'paciente_general_dashboard' %}" class="nav-item">
+            <i class="fa-solid fa-house"></i> Inicio
+        </a>
+        <a href="{% url 'paciente_general_agendar' %}" class="nav-item active">
+            <i class="fa-regular fa-calendar-plus"></i> Agendar Cita
+        </a>
+        <a href="{% url 'paciente_general_citas' %}" class="nav-item">
+            <i class="fa-regular fa-calendar-check"></i> Mis Citas
+        </a>
+        <a href="{% url 'paciente_general_consultas' %}" class="nav-item">
+            <i class="fa-solid fa-file-medical"></i> Mis Consultas
+        </a>
+    </nav>
             {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
         </a>
         {% if request.user.paciente.estado_embarazo == 'ACTIVO' %}

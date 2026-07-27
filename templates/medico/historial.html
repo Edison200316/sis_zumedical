@@ -52,7 +52,7 @@
         .toast-close svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5}
 
         /* SIDEBAR */
-        .sidebar{width:var(--sw);min-width:var(--sw);min-height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:sticky;top:0;left:0;z-index:100;box-shadow:4px 0 20px rgba(138,37,99,.2);align-self:flex-start;height:100vh;}
+        .sidebar{width:var(--sw);min-width:var(--sw);min-height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:350;box-shadow:4px 0 20px rgba(138,37,99,.2);align-self:flex-start;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
         .sidebar-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
         .sidebar-brand-logo{width:44px;height:44px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .sidebar-brand-logo img{width:40px;height:40px;object-fit:contain}
@@ -79,7 +79,7 @@
         .btn-logout svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
 
         /* MAIN */
-        .main { flex:1; padding:2.5rem; min-height:100vh; opacity:0; animation:pageIn .4s ease .05s forwards; }
+        .main { flex:1; margin-left:var(--sw); padding:2.5rem; min-height:100vh; height:100vh; overflow-y:auto; -webkit-overflow-scrolling:touch; opacity:0; animation:pageIn .4s ease .05s forwards; }
 
         /* HEADER */
         .page-header { margin-bottom:1.75rem; }

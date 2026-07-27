@@ -11,6 +11,7 @@ class Usuario(AbstractUser):
         ('admin', 'Administrador'),
         ('medico', 'Medico'),
         ('enfermera', 'Enfermera'),
+        ('secretaria', 'Secretaria'),
         ('paciente', 'Paciente'),
     )
 

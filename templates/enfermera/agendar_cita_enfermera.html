@@ -710,11 +710,9 @@
  
     </main>
 
-    {{ medicos_especialidades|default:'[]'|json_script:"medicos-data" }}
-
     <script>
-        // Datos de médicos con sus especialidades (inyectados desde Django via json_script)
-        window.MEDICOS_ESPECIALIDADES = JSON.parse(document.getElementById('medicos-data').textContent);
+        // Datos de médicos con sus especialidades (inyectados desde Django)
+        window.MEDICOS_ESPECIALIDADES = {{ medicos_especialidades|safe }};
     </script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {

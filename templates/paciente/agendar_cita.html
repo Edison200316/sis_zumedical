@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-  <link rel="stylesheet" href="{% static 'css/sidebar_paciente.css' %}">
   <style>
     :root{
       --mg:#b03580;--mg-l:#cc4d99;--mg-d:#8a2563;
@@ -160,23 +160,38 @@
 <aside class="sidebar">
   <div class="sb-brand">
     <div class="sb-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical" /></div>
-    <div><h2>Zumedical</h2><span>Paciente</span></div>
+    <div class="sb-brand-text"><h2>Zumedical</h2><span>Embarazo</span></div>
   </div>
   <a href="{% url 'mi_perfil' %}" class="sb-user">
     <div class="sb-av">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}</div>
     <div class="sb-user-info"><p>Mi perfil</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
   </a>
   <nav class="sb-nav">
-    <div class="nav-lbl">Menú</div>
-    <a href="{% url 'paciente_dashboard' %}" class="nav-item">🏠 Inicio</a>
-    <a href="{% url 'paciente_general_agendar' %}" class="nav-item active">📅 Agendar Cita</a>
-    <a href="{% url 'paciente_general_citas' %}" class="nav-item">🗓 Mis Citas</a>
+    <div class="nav-lbl">Embarazo</div>
+    <a href="{% url 'paciente_dashboard' %}" class="nav-item">
+      <i class="fa-solid fa-house"></i> Inicio Embarazo
+    </a>
+    <a href="{% url 'agendar_cita' %}" class="nav-item active">
+      <i class="fa-regular fa-calendar-plus"></i> Agendar Cita
+    </a>
+    <a href="{% url 'ver_citas' %}" class="nav-item">
+      <i class="fa-regular fa-calendar-check"></i> Mis Citas
+    </a>
+    <a href="{% url 'mi_historial' %}" class="nav-item">
+      <i class="fa-solid fa-heart-pulse"></i> Controles Prenatales
+    </a>
     <div class="nav-lbl">Inteligencia Artificial</div>
-    <a href="{% url 'chatbot_page' %}" class="nav-item">💬 Asistente Virtual</a>
-    <a href="{% url 'evaluar_riesgo' %}" class="nav-item">🧬 Evaluación de Riesgo</a>
+    <a href="{% url 'chatbot_page' %}" class="nav-item">
+      <i class="fa-solid fa-comments"></i> Asistente Virtual
+    </a>
+    <a href="{% url 'evaluar_riesgo' %}" class="nav-item">
+      <i class="fa-solid fa-dna"></i> Evaluación de Riesgo
+    </a>
   </nav>
   <div class="sb-footer">
-    <a href="{% url 'logout' %}" class="btn-logout">🚪 Cerrar sesión</a>
+    <a href="{% url 'logout' %}" class="btn-logout">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión
+    </a>
   </div>
 </aside>
 

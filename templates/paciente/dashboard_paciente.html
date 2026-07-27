@@ -10,7 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-    <link rel="stylesheet" href="{% static 'css/sidebar_paciente.css' %}">
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
       html {
@@ -246,10 +245,10 @@
         <div class="sb-brand-text"><h2>Zumedical</h2><span>Embarazo</span></div>
     </div>
     <a href="{% url 'paciente_general_perfil' %}" class="sb-user">
-        <div class="sb-avatar">{{ user.first_name|first }}{{ user.last_name|first }}</div>
+        <div class="sb-avatar">U</div>
         <div class="sb-user-info">
             <p>Mi perfil</p>
-            <h3>{{ user.first_name }} {{ user.last_name }}</h3>
+            <h3>{{ user.get_full_name|default:user.username }}</h3>
         </div>
     </a>
     <nav class="sb-nav">
@@ -260,11 +259,11 @@
         <a href="{% url 'agendar_cita' %}" class="nav-item">
             <i class="fa-regular fa-calendar-plus"></i> Agendar Cita
         </a>
-        <a href="{% url 'mis_citas' %}" class="nav-item">
+        <a href="{% url 'ver_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Mis Citas
             {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
         </a>
-        <a href="{% url 'controles' %}" class="nav-item">
+        <a href="{% url 'mi_historial' %}" class="nav-item">
             <i class="fa-solid fa-heart-pulse"></i> Controles Prenatales
         </a>
         <div class="nav-lbl">Inteligencia Artificial</div>
@@ -273,10 +272,6 @@
         </a>
         <a href="{% url 'evaluar_riesgo' %}" class="nav-item">
             <i class="fa-solid fa-dna"></i> Evaluación de Riesgo
-        </a>
-        <div class="nav-lbl" style="margin-top:1.2rem">General</div>
-        <a href="{% url 'paciente_general_dashboard' %}" class="nav-item">
-            <i class="fa-solid fa-user"></i> Inicio General
         </a>
     </nav>
     <div class="sb-footer">
@@ -401,11 +396,11 @@
                         <div class="accion-ico"><i class="fa-regular fa-calendar-plus"></i></div>
                         <span class="accion-lbl">Agendar Cita</span>
                     </a>
-                    <a href="{% url 'mis_citas' %}" class="accion-btn">
+                    <a href="{% url 'ver_citas' %}" class="accion-btn">
                         <div class="accion-ico"><i class="fa-regular fa-calendar-check"></i></div>
                         <span class="accion-lbl">Mis Citas</span>
                     </a>
-                    <a href="{% url 'controles' %}" class="accion-btn">
+                    <a href="{% url 'mi_historial' %}" class="accion-btn">
                         <div class="accion-ico"><i class="fa-solid fa-heart-pulse"></i></div>
                         <span class="accion-lbl">Controles</span>
                     </a>
@@ -421,7 +416,7 @@
                 <div class="card-header-icon"><i class="fa-regular fa-clock-rotate-left"></i></div>
                 <h3>Últimas Citas</h3>
             </div>
-            <a href="{% url 'mis_citas' %}" class="card-badge">Ver todas →</a>
+            <a href="{% url 'ver_citas' %}" class="card-badge">Ver todas →</a>
         </div>
 
         {% if ultimas_citas %}
@@ -491,7 +486,7 @@
         </div>
         <div class="modal-foot">
             <button class="btn-cerrar" onclick="closeModal()">Cerrar</button>
-            <a href="{% url 'mis_citas' %}" class="btn-agendar">
+            <a href="{% url 'ver_citas' %}" class="btn-agendar">
                 <i class="fa-regular fa-calendar-check"></i> Ver todas
             </a>
         </div>

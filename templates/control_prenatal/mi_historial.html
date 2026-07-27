@@ -7,156 +7,271 @@
     <title>Zumedical - Mi Historial Prenatal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      html {
-        font-size: 16px !important;
-        -webkit-text-size-adjust: 100%;
-        -ms-text-size-adjust: 100%;
-        text-size-adjust: 100%;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-
-        :root {
-            --mg: #B03580; --mg-l: #CC4D99; --mg-d: #8A2563;
-            --mg-bg: #FBF0F7; --mg-border: #E8AAD4;
-            --text: #2A1020; --muted: #8A6070; --white: #fff; --bg: #FDF5FA;
-            --sw: 260px;
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html {
+            font-size: 16px !important;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
-        body { font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; background:var(--bg); min-height:100vh; }
-        @keyframes pageIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
-        
-        /* HEADER */
-        .header { background:linear-gradient(135deg,var(--mg-d),var(--mg-l)); color:white; padding:1.5rem 2rem; }
-        .header-content { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
-        .header-logo { display:flex; align-items:center; gap:1rem; }
-        .header-logo-img { width:50px; height:50px; border-radius:50%; background:white; display:flex; align-items:center; justify-content:center; }
-        .header-logo-img img { width:40px; height:40px; object-fit:contain; }
-        .header-title h1 { font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size:1.75rem; }
-        .header-title p { font-size:.9rem; opacity:.9; }
-        .header-actions a { display:inline-flex; align-items:center; gap:.5rem; padding:.6rem 1.2rem; background:rgba(255,255,255,.2); color:white; border-radius:10px; text-decoration:none; transition:all .2s; }
-        .header-actions a:hover { background:rgba(255,255,255,.3); }
 
-        /* MAIN */
-        .main { padding:2rem; opacity:0; animation:pageIn .4s ease .05s forwards; }
+        :root{
+            --mg:#B03580;--mg-l:#CC4D99;--mg-d:#8A2563;
+            --mg-bg:#FBF0F7;--mg-border:#E8AAD4;
+            --text:#2A1020;--muted:#8A6070;--white:#fff;--bg:#FDF5FA;
+            --sw:260px;
+            --green:#1a7a4a;--green-bg:#edfaf3;--green-border:#a8dfc0;
+            --amber:#b06a00;--amber-bg:#fff8ed;--amber-border:#f5d08a;
+            --red:#b03030;--red-bg:#fdf0f0;--red-border:#f0b8b8;
+            --blue:#1565c0;--blue-bg:#e3f2fd;--blue-border:#90caf9;
+        }
+        html,body{height:100%}
+        body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+        @keyframes fadeIn{to{opacity:1}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-        /* CARD */
-        .card { background:var(--white); border-radius:16px; border:1px solid var(--mg-border); padding:1.5rem; margin-bottom:1.5rem; }
-        .card-header { display:flex; align-items:center; gap:.75rem; margin-bottom:1.25rem; padding-bottom:1rem; border-bottom:1px solid var(--mg-border); }
-        .card-header svg { width:24px; height:24px; stroke:var(--mg); fill:none; stroke-width:1.8; }
-        .card-header h2 { font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size:1.3rem; font-weight:600; color:var(--text); }
-        .empty-state { text-align:center; padding:3rem; color:var(--muted); }
+        /* ── SIDEBAR ── */
+        .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:4px 0 24px rgba(138,37,99,.22);transition:transform .3s ease;overflow:hidden}
+        .sb-brand{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
+        .sb-logo{width:42px;height:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
+        .sb-logo img{width:38px;height:38px;object-fit:contain}
+        .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+        .sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.1em;text-transform:uppercase}
+        .sb-user{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.7rem;text-decoration:none;transition:background .2s;cursor:pointer}
+        .sb-user:hover{background:rgba(255,255,255,.1)}
+        .sb-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase}
+        .sb-user-info p{font-size:.7rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.1rem}
+        .sb-user-info h3{font-size:.88rem;font-weight:500;color:white}
+        .sb-nav{flex:1;padding:1rem .75rem;overflow-y:auto}
+        .nav-lbl{font-size:.68rem;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.75rem}
+        .nav-item{display:flex;align-items:center;gap:.7rem;padding:.72rem 1rem;border-radius:10px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.88rem;transition:all .2s;margin-bottom:.2rem}
+        .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white}
+        .nav-item i{width:18px;text-align:center;font-size:15px}
+        .nav-badge{margin-left:auto;background:#e74c3c;color:white;font-size:.68rem;font-weight:600;padding:.2rem .55rem;border-radius:999px;min-width:20px;text-align:center}
+        .sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12)}
+        .btn-logout{display:flex;align-items:center;gap:.7rem;padding:.72rem 1rem;border-radius:10px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;transition:all .2s}
+        .btn-logout:hover{background:rgba(255,255,255,.15);color:white}
 
-        .grid-2 { display:grid; grid-template-columns:repeat(2,1fr); gap:1rem; }
-        .grid-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; }
-        @media(max-width:768px) { .grid-2, .grid-3 { grid-template-columns:1fr; } }
-        .stat-card { background:var(--mg-bg); border:1px solid var(--mg-border); border-radius:12px; padding:1rem; }
-        .stat-label { font-size:.75rem; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
-        .stat-value { font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size:1.5rem; font-weight:600; color:var(--mg-d); margin-top:.25rem; }
+        /* ── MOBILE TOPBAR ── */
+        .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300}
+        .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
+        .mobile-topbar-brand img{width:30px;height:30px;background:white;border-radius:50%;padding:2px;object-fit:contain}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
+        .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+        .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
+        .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+        .hamburger.open span:nth-child(2){opacity:0}
+        .hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+        .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s}
+        .sidebar-overlay.active{opacity:1;pointer-events:auto}
+
+        /* ── MAIN ── */
+        .main{margin-left:var(--sw);flex:1;padding:2.5rem;height:100vh;overflow-y:auto}
+
+        /* ── PAGE HEADER ── */
+        .page-header{margin-bottom:2rem;animation:slideUp .4s ease .1s both}
+        .page-header h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2.2rem;font-weight:700;color:var(--text);line-height:1.1;margin-bottom:.3rem}
+        .page-header .sub{color:var(--muted);font-size:.82rem;display:flex;align-items:center;gap:.4rem}
+
+        /* ── CARD ── */
+        .card{background:var(--white);border-radius:16px;border:1px solid var(--mg-border);padding:1.5rem;margin-bottom:1.5rem;animation:slideUp .4s ease .15s both}
+        .card-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--mg-border)}
+        .card-header i{color:var(--mg);font-size:20px;width:24px;text-align:center}
+        .card-header h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.3rem;font-weight:600;color:var(--text)}
+        .empty-state{text-align:center;padding:3rem;color:var(--muted)}
+        .empty-state i{font-size:2.5rem;color:var(--mg-border);display:block;margin-bottom:.75rem}
+        .empty-state h3{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;color:var(--text);margin-bottom:.5rem;font-size:1.2rem}
+
+        .grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+        .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+        @media(max-width:768px){.grid-2,.grid-3{grid-template-columns:1fr}}
+        .stat-card{background:var(--mg-bg);border:1px solid var(--mg-border);border-radius:12px;padding:1rem}
+        .stat-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+        .stat-value{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.5rem;font-weight:600;color:var(--mg-d);margin-top:.25rem}
 
         /* CONTROLS LIST */
-        .control-item { border:1px solid var(--mg-border); border-radius:12px; padding:1rem; margin-bottom:1rem; display:flex; flex-direction:column; gap:.75rem; transition:all .15s; background:var(--white); }
-        .control-item:hover { border-color:var(--mg); background:var(--mg-bg); }
-        .control-top { display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap; }
-        .control-date { font-weight:600; color:var(--mg); font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size:1.15rem; }
-        .control-semanas { background:var(--mg-bg); color:var(--mg-d); padding:.25rem .75rem; border-radius:999px; font-size:.8rem; font-weight:500; }
-        .control-stats { display:flex; gap:1.5rem; flex-wrap:wrap; font-size:.9rem; color:var(--text); }
-        .control-stats span strong { color:var(--mg-d); }
-        .control-obs { color:var(--muted); font-size:.85rem; margin-top:.5rem; padding-top:.5rem; border-top:1px solid var(--mg-border); }
+        .control-item{border:1px solid var(--mg-border);border-radius:12px;padding:1rem;margin-bottom:1rem;display:flex;flex-direction:column;gap:.75rem;transition:all .15s;background:var(--white)}
+        .control-item:hover{border-color:var(--mg);background:var(--mg-bg)}
+        .control-top{display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+        .control-date{font-weight:600;color:var(--mg);font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.15rem}
+        .control-semanas{background:var(--mg-bg);color:var(--mg-d);padding:.25rem .75rem;border-radius:999px;font-size:.8rem;font-weight:500}
+        .control-stats{display:flex;gap:1.5rem;flex-wrap:wrap;font-size:.9rem;color:var(--text)}
+        .control-stats span strong{color:var(--mg-d)}
+        .control-obs{color:var(--muted);font-size:.85rem;margin-top:.5rem;padding-top:.5rem;border-top:1px solid var(--mg-border)}
 
-        .section { display:none; }
-        .section.active { display:block; }
-        @media(max-width:768px) {
-            .header { padding:1rem; }
-            .main { padding:1rem; }
+        /* ── RESPONSIVE ── */
+        @media(max-width:768px){
+            body{flex-direction:column}
+            .sidebar{position:fixed;top:64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);z-index:250}
+            .sidebar.open{transform:translateX(0)}
+            .sidebar-overlay{display:block;z-index:200}
+            .mobile-topbar{display:flex}
+            .main{margin-left:0;padding:1.1rem;padding-top:calc(1.1rem + 64px);height:auto;overflow-y:visible}
+            .page-header h1{font-size:1.75rem}
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <div class="header-content">
-            <div class="header-logo">
-                <div class="header-logo-img">
-                    <img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical">
-                </div>
-                <div class="header-title">
-                    <h1>Mi Historial Prenatal</h1>
-                    <p>{{ request.user.get_full_name|default:request.user.username }}</p>
-                </div>
-            </div>
-            <div class="header-actions">
-                <a href="{% url 'logout' %}">
-                    <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Cerrar Sesión
-                </a>
-            </div>
-        </div>
-    </header>
 
-    <main class="main">
-        {% if not historia %}
-        <div class="card">
-            <div class="empty-state">
-                <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
-                <h3 style="font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif; color:var(--text); margin-bottom:.5rem;">Aún no tienes historia clínica registrada</h3>
-                <p>Tu médico registrará tu historia clínica en tu primera consulta</p>
+<!-- OVERLAY -->
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- MOBILE TOPBAR -->
+<div class="mobile-topbar">
+    <div class="mobile-topbar-brand">
+        <img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical">
+        <span>Zumedical</span>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+    </button>
+</div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+        <div class="sb-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
+        <div class="sb-brand-text"><h2>Zumedical</h2><span>Embarazo</span></div>
+    </div>
+    <a href="{% url 'paciente_general_perfil' %}" class="sb-user">
+        <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}U{% endif %}</div>
+        <div class="sb-user-info">
+            <p>Mi perfil</p>
+            <h3>{{ user.get_full_name|default:user.username }}</h3>
+        </div>
+    </a>
+    <nav class="sb-nav">
+        <div class="nav-lbl">Embarazo</div>
+        <a href="{% url 'paciente_dashboard' %}" class="nav-item">
+            <i class="fa-solid fa-house"></i> Inicio Embarazo
+        </a>
+        <a href="{% url 'agendar_cita' %}" class="nav-item">
+            <i class="fa-regular fa-calendar-plus"></i> Agendar Cita
+        </a>
+        <a href="{% url 'ver_citas' %}" class="nav-item">
+            <i class="fa-regular fa-calendar-check"></i> Mis Citas
+            {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
+        </a>
+        <a href="{% url 'mi_historial' %}" class="nav-item active">
+            <i class="fa-solid fa-heart-pulse"></i> Controles Prenatales
+        </a>
+        <div class="nav-lbl">Inteligencia Artificial</div>
+        <a href="{% url 'chatbot_page' %}" class="nav-item">
+            <i class="fa-solid fa-comments"></i> Asistente Virtual
+        </a>
+        <a href="{% url 'evaluar_riesgo' %}" class="nav-item">
+            <i class="fa-solid fa-dna"></i> Evaluación de Riesgo
+        </a>
+    </nav>
+    <div class="sb-footer">
+        <a href="{% url 'logout' %}" class="btn-logout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+    <!-- PAGE HEADER -->
+    <div class="page-header">
+        <h1>Mi Historial Prenatal</h1>
+        <p class="sub">
+            <i class="fa-solid fa-heart-pulse" style="color:var(--mg)"></i>
+            Controles prenatales y seguimiento del embarazo
+        </p>
+    </div>
+
+    {% if not historia %}
+    <div class="card">
+        <div class="empty-state">
+            <i class="fa-regular fa-folder-open"></i>
+            <h3>Aún no tienes historia clínica registrada</h3>
+            <p>Tu médico registrará tu historia clínica en tu primera consulta</p>
+        </div>
+    </div>
+    {% else %}
+    
+    <!-- DATOS DE LA HISTORIA -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fa-solid fa-file-medical"></i>
+            <h2>Mi Historia Clínica</h2>
+        </div>
+        <div class="grid-3">
+            <div class="stat-card">
+                <div class="stat-label">Fecha de registro</div>
+                <div class="stat-value">{{ historia.fecha_registro|date:"d/m/Y" }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">IMC inicial</div>
+                <div class="stat-value">{{ historia.imc_inicial|default:"—" }}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Fórmula obstétrica</div>
+                <div class="stat-value">{{ historia.gestas }}G {{ historia.partos }}P {{ historia.cesareas }}C {{ historia.abortos }}A</div>
             </div>
         </div>
-        {% else %}
-        
-        <!-- DATOS DE LA HISTORIA
-        <div class="card">
-            <div class="card-header">
-                <svg viewBox="0 0 24 24"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/></svg>
-                <h2>Mi Historia Clínica</h2>
-            </div>
-            <div class="grid-3">
-                <div class="stat-card">
-                    <div class="stat-label">Fecha de registro</div>
-                    <div class="stat-value">{{ historia.fecha_registro|date:"d/m/Y" }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">IMC inicial</div>
-                    <div class="stat-value">{{ historia.imc_inicial|default:"—" }}</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-label">Fórmula obstétrica</div>
-                    <div class="stat-value">{{ historia.gestas }}G {{ historia.partos }}P {{ historia.cesareas }}C {{ historia.abortos }}A</div>
-                </div>
-            </div>
+    </div>
+    
+    <!-- CONTROLES PRENATALES -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fa-solid fa-notes-medical"></i>
+            <h2>Mis Controles Prenatales ({{ controles|length }})</h2>
         </div>
-        
-        <!-- CONTROLES PRENATALES
-        <div class="card">
-            <div class="card-header">
-                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-                <h2>Mis Controles Prenatales ({{ controles|length }})</h2>
+        {% if controles %}
+        {% for control in controles %}
+        <div class="control-item">
+            <div class="control-top">
+                <span class="control-date">{{ control.fecha|date:"d/m/Y" }}</span>
+                <span class="control-semanas">{{ control.semanas_gestacion }} semanas</span>
             </div>
-            {% if controles %}
-            {% for control in controles %}
-            <div class="control-item">
-                <div class="control-top">
-                    <span class="control-date">{{ control.fecha|date:"d/m/Y" }}</span>
-                    <span class="control-semanas">{{ control.semanas_gestacion }} semanas</span>
-                </div>
-                <div class="control-stats">
-                    <span><strong>PA:</strong> {{ control.presion_arterial|default:"—" }}</span>
-                    <span><strong>Peso:</strong> {{ control.peso|default:"—" }} kg</span>
-                </div>
-                {% if control.observaciones %}
-                <div class="control-obs">{{ control.observaciones }}</div>
-                {% endif %}
+            <div class="control-stats">
+                <span><strong>PA:</strong> {{ control.presion_arterial|default:"—" }}</span>
+                <span><strong>Peso:</strong> {{ control.peso|default:"—" }} kg</span>
             </div>
-            {% endfor %}
-            {% else %}
-            <div class="empty-state" style="padding:1.5rem;">
-                <p>Aún no tienes controles prenatales registrados</p>
-            </div>
+            {% if control.observaciones %}
+            <div class="control-obs">{{ control.observaciones }}</div>
             {% endif %}
         </div>
+        {% endfor %}
+        {% else %}
+        <div class="empty-state" style="padding:1.5rem;">
+            <p>Aún no tienes controles prenatales registrados</p>
+        </div>
         {% endif %}
-    </main>
+    </div>
+    {% endif %}
+</main>
+
+<script>
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.getElementById('hamburger');
+    const overlay = document.getElementById('overlay');
+    
+    sidebar.classList.toggle('open');
+    hamburger.classList.toggle('open');
+    overlay.classList.toggle('active');
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const hamburger = document.getElementById('hamburger');
+    const overlay = document.getElementById('overlay');
+    
+    sidebar.classList.remove('open');
+    hamburger.classList.remove('open');
+    overlay.classList.remove('active');
+}
+</script>
+
 </body>
 </html>

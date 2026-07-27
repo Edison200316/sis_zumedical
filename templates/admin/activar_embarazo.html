@@ -1,0 +1,199 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activar Embarazo — Zumedical</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --mg:#B03580; --mg-d:#8A2563; --mg-l:#CC4D99;
+            --mg-bg:#FBF0F7; --mg-border:#E8AAD4;
+            --text:#2A1020; --muted:#8A6070; --white:#fff; --bg:#FDF5FA;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, var(--mg-d), var(--mg));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(138, 37, 99, 0.3);
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--mg-d);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--mg-border);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--mg);
+            box-shadow: 0 0 0 3px rgba(176, 53, 128, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--mg-d), var(--mg-l));
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(176, 53, 128, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--muted);
+            border: 2px solid var(--mg-border);
+        }
+
+        .btn-secondary:hover {
+            color: var(--text);
+            border-color: var(--mg);
+        }
+
+        .patient-info {
+            background: var(--mg-bg);
+            border: 1px solid var(--mg-border);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .patient-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--mg-d), var(--mg-l));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .patient-details h3 {
+            font-size: 0.95rem;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .patient-details p {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><i class="fa-solid fa-person-pregnant"></i> Activar Embarazo</h1>
+        <p>Registra un nuevo embarazo para esta paciente</p>
+    </div>
+
+    <div class="patient-info">
+        <div class="patient-avatar">
+            {{ paciente.usuario.first_name|first }}{{ paciente.usuario.last_name|first }}
+        </div>
+        <div class="patient-details">
+            <h3>{{ paciente.usuario.get_full_name }}</h3>
+            <p>Cédula: {{ paciente.cedula }}</p>
+        </div>
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="fecha_inicio">Fecha de Inicio del Embarazo</label>
+            <input type="date" id="fecha_inicio" name="fecha_inicio" required>
+        </div>
+
+        <div class="form-group">
+            <label for="semanas_gestacion">Semanas de Gestación Actual</label>
+            <input type="number" id="semanas_gestacion" name="semanas_gestacion" min="0" max="42" value="0" required>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-check"></i> Activar Embarazo
+            </button>
+            <a href="{% url 'ficha_paciente' paciente.id %}" class="btn btn-secondary">
+                <i class="fa-solid fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

@@ -1141,9 +1141,7 @@
       </div>
       <div class="sb-user">
         <div class="sb-avatar">
-          {% if request.user.first_name %}{{ request.user.first_name|slice:":1"
-          }}{{ request.user.last_name|slice:":1" }}{% else %}{{
-          request.user.username|slice:":1"|upper }}{% endif %}
+          {% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}
         </div>
         <div class="sb-user-info">
           <p>Sesión activa</p>
@@ -1168,10 +1166,8 @@
           ><i class="fa-solid fa-hospital-user"></i> Pacientes</a
         >
         <a href="{% url 'todas_citas' %}" class="nav-item active">
-          <i class="fa-regular fa-calendar-check"></i> Citas {% if
-          citas_pendientes %}<span class="nav-badge-alert"
-            >{{ citas_pendientes }}</span
-          >{% endif %}
+          <i class="fa-regular fa-calendar-check"></i> Citas
+          {% if citas_pendientes %}<span class="nav-badge-alert">{{ citas_pendientes }}</span>{% endif %}
         </a>
         <a href="{% url 'controles_admin' %}" class="nav-item"
           ><i class="fa-solid fa-heart-pulse"></i> Controles Prenatales</a
@@ -1334,10 +1330,34 @@
       <script id="citas-data" type="application/json">
         [
           {% for c in citas_prenatales %}
-            {"id":{{ c.id }},"paciente":"{{ c.paciente.get_full_name|default:c.paciente.username|escapejs }}","paciente_ini":"{{ c.paciente.first_name|slice:':1'|upper|escapejs }}{{ c.paciente.last_name|slice:':1'|escapejs }}","medico":"{{ c.medico.get_full_name|default:c.medico.username|escapejs }}","fecha":"{{ c.fecha|date:'Y-m-d' }}","fecha_display":"{{ c.fecha|date:'d/m/Y' }}","hora":"{{ c.hora|time:'H:i' }}","motivo":"{{ c.motivo|default:''|escapejs }}","estado":"{{ c.estado }}","tipo_paciente":"prenatal","delete_url":"{% url 'admin_eliminar_cita' c.id %}"}{% if not forloop.last or citas_generales %},{% endif %}
+            {
+              "id":{{ c.id }},
+              "paciente":"{{ c.paciente.get_full_name|default:c.paciente.username|escapejs }}",
+              "paciente_ini":"{% if c.paciente.first_name %}{{ c.paciente.first_name|slice:':1'|upper }}{% endif %}{% if c.paciente.last_name %}{{ c.paciente.last_name|slice:':1'|upper }}{% endif %}{% if not c.paciente.first_name and not c.paciente.last_name %}{{ c.paciente.username|slice:':1'|upper }}{% endif %}",
+              "medico":"{{ c.medico.get_full_name|default:c.medico.username|escapejs }}",
+              "fecha":"{{ c.fecha|date:'Y-m-d' }}",
+              "fecha_display":"{{ c.fecha|date:'d/m/Y' }}",
+              "hora":"{{ c.hora|time:'H:i' }}",
+              "motivo":"{{ c.motivo|default:''|escapejs }}",
+              "estado":"{{ c.estado }}",
+              "tipo_paciente":"prenatal",
+              "delete_url":"{% url 'admin_eliminar_cita' c.id %}"
+            }{% if not forloop.last or citas_generales %},{% endif %}
           {% endfor %}
           {% for c in citas_generales %}
-            {"id":{{ c.id }},"paciente":"{{ c.paciente.get_full_name|default:c.paciente.username|escapejs }}","paciente_ini":"{{ c.paciente.first_name|slice:':1'|upper|escapejs }}{{ c.paciente.last_name|slice:':1'|escapejs }}","medico":"{{ c.medico.get_full_name|default:c.medico.username|escapejs }}","fecha":"{{ c.fecha|date:'Y-m-d' }}","fecha_display":"{{ c.fecha|date:'d/m/Y' }}","hora":"{{ c.hora|time:'H:i' }}","motivo":"{{ c.motivo|default:''|escapejs }}","estado":"{{ c.estado }}","tipo_paciente":"general","delete_url":"{% url 'admin_eliminar_cita' c.id %}"}{% if not forloop.last %},{% endif %}
+            {
+              "id":{{ c.id }},
+              "paciente":"{{ c.paciente.get_full_name|default:c.paciente.username|escapejs }}",
+              "paciente_ini":"{% if c.paciente.first_name %}{{ c.paciente.first_name|slice:':1'|upper }}{% endif %}{% if c.paciente.last_name %}{{ c.paciente.last_name|slice:':1'|upper }}{% endif %}{% if not c.paciente.first_name and not c.paciente.last_name %}{{ c.paciente.username|slice:':1'|upper }}{% endif %}",
+              "medico":"{{ c.medico.get_full_name|default:c.medico.username|escapejs }}",
+              "fecha":"{{ c.fecha|date:'Y-m-d' }}",
+              "fecha_display":"{{ c.fecha|date:'d/m/Y' }}",
+              "hora":"{{ c.hora|time:'H:i' }}",
+              "motivo":"{{ c.motivo|default:''|escapejs }}",
+              "estado":"{{ c.estado }}",
+              "tipo_paciente":"general",
+              "delete_url":"{% url 'admin_eliminar_cita' c.id %}"
+            }{% if not forloop.last %},{% endif %}
           {% endfor %}
         ]
       </script>

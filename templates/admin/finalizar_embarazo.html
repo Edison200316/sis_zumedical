@@ -1,0 +1,250 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalizar Embarazo — Zumedical</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --mg:#B03580; --mg-d:#8A2563; --mg-l:#CC4D99;
+            --mg-bg:#FBF0F7; --mg-border:#E8AAD4;
+            --text:#2A1020; --muted:#8A6070; --white:#fff; --bg:#FDF5FA;
+        }
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, var(--mg-d), var(--mg));
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(138, 37, 99, 0.3);
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--mg-d);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid var(--mg-border);
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: 'DM Sans', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--mg);
+            box-shadow: 0 0 0 3px rgba(176, 53, 128, 0.1);
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(5, 150, 105, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--white);
+            color: var(--muted);
+            border: 2px solid var(--mg-border);
+        }
+
+        .btn-secondary:hover {
+            color: var(--text);
+            border-color: var(--mg);
+        }
+
+        .patient-info {
+            background: var(--mg-bg);
+            border: 1px solid var(--mg-border);
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .patient-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--mg-d), var(--mg-l));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+
+        .patient-details h3 {
+            font-size: 0.95rem;
+            color: var(--text);
+            margin-bottom: 3px;
+        }
+
+        .patient-details p {
+            font-size: 0.8rem;
+            color: var(--muted);
+        }
+
+        .embarazo-info {
+            background: #edf9f0;
+            border: 1px solid #a8dfc0;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            color: #1a7a4a;
+        }
+
+        @media(max-width:600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1><i class="fa-solid fa-check-circle"></i> Finalizar Embarazo</h1>
+        <p>Registra el resultado del embarazo</p>
+    </div>
+
+    <div class="patient-info">
+        <div class="patient-avatar">
+            {{ embarazo.paciente.usuario.first_name|first }}{{ embarazo.paciente.usuario.last_name|first }}
+        </div>
+        <div class="patient-details">
+            <h3>{{ embarazo.paciente.usuario.get_full_name }}</h3>
+            <p>Embarazo desde: {{ embarazo.fecha_inicio|date:"d/m/Y" }}</p>
+        </div>
+    </div>
+
+    <div class="embarazo-info">
+        <i class="fa-solid fa-info-circle"></i> Este embarazo será marcado como finalizado. El historial se guardará permanentemente.
+    </div>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="fecha_parto">Fecha de Parto</label>
+                <input type="date" id="fecha_parto" name="fecha_parto" required>
+            </div>
+
+            <div class="form-group">
+                <label for="semanas_gestacion_fin">Semanas de Gestación al Parto</label>
+                <input type="number" id="semanas_gestacion_fin" name="semanas_gestacion_fin" min="0" max="42" value="{{ embarazo.semanas_gestacion_inicio }}" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="tipo_parto">Tipo de Parto</label>
+            <select id="tipo_parto" name="tipo_parto" required>
+                <option value="">-- Selecciona tipo --</option>
+                <option value="normal">Parto Normal</option>
+                <option value="cesarea">Cesárea</option>
+                <option value="induccion">Inducción</option>
+                <option value="otro">Otro</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="observaciones">Observaciones del Parto</label>
+            <textarea id="observaciones" name="observaciones" placeholder="Agrega observaciones o notas importantes..."></textarea>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-save"></i> Finalizar Embarazo
+            </button>
+            <a href="{% url 'ficha_paciente' embarazo.paciente.id %}" class="btn btn-secondary">
+                <i class="fa-solid fa-times"></i> Cancelar
+            </a>
+        </div>
+    </form>
+</div>
+
+</body>
+</html>

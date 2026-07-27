@@ -1,0 +1,42 @@
+<!-- SIDEBAR PRENATAL ESTÁNDAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+        <div class="sb-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
+        <div class="sb-brand-text"><h2>Zumedical</h2><span>Embarazo</span></div>
+    </div>
+    <a href="{% url 'paciente_general_perfil' %}" class="sb-user">
+        <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}U{% endif %}</div>
+        <div class="sb-user-info">
+            <p>Mi perfil</p>
+            <h3>{{ user.get_full_name|default:user.username }}</h3>
+        </div>
+    </a>
+    <nav class="sb-nav">
+        <div class="nav-lbl">Embarazo</div>
+        <a href="{% url 'paciente_dashboard' %}" class="nav-item {% if request.path == '/paciente-dashboard/' %}active{% endif %}">
+            <i class="fa-solid fa-house"></i> Inicio Embarazo
+        </a>
+        <a href="{% url 'agendar_cita' %}" class="nav-item {% if '/agendar-cita/' in request.path %}active{% endif %}">
+            <i class="fa-regular fa-calendar-plus"></i> Agendar Cita
+        </a>
+        <a href="{% url 'ver_citas' %}" class="nav-item {% if '/mis-citas/' in request.path or '/ver-citas/' in request.path %}active{% endif %}">
+            <i class="fa-regular fa-calendar-check"></i> Mis Citas
+            {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
+        </a>
+        <a href="{% url 'mi_historial' %}" class="nav-item {% if '/mi-historial/' in request.path or '/historial/' in request.path %}active{% endif %}">
+            <i class="fa-solid fa-heart-pulse"></i> Controles Prenatales
+        </a>
+        <div class="nav-lbl">Inteligencia Artificial</div>
+        <a href="{% url 'chatbot_page' %}" class="nav-item {% if '/chatbot/' in request.path %}active{% endif %}">
+            <i class="fa-solid fa-comments"></i> Asistente Virtual
+        </a>
+        <a href="{% url 'evaluar_riesgo' %}" class="nav-item {% if '/evaluar-riesgo/' in request.path or '/prediccion/' in request.path %}active{% endif %}">
+            <i class="fa-solid fa-dna"></i> Evaluación de Riesgo
+        </a>
+    </nav>
+    <div class="sb-footer">
+        <a href="{% url 'logout' %}" class="btn-logout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión
+        </a>
+    </div>
+</aside>

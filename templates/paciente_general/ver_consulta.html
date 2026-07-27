@@ -1,0 +1,317 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consulta — Zumedical</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'css/sidebar_paciente.css' %}">
+    <style>
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        html {font-size: 16px !important;}
+        :root{--mg:#B03580;--mg-l:#CC4D99;--mg-d:#8A2563;--mg-bg:#FBF0F7;--mg-border:#E8AAD4;--text:#2A1020;--muted:#8A6070;--white:#fff;--bg:#FDF5FA;--sw:260px;}
+        html,body{height:100%}
+        body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+        @keyframes fadeIn{to{opacity:1}}
+        @keyframes slideUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+
+        /* SIDEBAR */
+        .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:4px 0 24px rgba(138,37,99,.22);overflow:hidden}
+        .sb-brand{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
+        .sb-logo{width:42px;height:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+        .sb-logo img{width:38px;height:38px;object-fit:contain}
+        .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+        .sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.1em;text-transform:uppercase}
+        .sb-user{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.7rem;text-decoration:none;cursor:pointer}
+        .sb-avatar{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase}
+        .sb-user-info p{font-size:.7rem;color:rgba(255,255,255,.55);text-transform:uppercase;margin-bottom:.1rem}
+        .sb-user-info h3{font-size:.88rem;font-weight:500;color:white}
+        .sb-nav{flex:1;padding:1rem .75rem;overflow-y:auto}
+        .nav-item{display:flex;align-items:center;gap:.7rem;padding:.72rem 1rem;border-radius:10px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.88rem;transition:all .2s;margin-bottom:.2rem}
+        .nav-item.active{background:rgba(255,255,255,.18);color:white}
+        .nav-item i{width:18px;text-align:center;font-size:15px}
+        .sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12)}
+        .btn-logout{display:flex;align-items:center;gap:.7rem;padding:.72rem 1rem;border-radius:10px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;transition:all .2s}
+
+        /* MAIN */
+        .main{margin-left:var(--sw);flex:1;padding:2.5rem;height:100vh;overflow-y:auto}
+
+        /* PAGE HEADER */
+        .page-header{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:2rem}
+        .page-header h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2rem;font-weight:700;color:var(--text)}
+        .btn-agendar{display:inline-flex;align-items:center;gap:.4rem;padding:.65rem 1.3rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;border-radius:999px;font-size:.85rem;font-weight:500;cursor:pointer;text-decoration:none;transition:opacity .2s}
+
+        /* CONTENT CARD */
+        .content-card{background:var(--white);border-radius:18px;border:1px solid var(--mg-border);padding:2rem;margin-bottom:2rem;box-shadow:0 4px 16px rgba(176,53,128,.08);animation:slideUp .4s ease .2s both}
+
+        /* SECTION */
+        .section{margin-bottom:2rem;padding-bottom:2rem;border-bottom:1px solid var(--mg-border)}
+        .section:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+        .section-title{display:flex;align-items:center;gap:.6rem;font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.3rem;font-weight:700;color:var(--mg-d);margin-bottom:1rem}
+        .section-title i{font-size:1.3rem}
+
+        /* INFO GRID */
+        .info-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1rem}
+        .info-item{display:flex;flex-direction:column;gap:.3rem}
+        .info-label{font-size:.75rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+        .info-value{font-size:.95rem;color:var(--text);font-weight:500}
+
+        /* VITALES TABLE */
+        .vitales-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.8rem}
+        .vital{background:linear-gradient(135deg,#fce7f3 0%,#fbf0f7 100%);border:1px solid var(--mg-border);border-radius:10px;padding:1rem;text-align:center}
+        .vital-label{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem}
+        .vital-value{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.4rem;font-weight:700;color:var(--text)}
+        .vital-unit{font-size:.65rem;color:var(--muted);font-weight:500}
+
+        /* LISTA */
+        .content-list{list-style:none;padding:0}
+        .content-list li{display:flex;align-items:flex-start;gap:.8rem;padding:.8rem 1rem;background:linear-gradient(135deg,#fce7f3 0%,#fbf0f7 100%);border:1px solid var(--mg-border);border-radius:10px;margin-bottom:.6rem;font-size:.9rem;color:var(--text);line-height:1.5}
+        .content-list li i{color:var(--mg);font-size:1.1rem;flex-shrink:0;margin-top:.1rem}
+
+        /* BUTTONS */
+        .button-group{display:flex;gap:1rem;flex-wrap:wrap;margin-top:2rem}
+        .btn{padding:.8rem 1.6rem;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem}
+        .btn-primary{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white}
+        .btn-primary:hover{opacity:.88}
+        .btn-secondary{background:var(--white);color:var(--text);border:1px solid var(--mg-border)}
+        .btn-secondary:hover{background:var(--mg-bg)}
+
+        /* RESPONSIVE */
+        @media(max-width:768px){
+            .main{margin-left:0;padding:1.25rem}
+            .page-header{flex-direction:column}
+            .info-grid{grid-template-columns:1fr}
+        }
+    </style>
+</head>
+<body>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+        <div class="sb-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
+        <div class="sb-brand-text"><h2>Zumedical</h2><span>Paciente</span></div>
+    </div>
+    <a href="{% url 'paciente_general_perfil' %}" class="sb-user">
+        <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}U{% endif %}</div>
+        <div class="sb-user-info">
+            <p>Mi perfil</p>
+            <h3>{{ user.get_full_name|default:user.username }}</h3>
+        </div>
+    </a>
+    <nav class="sb-nav">
+        <div class="nav-item" style="opacity:.5;cursor:default">
+            <i class="fa-solid fa-arrow-left"></i> Atrás
+        </div>
+        <a href="{% url 'paciente_general_consultas' %}" class="nav-item">
+            <i class="fa-solid fa-file-medical"></i> Mis Consultas
+        </a>
+    </nav>
+    <div class="sb-footer">
+        <a href="{% url 'logout' %}" class="btn-logout">
+            <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión
+        </a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+    <div class="page-header">
+        <div>
+            <h1>Detalle de Consulta</h1>
+            <p style="font-size:.85rem;color:var(--muted);margin-top:.5rem">Consulta del {{ consulta.fecha|date:"d \d\e F \d\e Y" }}</p>
+        </div>
+        <a href="{% url 'paciente_general_descargar_consulta' consulta.id %}" class="btn-agendar">
+            <i class="fa-solid fa-download"></i> Descargar PDF
+        </a>
+    </div>
+
+    <!-- INFORMACIÓN GENERAL -->
+    <div class="content-card">
+        <div class="section">
+            <div class="section-title">
+                <i class="fa-solid fa-stethoscope"></i> Información General
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Médico</div>
+                    <div class="info-value">{{ consulta.medico.get_full_name|default:"No disponible" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Fecha de Consulta</div>
+                    <div class="info-value">{{ consulta.fecha|date:"d/m/Y" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">IMC</div>
+                    <div class="info-value">{{ consulta.imc|default:"No calculado" }}</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Peso</div>
+                    <div class="info-value">{{ consulta.peso|default:"N/A" }} kg</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MOTIVO DE CONSULTA -->
+        {% if consulta.motivo_consulta %}
+        <div class="section">
+            <div class="section-title">
+                <i class="fa-solid fa-clipboard"></i> Motivo de Consulta
+            </div>
+            <p style="font-size:.95rem;color:var(--text);line-height:1.6">{{ consulta.motivo_consulta }}</p>
+        </div>
+        {% endif %}
+
+        <!-- SIGNOS VITALES -->
+        <div class="section">
+            <div class="section-title">
+                <i class="fa-solid fa-heart-pulse"></i> Signos Vitales
+            </div>
+            <div class="vitales-grid">
+                {% if consulta.presion_arterial %}
+                <div class="vital">
+                    <div class="vital-label">Presión Arterial</div>
+                    <div class="vital-value">{{ consulta.presion_arterial }}</div>
+                    <div class="vital-unit">mmHg</div>
+                </div>
+                {% endif %}
+                {% if consulta.frecuencia_cardiaca %}
+                <div class="vital">
+                    <div class="vital-label">FC</div>
+                    <div class="vital-value">{{ consulta.frecuencia_cardiaca }}</div>
+                    <div class="vital-unit">lpm</div>
+                </div>
+                {% endif %}
+                {% if consulta.frecuencia_respiratoria %}
+                <div class="vital">
+                    <div class="vital-label">FR</div>
+                    <div class="vital-value">{{ consulta.frecuencia_respiratoria }}</div>
+                    <div class="vital-unit">rpm</div>
+                </div>
+                {% endif %}
+                {% if consulta.temperatura %}
+                <div class="vital">
+                    <div class="vital-label">Temperatura</div>
+                    <div class="vital-value">{{ consulta.temperatura }}</div>
+                    <div class="vital-unit">°C</div>
+                </div>
+                {% endif %}
+                {% if consulta.saturacion_oxigeno %}
+                <div class="vital">
+                    <div class="vital-label">SpO₂</div>
+                    <div class="vital-value">{{ consulta.saturacion_oxigeno }}</div>
+                    <div class="vital-unit">%</div>
+                </div>
+                {% endif %}
+                {% if consulta.talla %}
+                <div class="vital">
+                    <div class="vital-label">Talla</div>
+                    <div class="vital-value">{{ consulta.talla }}</div>
+                    <div class="vital-unit">m</div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- EXAMEN FÍSICO -->
+        {% if consulta.examen_fisico %}
+        <div class="section">
+            <div class="section-title">
+                <i class="fa-solid fa-user-doctor"></i> Examen Físico
+            </div>
+            <p style="font-size:.95rem;color:var(--text);line-height:1.6">{{ consulta.examen_fisico }}</p>
+        </div>
+        {% endif %}
+
+        <!-- ANTECEDENTES -->
+        {% if consulta.antecedentes_personales or consulta.antecedentes_familiares or consulta.antecedentes_alergicos or consulta.antecedentes_quirurgicos %}
+        <div class="section">
+            <div class="section-title">
+                <i class="fa-solid fa-history"></i> Antecedentes
+            </div>
+            {% if consulta.antecedentes_personales %}
+            <div style="margin-bottom:1rem">
+                <div class="info-label">Antecedentes Personales</div>
+                <p style="font-size:.9rem;color:var(--text);margin-top:.4rem;line-height:1.5">{{ consulta.antecedentes_personales }}</p>
+            </div>
+            {% endif %}
+            {% if consulta.antecedentes_familiares %}
+            <div style="margin-bottom:1rem">
+                <div class="info-label">Antecedentes Familiares</div>
+                <p style="font-size:.9rem;color:var(--text);margin-top:.4rem;line-height:1.5">{{ consulta.antecedentes_familiares }}</p>
+            </div>
+            {% endif %}
+            {% if consulta.antecedentes_alergicos %}
+            <div style="margin-bottom:1rem">
+                <div class="info-label">Antecedentes Alérgicos</div>
+                <p style="font-size:.9rem;color:var(--text);margin-top:.4rem;line-height:1.5">{{ consulta.antecedentes_alergicos }}</p>
+            </div>
+            {% endif %}
+            {% if consulta.antecedentes_quirurgicos %}
+            <div style="margin-bottom:0">
+                <div class="info-label">Antecedentes Quirúrgicos</div>
+                <p style="font-size:.9rem;color:var(--text);margin-top:.4rem;line-height:1.5">{{ consulta.antecedentes_quirurgicos }}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- DIAGNÓSTICOS -->
+        {% if consulta.diagnosticos %}
+        <div class="section">
+            <div class="section-title">
+                <i class="fa-solid fa-diagnoses"></i> Diagnósticos
+            </div>
+            <ul class="content-list">
+                {% for diag in consulta.diagnosticos %}
+                <li>
+                    <i class="fa-solid fa-check"></i>
+                    <div>
+                        <strong>{{ diag.patologia }}</strong>
+                        {% if diag.cie10 %}<br><span style="font-size:.8rem;color:var(--muted)">CIE-10: {{ diag.cie10 }}</span>{% endif %}
+                        <br><span style="font-size:.8rem;color:var(--muted)">Tipo: {% if diag.presuntivo %}Presuntivo{% elif diag.definitivo %}Definitivo{% else %}Pendiente{% endif %}</span>
+                    </div>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+
+        <!-- PLAN Y TRATAMIENTO -->
+        {% if consulta.plan %}
+        <div class="section">
+            <div class="section-title">
+                <i class="fa-solid fa-tasks"></i> Plan
+            </div>
+            <p style="font-size:.95rem;color:var(--text);line-height:1.6">{{ consulta.plan }}</p>
+        </div>
+        {% endif %}
+
+        {% if consulta.tratamiento %}
+        <div class="section">
+            <div class="section-title">
+                <i class="fa-solid fa-prescription-bottle"></i> Tratamiento
+            </div>
+            <p style="font-size:.95rem;color:var(--text);line-height:1.6">{{ consulta.tratamiento }}</p>
+        </div>
+        {% endif %}
+
+        <!-- BOTONES DE ACCIÓN -->
+        <div class="button-group">
+            <a href="{% url 'paciente_general_descargar_consulta' consulta.id %}" class="btn btn-primary">
+                <i class="fa-solid fa-download"></i> Descargar PDF
+            </a>
+            <a href="{% url 'paciente_general_consultas' %}" class="btn btn-secondary">
+                <i class="fa-solid fa-arrow-left"></i> Volver al Historial
+            </a>
+        </div>
+    </div>
+
+</main>
+
+</body>
+</html>

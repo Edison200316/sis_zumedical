@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.utils import timezone
 from citas.models import Cita
 from medicos.models import Medico
@@ -9,6 +9,7 @@ from landing.models import Especialidad
 from usuarios.models import Usuario, LogAuditoria
 from django.contrib.auth import authenticate, login as auth_login
 from functools import wraps
+from .models import ConsultaGeneral
 
 
 def get_client_ip(request):
@@ -98,6 +99,13 @@ def dashboard(request):
         paciente=user, estado__in=['pendiente', 'confirmada'], fecha__gte=hoy
     ).count()
     ultimas_citas = Cita.objects.filter(paciente=user).order_by('-fecha', 'hora')[:3]
+    
+    # ── CONSULTAS ──
+    ultima_consulta = ConsultaGeneral.objects.filter(
+        paciente=user
+    ).order_by('-fecha').first()
+    total_consultas = ConsultaGeneral.objects.filter(paciente=user).count()
+    
     from .models import ProgramacionParto
     parto_programado = ProgramacionParto.objects.filter(
         paciente=user,
@@ -112,6 +120,8 @@ def dashboard(request):
         'ultimas_citas': ultimas_citas,
         'hoy': hoy,
         'parto_programado': parto_programado,
+        'ultima_consulta': ultima_consulta,
+        'total_consultas': total_consultas,
     })
 
 @login_required
@@ -339,5 +349,214 @@ def horas_disponibles(request):
     else:
         disponibles = horas_semana
     return JsonResponse({'horas': disponibles})
+
+
+@paciente_general_required
+@no_cache_view
+def mis_consultas(request):
+    """Muestra el historial de consultas generales del paciente."""
+    user = request.user
+    hoy = timezone.localdate()
+    
+    # Obtener todas las consultas del paciente
+    consultas = ConsultaGeneral.objects.filter(
+        paciente=user
+    ).select_related('medico').order_by('-fecha')
+    
+    # Filtros opcionales
+    filtro_medico = request.GET.get('medico_id', '')
+    filtro_mes = request.GET.get('mes', '')
+    
+    if filtro_medico:
+        consultas = consultas.filter(medico_id=filtro_medico)
+    
+    if filtro_mes:
+        try:
+            año, mes = map(int, filtro_mes.split('-'))
+            consultas = consultas.filter(fecha__year=año, fecha__month=mes)
+        except:
+            pass
+    
+    # Médicos únicos para el filtro
+    medicos_unicos = ConsultaGeneral.objects.filter(
+        paciente=user
+    ).values_list('medico__id', 'medico__first_name', 'medico__last_name').distinct()
+    
+    # Stats
+    total_consultas = ConsultaGeneral.objects.filter(paciente=user).count()
+    citas_pendientes_badge = Cita.objects.filter(
+        paciente=user, estado__in=['pendiente', 'confirmada'], fecha__gte=hoy
+    ).count()
+    
+    return render(request, 'paciente_general/mis_consultas.html', {
+        'consultas': consultas,
+        'total_consultas': total_consultas,
+        'citas_pendientes': citas_pendientes_badge,
+        'medicos_unicos': medicos_unicos,
+        'filtro_medico': filtro_medico,
+        'filtro_mes': filtro_mes,
+    })
+
+
+@paciente_general_required
+def ver_consulta(request, consulta_id):
+    """Muestra el detalle de una consulta específica."""
+    user = request.user
+    consulta = get_object_or_404(ConsultaGeneral, id=consulta_id, paciente=user)
+    
+    hoy = timezone.localdate()
+    citas_pendientes_badge = Cita.objects.filter(
+        paciente=user, estado__in=['pendiente', 'confirmada'], fecha__gte=hoy
+    ).count()
+    
+    return render(request, 'paciente_general/ver_consulta.html', {
+        'consulta': consulta,
+        'citas_pendientes': citas_pendientes_badge,
+    })
+
+
+@paciente_general_required
+def descargar_consulta_pdf(request, consulta_id):
+    """Descarga en PDF una consulta del paciente."""
+    user = request.user
+    consulta = get_object_or_404(ConsultaGeneral, id=consulta_id, paciente=user)
+    
+    try:
+        from reportlab.lib.pagesizes import letter
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.units import inch
+        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer, PageBreak
+        from reportlab.lib import colors
+        from io import BytesIO
+        from datetime import datetime
+        
+        buffer = BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=letter)
+        styles = getSampleStyleSheet()
+        story = []
+        
+        # Estilos personalizados
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=18,
+            textColor=colors.HexColor('#B03580'),
+            spaceAfter=6,
+            alignment=1,  # Center
+        )
+        
+        heading_style = ParagraphStyle(
+            'CustomHeading',
+            parent=styles['Heading2'],
+            fontSize=12,
+            textColor=colors.HexColor('#8A2563'),
+            spaceAfter=6,
+            spaceBefore=12,
+        )
+        
+        # Título
+        story.append(Paragraph('ZUMEDICAL — Consulta General', title_style))
+        story.append(Spacer(1, 0.2*inch))
+        
+        # Información del paciente
+        paciente_data = [
+            ['Paciente:', consulta.paciente.get_full_name()],
+            ['Médico:', consulta.medico.get_full_name() if consulta.medico else 'N/A'],
+            ['Fecha:', consulta.fecha.strftime('%d/%m/%Y')],
+            ['IMC:', f"{consulta.imc} kg/m²" if consulta.imc else 'N/A'],
+        ]
+        paciente_table = Table(paciente_data, colWidths=[1.5*inch, 4*inch])
+        paciente_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (0, -1), colors.HexColor('#FBF0F7')),
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (0, -1), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
+            ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#E8AAD4')),
+        ]))
+        story.append(paciente_table)
+        story.append(Spacer(1, 0.3*inch))
+        
+        # Motivo de consulta
+        story.append(Paragraph('MOTIVO DE CONSULTA', heading_style))
+        story.append(Paragraph(consulta.motivo_consulta or 'N/A', styles['Normal']))
+        story.append(Spacer(1, 0.2*inch))
+        
+        # Signos vitales
+        story.append(Paragraph('SIGNOS VITALES', heading_style))
+        vitales_data = [
+            ['PA', 'FC', 'FR', 'Temp', 'SpO₂', 'Peso', 'Talla'],
+            [
+                consulta.presion_arterial or 'N/A',
+                str(consulta.frecuencia_cardiaca) if consulta.frecuencia_cardiaca else 'N/A',
+                str(consulta.frecuencia_respiratoria) if consulta.frecuencia_respiratoria else 'N/A',
+                str(consulta.temperatura) if consulta.temperatura else 'N/A',
+                str(consulta.saturacion_oxigeno) if consulta.saturacion_oxigeno else 'N/A',
+                str(consulta.peso) if consulta.peso else 'N/A',
+                str(consulta.talla) if consulta.talla else 'N/A',
+            ]
+        ]
+        vitales_table = Table(vitales_data, colWidths=[0.8*inch]*7)
+        vitales_table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#B03580')),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, -1), 9),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+            ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#E8AAD4')),
+        ]))
+        story.append(vitales_table)
+        story.append(Spacer(1, 0.3*inch))
+        
+        # Examen físico
+        if consulta.examen_fisico:
+            story.append(Paragraph('EXAMEN FÍSICO', heading_style))
+            story.append(Paragraph(consulta.examen_fisico, styles['Normal']))
+            story.append(Spacer(1, 0.2*inch))
+        
+        # Diagnósticos
+        if consulta.diagnosticos:
+            story.append(Paragraph('DIAGNÓSTICOS', heading_style))
+            diag_data = [['Patología', 'CIE-10', 'Tipo']]
+            for d in consulta.diagnosticos:
+                tipo = 'Presuntivo' if d['presuntivo'] else ('Definitivo' if d['definitivo'] else 'N/A')
+                diag_data.append([d['patologia'], d['cie10'] or 'N/A', tipo])
+            diag_table = Table(diag_data, colWidths=[3*inch, 1.2*inch, 1.3*inch])
+            diag_table.setStyle(TableStyle([
+                ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#B03580')),
+                ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
+                ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                ('FONTSIZE', (0, 0), (-1, -1), 9),
+                ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+                ('GRID', (0, 0), (-1, -1), 1, colors.HexColor('#E8AAD4')),
+            ]))
+            story.append(diag_table)
+            story.append(Spacer(1, 0.2*inch))
+        
+        # Plan y tratamiento
+        if consulta.plan:
+            story.append(Paragraph('PLAN', heading_style))
+            story.append(Paragraph(consulta.plan, styles['Normal']))
+            story.append(Spacer(1, 0.2*inch))
+        
+        if consulta.tratamiento:
+            story.append(Paragraph('TRATAMIENTO', heading_style))
+            story.append(Paragraph(consulta.tratamiento, styles['Normal']))
+        
+        # Generar PDF
+        doc.build(story)
+        buffer.seek(0)
+        
+        response = HttpResponse(buffer.getvalue(), content_type='application/pdf')
+        filename = f"Consulta_{consulta.paciente.get_full_name()}_{consulta.fecha.strftime('%d_%m_%Y')}.pdf"
+        response['Content-Disposition'] = f'attachment; filename="{filename}"'
+        return response
+        
+    except ImportError:
+        messages.error(request, 'No se puede generar el PDF en este momento.')
+        return redirect('paciente_general_consultas')
 
 

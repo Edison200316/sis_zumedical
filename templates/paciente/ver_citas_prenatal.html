@@ -1,0 +1,244 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mis Citas — Zumedical</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    :root{
+      --mg:#b03580;--mg-l:#cc4d99;--mg-d:#8a2563;
+      --mg-bg:#fbf0f7;--mg-border:#e8aad4;
+      --text:#2a1020;--muted:#8a6070;--white:#fff;--bg:#fdf5fa;
+      --green:#1a7a4a;--green-bg:#edfaf3;--amber:#b06a00;--amber-bg:#fff8ed;
+      --red:#b03030;--red-bg:#fdf0f0;--blue:#1565c0;--blue-bg:#e3f2fd;
+      --sw:260px;
+    }
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+      html {
+        font-size: 16px !important;
+        -webkit-text-size-adjust: 100%;
+        -ms-text-size-adjust: 100%;
+        text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+    html,body{height:100%;}
+    body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards;}
+    @keyframes fadeIn{to{opacity:1;}}
+
+    /* SIDEBAR */
+    .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8a2563 0%,#b03580 55%,#cc4d99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:4px 0 24px rgba(138,37,99,.22);transition:transform .3s ease;overflow:hidden;}
+    .sb-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;}
+    .sb-logo{width:44px;height:44px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;}
+    .sb-logo img{width:40px;height:40px;object-fit:contain;}
+    .sb-brand h2{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.4rem;font-weight:600;color:white;line-height:1;}
+    .sb-brand span{font-size:.72rem;color:rgba(255,255,255,.7);letter-spacing:.1em;text-transform:uppercase;}
+    .sb-user{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;text-decoration:none;}
+    .sb-av{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:500;color:white;text-transform:uppercase;flex-shrink:0;}
+    .sb-user-info p{font-size:.78rem;color:rgba(255,255,255,.6);text-transform:uppercase;letter-spacing:.08em;}
+    .sb-user-info h3{font-size:.9rem;font-weight:500;color:white;}
+    .sb-nav{flex:1;padding:1rem .75rem;}
+    .nav-lbl{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.5rem;}
+    .nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:10px;color:rgba(255,255,255,.85);text-decoration:none;font-size:.9rem;font-weight:400;transition:all .2s;margin-bottom:.25rem;}
+    .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white;}
+    .nav-badge{margin-left:auto;background:#e74c3c;color:white;font-size:.68rem;font-weight:600;padding:.2rem .55rem;border-radius:999px;min-width:20px;text-align:center;}
+    .sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12);}
+    .btn-logout{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:10px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.9rem;transition:all .2s;}
+    .btn-logout:hover{background:rgba(255,255,255,.15);color:white;}
+
+    /* MOBILE TOPBAR */
+    .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8a2563,#cc4d99);position:fixed;top:0;left:0;right:0;z-index:300;}
+    .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem;}
+    .mobile-topbar-logo{width:36px;height:36px;background:white;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+    .mobile-topbar-logo img{width:32px;height:32px;object-fit:contain;}
+    .mobile-topbar-brand span{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.2rem;font-weight:600;color:white;}
+    .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px;}
+    .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s;}
+    .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg);}
+    .hamburger.open span:nth-child(2){opacity:0;}
+    .hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg);}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s;}
+    .sidebar-overlay.active{opacity:1;pointer-events:auto;}
+
+    /* MAIN */
+    .main{margin-left:var(--sw);flex:1;padding:2.5rem;height:100vh;overflow-y:auto;}
+    .page-header{margin-bottom:2rem;}
+    .page-header .sub{font-size:.85rem;color:var(--muted);font-weight:300;margin-bottom:.3rem;}
+    .page-header h1{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:2.2rem;font-weight:600;color:var(--text);}
+
+    /* MENSAJES */
+    .msg{display:flex;align-items:center;gap:.65rem;padding:.9rem 1.2rem;border-radius:12px;font-size:.88rem;font-weight:500;margin-bottom:.75rem;}
+    .msg-success{background:#edfaf3;color:#1a7a4a;border:1px solid #a8dfc0;}
+    .msg-error{background:#fdf0f0;color:#b03030;border:1px solid #f0b8b8;}
+
+    /* CITAS CARD */
+    .card{background:var(--white);border-radius:16px;border:1px solid var(--mg-border);overflow:hidden;box-shadow:0 2px 12px rgba(176,53,128,.06);margin-bottom:1.5rem;}
+    .card-header{padding:1.5rem 2rem;border-bottom:1px solid var(--mg-border);background:var(--mg-bg);display:flex;align-items:center;justify-content:space-between;}
+    .card-header h2{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.4rem;font-weight:600;color:var(--text);}
+    .btn-nueva{display:inline-flex;align-items:center;gap:.5rem;padding:.65rem 1.2rem;background:var(--mg);color:white;border:none;border-radius:10px;text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s;}
+    .btn-nueva:hover{background:var(--mg-d);}
+
+    /* CITA ITEM */
+    .cita-item{display:flex;align-items:center;gap:1rem;padding:1.2rem 1.5rem;border-bottom:1px solid var(--mg-border);transition:background .15s;}
+    .cita-item:last-child{border-bottom:none;}
+    .cita-item:hover{background:var(--mg-bg);}
+    .cita-fecha-box{width:52px;height:56px;background:linear-gradient(135deg,var(--mg-d),var(--mg));border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:white;flex-shrink:0;}
+    .cita-fecha-box .dia{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.5rem;font-weight:600;line-height:1;}
+    .cita-fecha-box .mes{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;opacity:.85;}
+    .cita-info{flex:1;min-width:0;}
+    .cita-esp{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:.2rem;}
+    .cita-meta{font-size:.8rem;color:var(--muted);}
+    .badge{display:inline-flex;align-items:center;gap:.25rem;font-size:.75rem;font-weight:600;padding:.3rem .7rem;border-radius:999px;}
+    .badge-pendiente{background:var(--amber-bg);color:var(--amber);}
+    .badge-confirmada{background:var(--blue-bg);color:var(--blue);}
+    .badge-atendido{background:var(--green-bg);color:var(--green);}
+    .badge-cancelada,.badge-cancelado{background:var(--red-bg);color:var(--red);}
+    
+    /* EMPTY STATE */
+    .empty-state{text-align:center;padding:3rem 2rem;color:var(--muted);}
+    .empty-state .icon{font-size:3rem;margin-bottom:1rem;opacity:.4;}
+    .empty-state h3{font-size:1.1rem;margin-bottom:.5rem;color:var(--text);}
+    .empty-state p{font-size:.9rem;margin-bottom:1.5rem;}
+
+    .btn-volver{display:inline-flex;align-items:center;gap:.5rem;padding:.75rem 1.3rem;background:white;color:var(--mg);border:1px solid var(--mg-border);border-radius:10px;text-decoration:none;font-size:.9rem;font-weight:500;margin-top:1rem;}
+
+    @media(max-width:768px){
+      body{flex-direction:column;}
+      .sidebar{position:fixed;top:64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);z-index:250;}
+      .sidebar.open{transform:translateX(0);}
+      .sidebar-overlay{display:block;z-index:200;}
+      .mobile-topbar{display:flex;}
+      .main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px);height:auto;overflow-y:visible;}
+    }
+  </style>
+</head>
+<body>
+<!-- OVERLAY -->
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+<!-- MOBILE TOPBAR -->
+<div class="mobile-topbar">
+  <div class="mobile-topbar-brand">
+    <div class="mobile-topbar-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical" /></div>
+    <span>Zumedical</span>
+  </div>
+  <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical" /></div>
+    <div class="sb-brand-text"><h2>Zumedical</h2><span>Embarazo</span></div>
+  </div>
+  <a href="{% url 'mi_perfil' %}" class="sb-user">
+    <div class="sb-av">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}</div>
+    <div class="sb-user-info"><p>Mi perfil</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
+  </a>
+  <nav class="sb-nav">
+    <div class="nav-lbl">Embarazo</div>
+    <a href="{% url 'paciente_dashboard' %}" class="nav-item">
+      <i class="fa-solid fa-house"></i> Inicio Embarazo
+    </a>
+    <a href="{% url 'agendar_cita' %}" class="nav-item">
+      <i class="fa-regular fa-calendar-plus"></i> Agendar Cita
+    </a>
+    <a href="{% url 'ver_citas' %}" class="nav-item active">
+      <i class="fa-regular fa-calendar-check"></i> Mis Citas{% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
+    </a>
+    <a href="{% url 'mi_historial' %}" class="nav-item">
+      <i class="fa-solid fa-heart-pulse"></i> Controles Prenatales
+    </a>
+    <div class="nav-lbl">Inteligencia Artificial</div>
+    <a href="{% url 'chatbot_page' %}" class="nav-item">
+      <i class="fa-solid fa-comments"></i> Asistente Virtual
+    </a>
+    <a href="{% url 'evaluar_riesgo' %}" class="nav-item">
+      <i class="fa-solid fa-dna"></i> Evaluación de Riesgo
+    </a>
+  </nav>
+  <div class="sb-footer">
+    <a href="{% url 'logout' %}" class="btn-logout">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión
+    </a>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main class="main">
+  <div class="page-header">
+    <p class="sub">Historial</p>
+    <h1>Mis Citas</h1>
+  </div>
+
+  {% if messages %}
+    {% for message in messages %}
+    <div class="msg {% if message.tags == 'success' %}msg-success{% else %}msg-error{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  {% endif %}
+
+  <div class="card">
+    <div class="card-header">
+      <h2>📋 Todas mis citas</h2>
+      <a href="{% url 'agendar_cita' %}" class="btn-nueva">+ Nueva cita</a>
+    </div>
+    
+    {% if citas %}
+      {% for cita in citas %}
+      <div class="cita-item">
+        <div class="cita-fecha-box">
+          <span class="dia">{{ cita.fecha|date:"d" }}</span>
+          <span class="mes">{{ cita.fecha|date:"M" }}</span>
+        </div>
+        <div class="cita-info">
+          <div class="cita-esp">{{ cita.especialidad.nombre|default:"Control Prenatal" }}</div>
+          <div class="cita-meta">
+            {{ cita.fecha|date:"d/m/Y" }} • {{ cita.hora|time:"H:i" }} • 
+            Dr(a). {{ cita.medico.get_full_name|default:cita.medico.username }}
+          </div>
+        </div>
+        <span class="badge badge-{{ cita.estado }}">
+          {% if cita.estado == 'pendiente' %}⏳ Pendiente
+          {% elif cita.estado == 'confirmada' %}✅ Confirmada
+          {% elif cita.estado == 'atendido' %}✔️ Atendida
+          {% else %}❌ Cancelada
+          {% endif %}
+        </span>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state">
+        <div class="icon">📅</div>
+        <h3>Sin citas registradas</h3>
+        <p>Aún no tienes ninguna consulta agendada.</p>
+        <a href="{% url 'agendar_cita' %}" class="btn-nueva">+ Agendar mi primera cita</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <a href="{% url 'paciente_dashboard' %}" class="btn-volver">← Volver al inicio</a>
+</main>
+
+<script>
+  function toggleSidebar() {
+    document.querySelector('.sidebar').classList.toggle('open');
+    document.getElementById('overlay').classList.toggle('active');
+    document.getElementById('hamburger').classList.toggle('open');
+  }
+  function closeSidebar() {
+    document.querySelector('.sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('active');
+    document.getElementById('hamburger').classList.remove('open');
+  }
+</script>
+</body>
+</html>

@@ -92,4 +92,10 @@ urlpatterns = [
     path('reportes/citas/',     views.reporte_citas_data,     name='reporte_citas_data'),
     path('reportes/controles/', views.reporte_controles_data, name='reporte_controles_data'),
     path('reportes/usuarios/',  views.reporte_usuarios_data,  name='reporte_usuarios_data'),
+
+    # GESTIÓN DE PACIENTES - EMBARAZOS
+    path('buscar-paciente/', views.buscar_paciente, name='buscar_paciente'),
+    path('ficha-paciente/<int:paciente_id>/', views.ficha_paciente, name='ficha_paciente'),
+    path('activar-embarazo-nuevo/<int:paciente_id>/', views.activar_embarazo, name='activar_embarazo_nuevo'),
+    path('finalizar-embarazo/<int:embarazo_id>/', views.finalizar_embarazo, name='finalizar_embarazo'),
 ]

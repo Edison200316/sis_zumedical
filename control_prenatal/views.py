@@ -157,7 +157,19 @@ def mi_historial(request):
         historia = None
         controles = []
     
-    return render(request, 'control_prenatal/mi_historial.html', {'historia': historia, 'controles': controles})
+    # Contexto adicional para el sidebar
+    from datetime import date
+    citas_pendientes = request.user.citas_paciente.filter(
+        estado='pendiente',
+        fecha__gte=date.today()
+    ).count()
+    
+    return render(request, 'control_prenatal/mi_historial.html', {
+        'historia': historia,
+        'controles': controles,
+        'user': request.user,
+        'citas_pendientes': citas_pendientes
+    })
 
 
 # ── API Endpoints para editar/eliminar controles ────────────────────────

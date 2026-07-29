@@ -245,7 +245,8 @@
       .sb-nav {
         flex: 1;
         padding: 1rem 0.75rem;
-        overflow-y: visible;
+        overflow-y: auto;
+        min-height: 0;
       }
       .nav-lbl {
         font-size: 0.7rem;
@@ -1050,6 +1051,15 @@
         }
         .sidebar.open {
           transform: translateX(0);
+        }
+
+        .sb-nav {
+          flex: 1;
+          overflow-y: auto;
+          min-height: 0;
+        }
+        .sb-footer {
+          flex-shrink: 0;
         }
 
         .sidebar-overlay {

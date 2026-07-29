@@ -384,9 +384,8 @@ aside#sidebar > .sidebar-brand:first-of-type {
    ============================================================== */
 .sidebar .sb-nav,
 .sidebar .sidebar-nav {
-  flex: 1 1 auto !important;
+  flex: 1 !important;
   padding: 1rem 0.75rem !important;
-  padding-bottom: 0 !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
   display: flex !important;
@@ -398,7 +397,6 @@ aside#sidebar > .sidebar-brand:first-of-type {
   width: 100% !important;
   margin: 0 !important;
   min-height: 0 !important;
-  /* ✅ Removido max-height - el flex: 1 controla esto */
 }
 
 .sidebar .nav-lbl,
@@ -569,8 +567,6 @@ aside#sidebar > .sidebar-brand:first-of-type {
   width: 100% !important;
   background: transparent !important;
   margin: 0 !important;
-  position: relative !important;
-  z-index: 10 !important;
 }
 
 .sidebar a.btn-logout,
@@ -805,29 +801,18 @@ aside#sidebar > .sidebar-brand:first-of-type {
   /* Ensure navigation has scroll in mobile */
   .sidebar .sb-nav,
   .sidebar .sidebar-nav {
-    flex: 1 1 auto !important;
+    flex: 1 !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
-    max-height: calc(100vh - 300px) !important;
     min-height: 0 !important;
   }
 
   /* Ensure footer is always visible at bottom in mobile */
   .sidebar .sb-footer,
   .sidebar .sidebar-footer {
-    margin-top: auto !important;
-    margin-bottom: 0 !important;
-    position: relative !important;
-    bottom: 0 !important;
-    background: linear-gradient(
-      175deg,
-      #8a2563 0%,
-      #b03580 55%,
-      #cc4d99 100%
-    ) !important;
     flex-shrink: 0 !important;
-    z-index: 10 !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
   }
 }
 

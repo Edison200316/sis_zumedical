@@ -4,9 +4,26 @@ from django.conf import settings
 
 class ConsultaGeneral(models.Model):
     """
-    Historia clínica de consulta general — basada en el formulario físico de Zumedical.
-    Se crea una por cada consulta (puede haber múltiples por paciente).
+    Historia clínica unificada para múltiples especialidades:
+    - Medicina General
+    - Odontología
+    - Ecografía Diagnóstica
+    
+    Los campos se adaptan según la especialidad seleccionada.
     """
+    ESPECIALIDAD_CHOICES = [
+        ('medicina_general', 'Medicina General'),
+        ('odontologia', 'Odontología'),
+        ('ecografia', 'Ecografía Diagnóstica'),
+    ]
+    
+    # ── Campos comunes (todas las especialidades) ────────────────────────
+    especialidad = models.CharField(
+        max_length=20,
+        choices=ESPECIALIDAD_CHOICES,
+        default='medicina_general',
+        verbose_name='Especialidad'
+    )
     paciente = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -30,10 +47,10 @@ class ConsultaGeneral(models.Model):
     antecedentes_quirurgicos = models.TextField(blank=True, default='', verbose_name='Antecedentes quirúrgicos')
     antecedentes_obstetricos = models.TextField(blank=True, default='', verbose_name='Antecedentes obstétricos')
 
-    # ── Examen físico ─────────────────────────────────────────────────────
-    examen_fisico = models.TextField(blank=True, default='', verbose_name='Examen físico')
+    # ── Examen físico / Observaciones ─────────────────────────────────────
+    examen_fisico = models.TextField(blank=True, default='', verbose_name='Examen físico / Observaciones clínicas')
 
-    # ── Signos vitales ────────────────────────────────────────────────────
+    # ── Signos vitales (Medicina General principalmente) ──────────────────
     presion_arterial      = models.CharField(max_length=20, blank=True, default='', verbose_name='Presión arterial (P/A)')
     saturacion_oxigeno    = models.IntegerField(null=True, blank=True, verbose_name='Saturación de oxígeno (%)')
     frecuencia_cardiaca   = models.IntegerField(null=True, blank=True, verbose_name='Frecuencia cardíaca (lpm)')
@@ -42,11 +59,33 @@ class ConsultaGeneral(models.Model):
     talla                 = models.FloatField(null=True, blank=True, verbose_name='Talla (m)')
     peso                  = models.FloatField(null=True, blank=True, verbose_name='Peso (kg)')
 
-    # ── Evolución y plan ──────────────────────────────────────────────────
-    examenes_enviados     = models.TextField(blank=True, default='', verbose_name='Exámenes enviados')
+    # ── Diagnóstico y tratamiento (común) ─────────────────────────────────
+    diagnostico_clinico   = models.TextField(blank=True, default='', verbose_name='Diagnóstico clínico')
+    
+    # ── Procedimiento / Tratamiento realizado ─────────────────────────────
+    procedimiento_realizado = models.TextField(blank=True, default='', verbose_name='Procedimiento o tratamiento realizado')
+    
+    # ── Hallazgos (principalmente para Ecografía) ─────────────────────────
+    hallazgos            = models.TextField(blank=True, default='', verbose_name='Hallazgos')
+    
+    # ── Medicamentos y recomendaciones ────────────────────────────────────
+    medicamentos_recetados = models.TextField(blank=True, default='', verbose_name='Medicamentos recetados')
+    recomendaciones       = models.TextField(blank=True, default='', verbose_name='Indicaciones / Recomendaciones')
+
+    # ── Evolución y plan (Medicina General) ───────────────────────────────
+    examenes_enviados     = models.TextField(blank=True, default='', verbose_name='Exámenes solicitados')
     evolucion_enfermedad  = models.TextField(blank=True, default='', verbose_name='Evolución de la enfermedad')
     plan                  = models.TextField(blank=True, default='', verbose_name='Plan')
     tratamiento           = models.TextField(blank=True, default='', verbose_name='Tratamiento')
+
+    # ── Campos específicos de Odontología ─────────────────────────────────
+    piezas_dentales_tratadas = models.CharField(max_length=200, blank=True, default='', verbose_name='Piezas dentales tratadas')
+    odontograma              = models.TextField(blank=True, default='', verbose_name='Odontograma / Observaciones dentales')
+    
+    # ── Campos específicos de Ecografía ───────────────────────────────────
+    tipo_ecografia    = models.CharField(max_length=100, blank=True, default='', verbose_name='Tipo de ecografía')
+    region_examinada  = models.CharField(max_length=200, blank=True, default='', verbose_name='Región anatómica examinada')
+    conclusion_diagnostica = models.TextField(blank=True, default='', verbose_name='Conclusión diagnóstica')
 
     # ── Diagnóstico CIE-10 (hasta 3 diagnósticos) ────────────────────────
     diagnostico_1_patologia   = models.CharField(max_length=200, blank=True, default='', verbose_name='Patología 1')
@@ -74,7 +113,7 @@ class ConsultaGeneral(models.Model):
         ordering            = ['-fecha']
 
     def __str__(self):
-        return f"Consulta — {self.paciente.get_full_name()} — {self.fecha}"
+        return f"{self.get_especialidad_display()} — {self.paciente.get_full_name()} — {self.fecha}"
 
     @property
     def imc(self):
@@ -96,6 +135,11 @@ class ConsultaGeneral(models.Model):
                     'definitivo': getattr(self, f'diagnostico_{i}_definitivo'),
                 })
         return result
+    
+    @property
+    def especialidad_display(self):
+        """Retorna el nombre legible de la especialidad."""
+        return self.get_especialidad_display()
 
 
 class ProgramacionParto(models.Model):

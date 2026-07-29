@@ -4,11 +4,10 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Registrar Consulta General — Zumedical</title>
+  <title>Registrar Consulta — Zumedical</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
   <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
   <style>
     :root{--mg:#b03580;--mg-l:#cc4d99;--mg-d:#8a2563;--mg-bg:#fbf0f7;--mg-border:#e8aad4;--text:#2a1020;--muted:#8a6070;--white:#fff;--bg:#fdf5fa;--sw:260px;--green:#2e7d52;--green-bg:#edfaf3;--red:#b91c1c;--red-bg:#fef2f2;}
@@ -21,7 +20,6 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
-
     html,body{height:100%}
     body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
     @keyframes fadeIn{to{opacity:1}}
@@ -60,19 +58,7 @@
     .sidebar-overlay.active{opacity:1;pointer-events:auto}
     /* ── MAIN ── */
     .main{margin-left:var(--sw);flex:1;padding:2rem 2.5rem 4rem;height:100vh;overflow-y:auto;}
-    /* ── RESPONSIVE ── */
-    @media(max-width:800px){
-      body{flex-direction:column;height:100vh;overflow:hidden}
-      .sidebar{position:fixed;top: 64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);z-index:250}
-      .sidebar.open{transform:translateX(0)}
-      .sidebar-overlay{display:block;z-index:200}
-      .mobile-topbar{display:flex}
-      .main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px);height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
-      .grid2,.grid3,.grid4{grid-template-columns:1fr}
-      .card{padding:1.25rem 1.5rem}
-      .sec-title{font-size:1.05rem}
-      .page-title{font-size:1.6rem}
-    }
+    /* ── PAGE ── */
     .page-title{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.9rem;font-weight:600;color:var(--text);margin-bottom:.3rem;}
     .page-sub{color:var(--muted);font-size:.88rem;margin-bottom:1.75rem;}
     .card{background:white;border-radius:16px;border:1px solid var(--mg-border);padding:1.5rem 2rem;margin-bottom:1.25rem;box-shadow:0 2px 8px rgba(176,53,128,.04);}
@@ -104,6 +90,17 @@
     .pac-opt{padding:.65rem 1rem;cursor:pointer;font-size:.875rem;transition:background .15s;}
     .pac-opt:hover,.pac-opt.selected{background:var(--mg-bg);color:var(--mg-d);}
     .pac-opt .sub{font-size:.75rem;color:var(--muted);}
+    /* Specialty selector */
+    .spec-selector{display:flex;gap:.75rem;flex-wrap:wrap;margin-top:.5rem;}
+    .spec-opt{flex:1;min-width:150px;padding:1rem;border:2px solid var(--mg-border);border-radius:12px;background:var(--bg);cursor:pointer;transition:all .2s;text-align:center;}
+    .spec-opt:hover{border-color:var(--mg);background:var(--mg-bg);}
+    .spec-opt.active{border-color:var(--mg);background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;}
+    .spec-opt-icon{font-size:1.8rem;margin-bottom:.5rem;}
+    .spec-opt-label{font-size:.85rem;font-weight:600;}
+    .spec-opt.active .spec-opt-label{color:white;}
+    /* Section visibility */
+    .section-medicina,.section-odontologia,.section-ecografia{display:none;}
+    .section-medicina.show,.section-odontologia.show,.section-ecografia.show,.section-common.show{display:block;}
     /* Buttons */
     .actions{display:flex;gap:1rem;justify-content:flex-end;margin-top:1.5rem;}
     .btn-primary{background:var(--mg);color:white;border:none;padding:.75rem 2rem;border-radius:10px;font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.95rem;font-weight:500;cursor:pointer;transition:all .2s;}
@@ -112,7 +109,21 @@
     .btn-sec:hover{background:white;}
     .alert-success{background:var(--green-bg);border:1px solid #a8dfc0;color:var(--green);padding:1rem 1.5rem;border-radius:10px;margin-bottom:1.5rem;font-size:.9rem;}
     .alert-error{background:var(--red-bg);border:1px solid #fca5a5;color:var(--red);padding:1rem 1.5rem;border-radius:10px;margin-bottom:1.5rem;font-size:.9rem;}
-    @media(max-width:800px){.grid2,.grid3,.grid4{grid-template-columns:1fr}.main{padding:1.25rem}}
+    /* ── RESPONSIVE ── */
+    @media(max-width:800px){
+      body{flex-direction:column;height:100vh;overflow:hidden}
+      .sidebar{position:fixed;top:64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);z-index:250}
+      .sidebar.open{transform:translateX(0)}
+      .sidebar-overlay{display:block;z-index:200}
+      .mobile-topbar{display:flex}
+      .main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px);height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+      .grid2,.grid3,.grid4{grid-template-columns:1fr}
+      .card{padding:1.25rem 1.5rem}
+      .sec-title{font-size:1.05rem}
+      .page-title{font-size:1.6rem}
+      .spec-selector{flex-direction:column}
+      .spec-opt{min-width:unset}
+    }
   </style>
 </head>
 <body>
@@ -139,13 +150,33 @@
     <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
     Volver a la página anterior
   </a>
-  <div class="page-title">Registrar Consulta General</div>
-  <p class="page-sub">Complete el formulario de historia clínica de consulta general</p>
+  <div class="page-title">Registrar Consulta Médica</div>
+  <p class="page-sub">Seleccione la especialidad y complete el formulario correspondiente</p>
 
   {% if messages %}{% for msg in messages %}<div class="alert-{% if 'exitosa' in msg.message or 'correctamente' in msg.message %}success{% else %}error{% endif %}">{{ msg }}</div>{% endfor %}{% endif %}
 
   <form method="post" novalidate>
     {% csrf_token %}
+
+    <!-- ESPECIALIDAD -->
+    <div class="card">
+      <div class="sec-title"><div class="sec-icon">🏥</div>Especialidad</div>
+      <div class="spec-selector">
+        <div class="spec-opt active" data-especialidad="medicina_general" onclick="cambiarEspecialidad('medicina_general', this)">
+          <div class="spec-opt-icon">🩺</div>
+          <div class="spec-opt-label">Medicina General</div>
+        </div>
+        <div class="spec-opt" data-especialidad="odontologia" onclick="cambiarEspecialidad('odontologia', this)">
+          <div class="spec-opt-icon">🦷</div>
+          <div class="spec-opt-label">Odontología</div>
+        </div>
+        <div class="spec-opt" data-especialidad="ecografia" onclick="cambiarEspecialidad('ecografia', this)">
+          <div class="spec-opt-icon">📡</div>
+          <div class="spec-opt-label">Ecografía Diagnóstica</div>
+        </div>
+      </div>
+      <input type="hidden" name="especialidad" id="especialidad-input" value="medicina_general"/>
+    </div>
 
     <!-- Paciente -->
     <div class="card">
@@ -167,31 +198,22 @@
     </div>
 
     <!-- Motivo -->
-    <div class="card">
+    <div class="card section-common show">
       <div class="sec-title"><div class="sec-icon">💬</div>Motivo de Consulta</div>
       <div class="fg"><label>Motivo de consulta *</label><textarea name="motivo_consulta" rows="3" placeholder="Describe el motivo principal de la consulta..." required></textarea></div>
     </div>
 
     <!-- Antecedentes -->
-    <div class="card">
+    <div class="card section-common show">
       <div class="sec-title"><div class="sec-icon">📋</div>Antecedentes</div>
       <div class="grid2">
-        <div class="fg"><label>Personales</label><textarea name="antecedentes_personales" rows="3" placeholder="Enfermedades previas, condiciones crónicas..."></textarea></div>
-        <div class="fg"><label>Familiares</label><textarea name="antecedentes_familiares" rows="3" placeholder="Enfermedades hereditarias, diabetes, HTA..."></textarea></div>
-        <div class="fg"><label>Alérgicos</label><textarea name="antecedentes_alergicos" rows="2" placeholder="Alergias conocidas a medicamentos, alimentos..."></textarea></div>
-        <div class="fg"><label>Quirúrgicos</label><textarea name="antecedentes_quirurgicos" rows="2" placeholder="Cirugías previas..."></textarea></div>
-        <div class="fg full"><label>Obstétricos</label><textarea name="antecedentes_obstetricos" rows="2" placeholder="Gestaciones, partos, abortos (si aplica)..."></textarea></div>
+        <div class="fg"><label>Antecedentes Médicos</label><textarea name="antecedentes_personales" rows="3" placeholder="Enfermedades previas, condiciones crónicas..."></textarea></div>
+        <div class="fg"><label>Alergias</label><textarea name="antecedentes_alergicos" rows="3" placeholder="Alergias conocidas a medicamentos, alimentos..."></textarea></div>
       </div>
     </div>
 
-    <!-- Examen físico -->
-    <div class="card">
-      <div class="sec-title"><div class="sec-icon">🔬</div>Examen Físico</div>
-      <div class="fg"><label>Hallazgos del examen físico</label><textarea name="examen_fisico" rows="4" placeholder="Descripción del examen físico general y por sistemas..."></textarea></div>
-    </div>
-
-    <!-- Signos vitales -->
-    <div class="card">
+    <!-- Signos vitales (MEDICINA GENERAL) -->
+    <div class="card section-medicina show">
       <div class="sec-title"><div class="sec-icon">🩺</div>Signos Vitales</div>
       <div class="grid4">
         <div class="fg"><label>P/A (mmHg)</label><input type="text" name="presion_arterial" placeholder="Ej: 120/80"/></div>
@@ -205,21 +227,37 @@
       </div>
     </div>
 
-    <!-- Exámenes y evolución -->
-    <div class="card">
-      <div class="sec-title"><div class="sec-icon">🧪</div>Exámenes, Evolución y Plan</div>
+    <!-- Examen físico / Observaciones (COMÚN) -->
+    <div class="card section-common show">
+      <div class="sec-title"><div class="sec-icon">🔬</div>Examen Físico / Observaciones</div>
+      <div class="fg"><label>Hallazgos del examen clínico</label><textarea name="examen_fisico" rows="4" placeholder="Descripción del examen físico y observaciones clínicas..."></textarea></div>
+    </div>
+
+    <!-- Campos específicos ODONTOLOGÍA -->
+    <div class="card section-odontologia">
+      <div class="sec-title"><div class="sec-icon">🦷</div>Examen Odontológico</div>
       <div class="grid2">
-        <div class="fg"><label>Exámenes enviados</label><textarea name="examenes_enviados" rows="3" placeholder="Laboratorio, imagen, etc."></textarea></div>
-        <div class="fg"><label>Evolución de la enfermedad</label><textarea name="evolucion_enfermedad" rows="3" placeholder="Descripción de la evolución..."></textarea></div>
-        <div class="fg"><label>Plan</label><textarea name="plan" rows="3" placeholder="Plan diagnóstico y terapéutico..."></textarea></div>
-        <div class="fg"><label>Tratamiento</label><textarea name="tratamiento" rows="3" placeholder="Medicamentos, dosis, indicaciones..."></textarea></div>
+        <div class="fg"><label>Piezas dentales tratadas</label><input type="text" name="piezas_dentales_tratadas" placeholder="Ej: 11, 12, 21"/></div>
+        <div class="fg"><label>Odontograma / Notas</label><textarea name="odontograma" rows="3" placeholder="Estado de las piezas dentales..."></textarea></div>
       </div>
     </div>
 
-    <!-- Diagnóstico CIE-10 -->
-    <div class="card">
+    <!-- Campos específicos ECOGRAFÍA -->
+    <div class="card section-ecografia">
+      <div class="sec-title"><div class="sec-icon">📡</div>Datos de Ecografía</div>
+      <div class="grid2">
+        <div class="fg"><label>Tipo de ecografía</label><input type="text" name="tipo_ecografia" placeholder="Ej: Ecografía abdominal"/></div>
+        <div class="fg"><label>Región examinada</label><input type="text" name="region_examinada" placeholder="Ej: Abdomen superior"/></div>
+        <div class="fg full"><label>Hallazgos</label><textarea name="hallazgos" rows="3" placeholder="Descripción de los hallazgos encontrados..."></textarea></div>
+        <div class="fg full"><label>Conclusión diagnóstica</label><textarea name="conclusion_diagnostica" rows="2" placeholder="Conclusión del estudio..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- Diagnóstico (COMÚN) -->
+    <div class="card section-common show">
       <div class="sec-title"><div class="sec-icon">🏥</div>Diagnóstico</div>
-      <div style="overflow-x:auto">
+      <div class="fg"><label>Diagnóstico clínico</label><textarea name="diagnostico_clinico" rows="3" placeholder="Diagnóstico principal y secundarios..."></textarea></div>
+      <div style="overflow-x:auto;margin-top:1rem">
         <table class="cie-table">
           <thead><tr><th>Patología</th><th>CIE-10</th><th style="text-align:center">Presuntivo</th><th style="text-align:center">Definitivo</th></tr></thead>
           <tbody>
@@ -236,8 +274,29 @@
       </div>
     </div>
 
-    <!-- Próxima cita -->
-    <div class="card">
+    <!-- Tratamiento / Procedimiento (COMÚN) -->
+    <div class="card section-common show">
+      <div class="sec-title"><div class="sec-icon">💊</div>Tratamiento y Recomendaciones</div>
+      <div class="grid2">
+        <div class="fg"><label>Procedimiento / Tratamiento realizado</label><textarea name="procedimiento_realizado" rows="3" placeholder="Descripción del procedimiento o tratamiento..."></textarea></div>
+        <div class="fg"><label>Medicamentos recetados</label><textarea name="medicamentos_recetados" rows="3" placeholder="Medicamentos, dosis, indicaciones..."></textarea></div>
+        <div class="fg full"><label>Indicaciones / Recomendaciones</label><textarea name="recomendaciones" rows="3" placeholder="Recomendaciones para el paciente..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- Exámenes y evolución (MEDICINA GENERAL) -->
+    <div class="card section-medicina show">
+      <div class="sec-title"><div class="sec-icon">🧪</div>Exámenes y Evolución</div>
+      <div class="grid2">
+        <div class="fg"><label>Exámenes solicitados</label><textarea name="examenes_enviados" rows="3" placeholder="Laboratorio, imagen, etc."></textarea></div>
+        <div class="fg"><label>Evolución de la enfermedad</label><textarea name="evolucion_enfermedad" rows="3" placeholder="Descripción de la evolución..."></textarea></div>
+        <div class="fg full"><label>Plan</label><textarea name="plan" rows="2" placeholder="Plan diagnóstico y terapéutico..."></textarea></div>
+        <div class="fg full"><label>Tratamiento adicional</label><textarea name="tratamiento" rows="2" placeholder="Detalles del tratamiento..."></textarea></div>
+      </div>
+    </div>
+
+    <!-- Próxima cita (COMÚN) -->
+    <div class="card section-common show">
       <div class="sec-title"><div class="sec-icon">📅</div>Próxima Cita</div>
       <div class="grid2">
         <div class="fg"><label>Fecha de próxima cita</label><input type="date" name="proxima_cita"/></div>
@@ -253,7 +312,43 @@
 </main>
 
 <script>
-// Paciente buscable
+// ── HAMBURGUESA ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('active');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+  document.getElementById('hamburger').classList.remove('open');
+}
+
+// ── CAMBIAR ESPECIALIDAD ──
+function cambiarEspecialidad(especialidad, elemento) {
+  // Actualizar selector visual
+  document.querySelectorAll('.spec-opt').forEach(opt => opt.classList.remove('active'));
+  elemento.classList.add('active');
+  
+  // Actualizar input hidden
+  document.getElementById('especialidad-input').value = especialidad;
+  
+  // Ocultar todas las secciones específicas
+  document.querySelectorAll('.section-medicina, .section-odontologia, .section-ecografia').forEach(sec => {
+    sec.classList.remove('show');
+  });
+  
+  // Mostrar secciones según especialidad
+  if (especialidad === 'medicina_general') {
+    document.querySelectorAll('.section-medicina').forEach(sec => sec.classList.add('show'));
+  } else if (especialidad === 'odontologia') {
+    document.querySelectorAll('.section-odontologia').forEach(sec => sec.classList.add('show'));
+  } else if (especialidad === 'ecografia') {
+    document.querySelectorAll('.section-ecografia').forEach(sec => sec.classList.add('show'));
+  }
+}
+
+// ── PACIENTE BUSCABLE ──
 const search = document.getElementById('pac-search');
 const list   = document.getElementById('pac-list');
 const hidden = document.getElementById('pac-hidden');
@@ -276,7 +371,7 @@ opts.forEach(o => {
   });
 });
 
-// Pre-selección via ?pac=ID (cuando viene desde lista de pacientes)
+// Pre-selección via ?pac=ID
 const pacPresel = "{{ pac_preseleccionado|default:'' }}";
 if (pacPresel) {
   const target = Array.from(opts).find(o => o.dataset.id === pacPresel);
@@ -287,7 +382,7 @@ if (pacPresel) {
   }
 }
 
-// IMC automático
+// ── IMC AUTOMÁTICO ──
 const pesoEl  = document.getElementById('peso');
 const tallaEl = document.getElementById('talla');
 const imcEl   = document.getElementById('imc');
@@ -299,19 +394,9 @@ function calcIMC() {
     imcEl.value = `${v} (${cat})`;
   } else imcEl.value = '';
 }
-pesoEl.addEventListener('input', calcIMC);
-tallaEl.addEventListener('input', calcIMC);
-
-// ── HAMBURGUESA ──
-function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
-  document.getElementById('overlay').classList.toggle('active');
-  document.getElementById('hamburger').classList.toggle('open');
-}
-function closeSidebar() {
-  document.getElementById('sidebar').classList.remove('open');
-  document.getElementById('overlay').classList.remove('active');
-  document.getElementById('hamburger').classList.remove('open');
+if (pesoEl && tallaEl && imcEl) {
+  pesoEl.addEventListener('input', calcIMC);
+  tallaEl.addEventListener('input', calcIMC);
 }
 </script>
 </body>

@@ -39,13 +39,13 @@
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
 
         /* ── SIDEBAR ── */
-        .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:4px 0 24px rgba(138,37,99,.22);transition:transform .3s ease;overflow-y:auto}
-        .sb-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
+        .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:4px 0 24px rgba(138,37,99,.22);transition:transform .3s ease;overflow:hidden}
+        .sb-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;flex-shrink:0}
         .sb-logo{width:42px;height:42px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;overflow:hidden}
         .sb-logo img{width:38px;height:38px;object-fit:contain}
         .sb-brand-text h2{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
         .sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.1em;text-transform:uppercase}
-        .sb-user{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;text-decoration:none;transition:background .2s}
+        .sb-user{padding:1.2rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;text-decoration:none;transition:background .2s;flex-shrink:0}
         .sb-user:hover{background:rgba(255,255,255,.1)}
         .sb-av{width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase}
         .sb-user-info{flex:1;min-width:0}
@@ -54,13 +54,13 @@
         .sb-user-arrow{flex-shrink:0;opacity:.5;transition:opacity .2s}
         .sb-user:hover .sb-user-arrow{opacity:1}
         .sb-user-arrow svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2}
-        .sb-nav{flex:1;padding:1rem .75rem;overflow-y:auto}
+        .sb-nav{flex:1 1 auto;padding:1rem .75rem;overflow-y:auto;max-height:none;min-height:0}
         .nav-lbl{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.5rem}
         .nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:10px;color:rgba(255,255,255,.85);text-decoration:none;font-size:.9rem;font-weight:400;transition:all .2s;margin-bottom:.25rem;position:relative}
         .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white}
         .nav-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0}
         .nav-badge{margin-left:auto;background:rgba(255,255,255,.25);color:white;font-size:.68rem;font-weight:600;padding:.15rem .5rem;border-radius:999px;min-width:20px;text-align:center}
-        .sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12)}
+        .sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12);flex-shrink:0;background:rgba(138,37,99,0.3);position:relative;z-index:10}
         .btn-logout{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:10px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.9rem;transition:all .2s;width:100%}
         .btn-logout:hover{background:rgba(255,255,255,.15);color:white}
         .btn-logout svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
@@ -185,7 +185,7 @@
         @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}.two-col{grid-template-columns:1fr}}
         @media(max-width:768px){
             body{flex-direction:column}
-            .sidebar{position:fixed;top:64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);z-index:250}
+            .sidebar{position:fixed;top:64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);z-index:250;display:flex;flex-direction:column;overflow:hidden}
             .sidebar.open{transform:translateX(0)}
             .sidebar-overlay{display:block;z-index:200}
             .mobile-topbar{display:flex}
@@ -199,6 +199,8 @@
             .modal-ov{padding:.75rem}
             .modal-grid{grid-template-columns:1fr}
             .modal-field.full{grid-column:1}
+            .sb-nav{overflow-y:auto;flex:1 1 auto}
+            .sb-footer{margin-top:auto;flex-shrink:0;position:relative;z-index:100;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%)}
         }
         @media(max-width:480px){
             .stats-grid{grid-template-columns:1fr}
@@ -511,6 +513,19 @@ function closeModalOut(e) {
     if (e.target === document.getElementById('modalOv')) closeModal();
 }
 document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeModal(); });
+
+// ── FORZAR VISIBILIDAD DEL BOTÓN CERRAR SESIÓN ──
+window.addEventListener('DOMContentLoaded', function() {
+    const sidebar = document.getElementById('sidebar');
+    const footer = sidebar ? sidebar.querySelector('.sb-footer') : null;
+    if (footer) {
+        footer.style.display = 'block';
+        footer.style.marginTop = 'auto';
+        footer.style.flexShrink = '0';
+        footer.style.position = 'relative';
+        footer.style.zIndex = '100';
+    }
+});
 </script>
 </body>
 </html>

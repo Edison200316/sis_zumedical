@@ -274,17 +274,17 @@
         }
 
         @media(max-width:768px){
-            html, body{ height: 100vh; overflow: hidden; }
+            html, body{ height: 100vh; overflow: hidden; width:100%; max-width:100%; }
             body{flex-direction:column}
             
             .sidebar{
                 width:var(--sw);
-                height:100vh;
+                height:calc(100vh - 64px); /* Altura menos el header */
                 position:fixed;
-                top:0;
+                top:64px; /* Empieza debajo del header */
                 left:0;
                 z-index:350;
-                padding-top:64px; 
+                padding-top:0; /* Ya no necesitamos padding porque top:64px */
                 transform:translateX(-100%);
                 box-shadow:4px 0 20px rgba(0,0,0,0.15);
                 animation:none !important;
@@ -303,6 +303,9 @@
                 height:100vh;
                 overflow-y:auto;
                 -webkit-overflow-scrolling:touch;
+                width:100%;
+                max-width:100%;
+                box-sizing:border-box;
             }
 
             .page-header{flex-direction:column;align-items:stretch}
@@ -313,6 +316,174 @@
             .date-wrap{width:100%}
             .date-wrap > div {width:100%}
             .date-input{width:100%}
+
+            /* ══════════════════════════════════════════════
+               RESPONSIVE TABLE TO CARD TRANSFORMATION
+            ══════════════════════════════════════════════ */
+            
+            /* Ajustar contenedor de tabla */
+            .table-card {
+                width:100%;
+                max-width:100%;
+                box-sizing:border-box;
+                overflow:visible;
+            }
+            
+            .table-wrapper {
+                overflow:visible;
+            }
+            
+            table {
+                min-width:0;
+                display:block;
+                width:100%;
+            }
+            
+            thead {
+                display:none; /* Ocultamos los headers de la tabla */
+            }
+            
+            tbody {
+                display:block;
+                width:100%;
+            }
+            
+            /* Cada <tr> se convierte en una tarjeta */
+            tbody tr.fila-cita {
+                display:block;
+                background:var(--white);
+                border:2px solid var(--mg-border);
+                border-radius:14px;
+                padding:1rem;
+                margin-bottom:1rem;
+                box-shadow:0 2px 8px rgba(176,53,128,.08);
+                cursor:pointer;
+                transition:all .2s;
+                width:100%;
+                max-width:100%;
+                box-sizing:border-box;
+                overflow:hidden;
+            }
+            
+            tbody tr.fila-cita:hover {
+                transform:translateY(-2px);
+                box-shadow:0 8px 24px rgba(176,53,128,.15);
+                border-color:var(--mg-l);
+            }
+            
+            /* Cada <td> se convierte en una fila dentro de la tarjeta */
+            tbody td {
+                display:block;
+                padding:0.65rem 0 !important;
+                border:none;
+                text-align:left !important;
+                width:100%;
+                max-width:100%;
+                box-sizing:border-box;
+            }
+            
+            tbody td:first-child {
+                padding-left:0 !important;
+                padding-top:0 !important;
+                padding-bottom:0.85rem !important;
+                margin-bottom:0.85rem;
+                border-bottom:1px solid var(--mg-border);
+            }
+            
+            /* Los td que no son el primero (paciente) ni el último (acciones) muestran su label */
+            tbody td:not(:first-child):not(:last-child):before {
+                content: attr(data-label);
+                display:block;
+                font-size:0.68rem;
+                font-weight:500;
+                color:var(--muted);
+                text-transform:uppercase;
+                letter-spacing:0.06em;
+                margin-bottom:0.35rem;
+            }
+            
+            /* Agregar data-label a los td mediante CSS alternativo */
+            tbody td.fecha-cell:before {
+                content: "Fecha";
+            }
+            
+            tbody td:nth-child(3):before {
+                content: "Hora";
+            }
+            
+            tbody td:nth-child(4):before {
+                content: "Motivo";
+            }
+            
+            tbody td:nth-child(5):before {
+                content: "Estado";
+            }
+            
+            tbody td:nth-child(6):before {
+                content: "Cambiar estado";
+            }
+            
+            /* El td de acciones (último) */
+            tbody td:last-child {
+                padding-top:0.85rem !important;
+                padding-bottom:0 !important;
+                margin-top:0.85rem;
+                border-top:1px solid var(--mg-border);
+            }
+            
+            /* Ajustar formularios y botones en móvil */
+            tbody td:last-child .estado-form {
+                flex-direction:column;
+                gap:0.5rem;
+            }
+            
+            tbody td:last-child .estado-select {
+                width:100%;
+            }
+            
+            tbody td:last-child .btn-update {
+                width:100%;
+                justify-content:center;
+                padding:0.65rem 1rem;
+            }
+            
+            /* Botones de aceptar/rechazar en columna */
+            tbody td:last-child > div {
+                flex-direction:column !important;
+                gap:0.5rem !important;
+            }
+            
+            tbody td:last-child button {
+                width:100% !important;
+                justify-content:center;
+                padding:0.65rem 1rem !important;
+            }
+            
+            /* Ajustar el avatar y nombre para que se vea bien en card */
+            .td-paciente-wrap {
+                gap:0.75rem;
+            }
+            
+            .mini-avatar {
+                width:42px;
+                height:42px;
+                font-size:0.9rem;
+            }
+            
+            .pac-info .pac-name-link {
+                font-size:0.95rem;
+                font-weight:600;
+            }
+            
+            .pac-cedula-sub {
+                font-size:0.76rem;
+            }
+            
+            /* Ajustar badges de estado */
+            .badge {
+                display:inline-block;
+                font-size:0.8rem;
+            }
 
             .modal-overlay{padding:0;align-items:flex-end}
             .modal{

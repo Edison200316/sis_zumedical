@@ -156,6 +156,22 @@
         .btn-cerrar{padding:.65rem 1.4rem;background:var(--mg);color:white;border:none;border-radius:10px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.88rem;font-weight:500;cursor:pointer;transition:opacity .2s}
         .btn-cerrar:hover{opacity:.88}
 
+        /* ── RESPONSIVE CARDS ── */
+        @media(max-width:768px){
+            .table-scroll{overflow-x:visible}
+            table{min-width:unset}
+            thead{display:none}
+            tbody{display:block}
+            .fila-pac{display:block;background:var(--white);border:1px solid var(--mg-border);border-radius:12px;margin-bottom:.75rem;padding:0;cursor:pointer;transition:all .2s}
+            .fila-pac:hover{box-shadow:0 4px 12px rgba(176,53,128,.12);transform:translateY(-2px)}
+            .fila-pac:hover td{background:transparent}
+            .fila-pac td{display:block;border:none;padding:.65rem 1rem;position:relative}
+            .fila-pac td::before{content:attr(data-label);display:block;font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:.3rem}
+            .fila-pac td:first-child{padding-top:1rem}
+            .fila-pac td:last-child{padding-bottom:1rem;border-bottom:none}
+            .avatar-cell{margin-top:.2rem}
+        }
+
         /* ── RESPONSIVE ── */
         @media(max-width:768px){
             body{flex-direction:column}
@@ -278,16 +294,16 @@
                     data-telefono="{{ paciente.telefono|default:'—' }}"
                     data-email="{{ paciente.usuario.email|default:'—' }}"
                     data-estado="{{ paciente.usuario.is_active|yesno:'Activo,Inactivo' }}">
-                    <td>
+                    <td data-label="Paciente">
                         <div class="avatar-cell">
                             <div class="mini-avatar">{{ paciente.usuario.first_name|first }}{{ paciente.usuario.last_name|first }}</div>
                             <span class="pac-name">{{ paciente.usuario.get_full_name }}</span>
                         </div>
                     </td>
-                    <td>{{ paciente.cedula|default:"—" }}</td>
-                    <td>{{ paciente.telefono|default:"—" }}</td>
-                    <td>{{ paciente.usuario.email|default:"—" }}</td>
-                    <td>
+                    <td data-label="Cédula">{{ paciente.cedula|default:"—" }}</td>
+                    <td data-label="Teléfono">{{ paciente.telefono|default:"—" }}</td>
+                    <td data-label="Correo">{{ paciente.usuario.email|default:"—" }}</td>
+                    <td data-label="Estado">
                         {% if paciente.usuario.is_active %}
                         <span class="badge-estado badge-activo"><i class="fa-solid fa-circle" style="font-size:6px"></i> Activo</span>
                         {% else %}

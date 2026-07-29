@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="es" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Código de Recuperación - ZUMedical</title>
+    <style type="text/css">
+        * { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+        body { margin: 0; padding: 0; min-width: 100%!important; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .container { width: 100%; max-width: 600px; margin: 0 auto; background-color: #f5f5f5; }
+        table { border-collapse: collapse; width: 100%; }
+        td { vertical-align: top; }
+        
+        /* HEADER */
+        .header-bg { background: linear-gradient(135deg, #8A2563 0%, #B03580 50%, #CC4D99 100%); padding: 40px 20px; text-align: center; }
+        .header-title { font-size: 32px; font-weight: 700; color: #ffffff; margin: 0; padding: 0; }
+        .header-subtitle { font-size: 14px; color: rgba(255,255,255,0.9); margin: 8px 0 0 0; padding: 0; }
+        
+        /* CONTENT */
+        .wrapper { background-color: #ffffff; padding: 40px 30px; }
+        .greeting { font-size: 18px; font-weight: 600; color: #2A1020; margin: 0 0 10px 0; }
+        .content-text { font-size: 15px; line-height: 1.6; color: #555555; margin: 0 0 15px 0; }
+        
+        /* CODE BOX */
+        .code-section { background-color: #FDF5FA; border: 2px solid #E8AAD4; border-radius: 12px; padding: 30px; margin: 30px 0; text-align: center; }
+        .code-label { font-size: 12px; color: #8A6070; text-transform: uppercase; letter-spacing: 0.1em; margin: 0 0 12px 0; font-weight: 600; }
+        .code-value { font-size: 48px; font-weight: 800; color: #B03580; font-family: 'Courier New', 'Courier', monospace; letter-spacing: 6px; margin: 0; }
+        
+        /* INFO BOX */
+        .info-box { background-color: #EAFAF1; border-left: 4px solid #1a7a4a; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .info-text { font-size: 13px; color: #1a7a4a; margin: 0; font-weight: 600; }
+        
+        /* WARNING BOX */
+        .warning-box { background-color: #FFF8E1; border-left: 4px solid #F59E0B; padding: 15px; margin: 20px 0; border-radius: 4px; }
+        .warning-text { font-size: 13px; color: #7B5800; margin: 0; }
+        
+        /* LIST */
+        .steps-list { color: #555; font-size: 14px; line-height: 1.8; padding-left: 20px; margin: 15px 0; }
+        .steps-list li { margin-bottom: 8px; }
+        
+        /* DIVIDER */
+        .divider { height: 1px; background-color: #e8e8e8; margin: 25px 0; }
+        
+        /* FOOTER */
+        .footer-bg { background-color: #f9f9f9; padding: 25px 30px; border-top: 1px solid #e8e8e8; text-align: center; }
+        .footer-text { font-size: 12px; color: #999; margin: 5px 0; }
+        .footer-link { color: #B03580; text-decoration: none; font-weight: 600; }
+        .footer-link:hover { text-decoration: underline; }
+        
+        /* RESPONSIVE */
+        @media only screen and (max-width: 480px) {
+            .wrapper { padding: 20px 15px; }
+            .header-title { font-size: 24px; }
+            .code-value { font-size: 36px; letter-spacing: 4px; }
+            .steps-list { padding-left: 15px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <table role="presentation">
+            <tr>
+                <td class="header-bg">
+                    <h1 class="header-title">🔐 ZUMedical</h1>
+                    <p class="header-subtitle">Recuperación de Contraseña</p>
+                </td>
+            </tr>
+        </table>
+
+        <!-- CONTENT -->
+        <table role="presentation">
+            <tr>
+                <td class="wrapper">
+                    <p class="greeting">Hola {{ nombre }},</p>
+                    
+                    <p class="content-text">
+                        Hemos recibido una solicitud para resetear la contraseña de tu cuenta. 
+                        A continuación encontrarás tu código de recuperación de 6 dígitos:
+                    </p>
+
+                    <!-- CÓDIGO -->
+                    <div class="code-section">
+                        <p class="code-label">Tu código de recuperación</p>
+                        <p class="code-value">{{ codigo }}</p>
+                    </div>
+
+                    <!-- INFORMACIÓN DE TIEMPO -->
+                    <div class="info-box">
+                        <p class="info-text">⏱️ Este código es válido por {{ tiempo_expiracion }} minutos</p>
+                    </div>
+
+                    <!-- PASOS -->
+                    <h2 style="font-size: 16px; color: #2A1020; margin: 20px 0 10px 0; font-weight: 600;">Pasos para completar:</h2>
+                    <ol class="steps-list">
+                        <li>Regresa a la pantalla de recuperación de contraseña en ZUMedical</li>
+                        <li>Ingresa tu correo electrónico</li>
+                        <li>Ingresa el código: <strong>{{ codigo }}</strong></li>
+                        <li>Crea una nueva contraseña fuerte (mínimo 8 caracteres)</li>
+                        <li>¡Listo! Ya podrás acceder a tu cuenta con la nueva contraseña</li>
+                    </ol>
+
+                    <!-- ADVERTENCIA DE SEGURIDAD -->
+                    <div class="warning-box">
+                        <p class="warning-text">
+                            <strong>⚠️ Por tu seguridad:</strong> 
+                            Nunca compartas este código con nadie. El equipo de ZUMedical nunca te pedirá tu contraseña por correo electrónico.
+                        </p>
+                    </div>
+
+                    <p class="content-text">
+                        Si <strong>no solicitaste</strong> este cambio de contraseña, 
+                        puedes ignorar este correo. Tu cuenta permanecerá segura.
+                    </p>
+
+                    <div class="divider"></div>
+
+                    <p style="font-size: 12px; color: #999; margin: 0;">
+                        Si tienes problemas, contacta a nuestro equipo de soporte en 
+                        <a href="mailto:soporte@zumedical.com" class="footer-link">soporte@zumedical.com</a>
+                    </p>
+                </td>
+            </tr>
+        </table>
+
+        <!-- FOOTER -->
+        <table role="presentation">
+            <tr>
+                <td class="footer-bg">
+                    <p class="footer-text"><strong>ZUMedical - Centro Médico Especializado</strong></p>
+                    <p class="footer-text">Este es un correo automático, por favor no respondas directamente a este mensaje.</p>
+                    <p class="footer-text" style="color: #ccc; margin-top: 10px;">© 2024 ZUMedical. Todos los derechos reservados.</p>
+                </td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

@@ -2460,6 +2460,7 @@ def registrar_consulta_general(request):
         consulta = ConsultaGeneral.objects.create(
             paciente                 = paciente_obj,
             medico                   = request.user,
+            especialidad             = _val('especialidad', 'medicina_general'),
             motivo_consulta          = _val('motivo_consulta', '(sin motivo)'),
             antecedentes_personales  = _val('antecedentes_personales'),
             antecedentes_familiares  = _val('antecedentes_familiares'),
@@ -2474,10 +2475,20 @@ def registrar_consulta_general(request):
             temperatura              = _float('temperatura'),
             talla                    = _float('talla'),
             peso                     = _float('peso'),
+            diagnostico_clinico      = _val('diagnostico_clinico'),
+            procedimiento_realizado  = _val('procedimiento_realizado'),
+            hallazgos                = _val('hallazgos'),
+            medicamentos_recetados   = _val('medicamentos_recetados'),
+            recomendaciones          = _val('recomendaciones'),
             examenes_enviados        = _val('examenes_enviados'),
             evolucion_enfermedad     = _val('evolucion_enfermedad'),
             plan                     = _val('plan'),
             tratamiento              = _val('tratamiento'),
+            piezas_dentales_tratadas = _val('piezas_dentales_tratadas'),
+            odontograma              = _val('odontograma'),
+            tipo_ecografia           = _val('tipo_ecografia'),
+            region_examinada         = _val('region_examinada'),
+            conclusion_diagnostica   = _val('conclusion_diagnostica'),
             diagnostico_1_patologia  = _val('diag1_patologia'),
             diagnostico_1_cie10      = _val('diag1_cie10'),
             diagnostico_1_presuntivo = bool(request.POST.get('diag1_presuntivo')),
@@ -2494,11 +2505,11 @@ def registrar_consulta_general(request):
             proxima_cita_hora        = request.POST.get('proxima_cita_hora') or None,
         )
         registrar_log(request, 'CREATE', 'Consultas Generales',
-            f'Consulta registrada para paciente {paciente_obj.get_full_name()} por {request.user.rol}', 'INFO')
-        messages.success(request, f'Consulta de {paciente_obj.get_full_name()} registrada correctamente.')
+            f'Consulta {consulta.get_especialidad_display()} registrada para paciente {paciente_obj.get_full_name()} por {request.user.rol}', 'INFO')
+        messages.success(request, f'Consulta de {consulta.get_especialidad_display()} para {paciente_obj.get_full_name()} registrada correctamente.')
         return redirect('ver_consulta_general', consulta_id=consulta.id)
 
-    return render(request, 'medico/registrar_consulta_general.html',
+    return render(request, 'medico/registrar_consulta_unificada.html',
                   {'pacientes': pacientes_generales, 'pac_preseleccionado': pac_preseleccionado})
 
 

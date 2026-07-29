@@ -180,6 +180,22 @@
         .empty-state i{font-size:2.2rem;color:var(--mg-border);display:block;margin-bottom:.75rem}
         .empty-state p{font-size:.9rem}
 
+        /* ── RESPONSIVE CARDS ── */
+        @media(max-width:768px){
+            .table-scroll{overflow-x:visible}
+            table{min-width:unset}
+            thead{display:none}
+            tbody{display:block}
+            .fila-cita{display:block;background:var(--white);border:1px solid var(--mg-border);border-radius:12px;margin-bottom:.75rem;padding:0;cursor:pointer;transition:all .2s}
+            .fila-cita:hover{box-shadow:0 4px 12px rgba(176,53,128,.12);transform:translateY(-2px)}
+            .fila-cita:hover td{background:transparent}
+            .fila-cita td{display:block;border:none;padding:.65rem 1rem;position:relative}
+            .fila-cita td::before{content:attr(data-label);display:block;font-size:.68rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;margin-bottom:.3rem}
+            .fila-cita td:first-child{padding-top:1rem}
+            .fila-cita td:last-child{padding-bottom:1rem}
+            .pac-cell{margin-top:.2rem}
+        }
+
         /* ── RESPONSIVE ── */
         @media(max-width:1100px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
         @media(max-width:768px){
@@ -308,24 +324,24 @@
                         data-hora="{{ cita.hora|time:'H:i' }}"
                         data-motivo="{{ cita.motivo|default:'Sin motivo especificado' }}"
                         data-cita-id="{{ cita.id }}">
-                        <td>
+                        <td data-label="Paciente">
                             <div class="pac-cell">
                                 <div class="pac-av">{{ cita.paciente.first_name|first }}{{ cita.paciente.last_name|first }}</div>
                                 <strong>{{ cita.paciente.get_full_name|default:cita.paciente.username }}</strong>
                             </div>
                         </td>
-                        <td>{{ cita.fecha|date:"d/m/Y" }}</td>
-                        <td><strong>{{ cita.hora|time:"H:i" }}</strong></td>
-                        <td>{{ cita.especialidad|default:"—" }}</td>
-                        <td style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cita.motivo|default:"—"|truncatechars:28 }}</td>
-                        <td><span class="badge badge-{{ cita.estado }}">
+                        <td data-label="Fecha">{{ cita.fecha|date:"d/m/Y" }}</td>
+                        <td data-label="Hora"><strong>{{ cita.hora|time:"H:i" }}</strong></td>
+                        <td data-label="Especialidad">{{ cita.especialidad|default:"—" }}</td>
+                        <td data-label="Motivo" style="max-width:160px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ cita.motivo|default:"—"|truncatechars:28 }}</td>
+                        <td data-label="Estado"><span class="badge badge-{{ cita.estado }}">
                             {% if cita.estado == 'pendiente' %}<i class="fa-solid fa-hourglass-half"></i>
                             {% elif cita.estado == 'atendido' %}<i class="fa-solid fa-check"></i>
                             {% elif cita.estado == 'cancelado' or cita.estado == 'cancelada' %}<i class="fa-solid fa-xmark"></i>
                             {% endif %}
                             {{ cita.get_estado_display|default:cita.estado }}
                         </span></td>
-                        <td onclick="event.stopPropagation()">
+                        <td data-label="Cambiar estado" onclick="event.stopPropagation()">
                             <select class="select-estado" data-cita-id="{{ cita.id }}" onchange="cambiarEstado(this)">
                                 <option value="pendiente" {% if cita.estado == 'pendiente' %}selected{% endif %}>Pendiente</option>
                                 <option value="atendido" {% if cita.estado == 'atendido' %}selected{% endif %}>Atendido</option>

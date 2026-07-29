@@ -506,21 +506,23 @@
             {% if messages %}
             <div class="messages">
                 {% for message in messages %}
-                    {% if 'CUENTA_DESACTIVADA' in message.message %}
-                    <div class="alert-desactivada">
-                        <div class="alert-desactivada-header">
-                            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
-                            Cuenta desactivada
+                    {% if forloop.first %}
+                        {% if 'CUENTA_DESACTIVADA' in message.message %}
+                        <div class="alert-desactivada">
+                            <div class="alert-desactivada-header">
+                                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                                Cuenta desactivada
+                            </div>
+                            <p class="alert-desactivada-body">Tu cuenta ha sido desactivada por el centro médico. Para reactivarla, <strong>dirígete a Zumedical</strong> y solicita la reactivación de tu cuenta al administrador.</p>
                         </div>
-                        <p class="alert-desactivada-body">Tu cuenta ha sido desactivada por el centro médico. Para reactivarla, <strong>dirígete a Zumedical</strong> y solicita la reactivación de tu cuenta al administrador.</p>
-                    </div>
-                    {% else %}
-                    <div class="alert">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-                        </svg>
-                        {{ message }}
-                    </div>
+                        {% else %}
+                        <div class="alert">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                            </svg>
+                            {{ message }}
+                        </div>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </div>
@@ -575,6 +577,9 @@
             <div class="divider"><span>¿No tienes cuenta?</span></div>
             <div class="register-link">
                 <p>¿Paciente nuevo? <a href="{% url 'registro' %}">Crear cuenta</a></p>
+                <p style="margin-top: 0.8rem; font-size: 0.9rem;">
+                    ¿Olvidaste tu contraseña? <a href="{% url 'recuperar_contrasena' %}" style="font-weight: 600;">Recuperarla aquí</a>
+                </p>
             </div>
         </div>
     </div>
@@ -630,6 +635,35 @@
             return true;
         }
 
+        async function validateUsernameExists() {
+            const val = usernameI.value.trim();
+            const statusEl = document.getElementById('status_username');
+            const msgEl    = document.getElementById('msg_username');
+            
+            if (!val || val.length < 3) {
+                return false;
+            }
+
+            try {
+                const response = await fetch(`/api/validar-usuario/?username=${encodeURIComponent(val)}`);
+                const data = await response.json();
+                
+                if (data.desactivado) {
+                    setStatus(usernameI, statusEl, msgEl, false, 'Esta cuenta está desactivada.');
+                    return false;
+                } else if (!data.existe) {
+                    setStatus(usernameI, statusEl, msgEl, false, 'Usuario o correo no existe.');
+                    return false;
+                } else {
+                    setStatus(usernameI, statusEl, msgEl, true, 'Usuario encontrado.');
+                    return true;
+                }
+            } catch (error) {
+                console.error('Error validando usuario:', error);
+                return false;
+            }
+        }
+
         function validatePassword() {
             const val = passwordI.value;
             const statusEl = document.getElementById('status_username'); // reuse pattern
@@ -656,12 +690,17 @@
         }
 
         /* ── Eventos blur ── */
-        usernameI.addEventListener('blur', () => {
-            if (usernameI.value) validateUsername();
+        usernameI.addEventListener('blur', async () => {
+            if (usernameI.value) {
+                validateUsername();
+                await validateUsernameExists();
+            }
         });
 
         usernameI.addEventListener('input', () => {
-            if (usernameI.classList.contains('is-invalid')) validateUsername();
+            if (usernameI.classList.contains('is-invalid')) {
+                validateUsername();
+            }
         });
 
         passwordI.addEventListener('blur', () => {

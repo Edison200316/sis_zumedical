@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Éxito! - ZUMedical</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --magenta: #B03580;
+            --magenta-light: #CC4D99;
+            --magenta-dark: #8A2563;
+            --success: #1a7a4a;
+            --text: #2A1020;
+            --text-muted: #8A6070;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #8A2563 0%, #B03580 50%, #CC4D99 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .success-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 100%;
+            padding: 3rem;
+            text-align: center;
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--success), #27ae60);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            animation: successBounce 0.6s ease 0.2s both;
+        }
+
+        @keyframes successBounce {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .success-icon svg {
+            width: 48px;
+            height: 48px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+            animation: checkmark 0.6s ease 0.4s both;
+        }
+
+        @keyframes checkmark {
+            0% {
+                stroke-dasharray: 50;
+                stroke-dashoffset: 50;
+            }
+            100% {
+                stroke-dasharray: 50;
+                stroke-dashoffset: 0;
+            }
+        }
+
+        h1 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 2rem;
+            color: var(--text);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .success-message {
+            color: var(--text-muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .success-details {
+            background: #EAFAF1;
+            border-left: 4px solid var(--success);
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+
+        .success-details h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--success);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.75rem;
+        }
+
+        .success-details ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .success-details li {
+            padding: 0.5rem 0;
+            color: var(--text);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .success-details li::before {
+            content: '✓';
+            color: var(--success);
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .btn-login {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, var(--magenta-dark), var(--magenta-light));
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            margin-bottom: 1rem;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(176, 53, 128, 0.3);
+            color: white;
+            text-decoration: none;
+        }
+
+        .success-footer {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid #E8AAD4;
+        }
+
+        .success-footer a {
+            color: var(--magenta);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .success-footer a:hover {
+            color: var(--magenta-dark);
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-card">
+        <div class="success-icon">
+            <svg viewBox="0 0 24 24">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+
+        <h1>¡Éxito!</h1>
+        
+        <p class="success-message">
+            Tu contraseña ha sido actualizada correctamente. Ya puedes acceder a tu cuenta con la nueva contraseña.
+        </p>
+
+        <a href="{% url 'login' %}" class="btn-login">Ir a Iniciar Sesión</a>
+
+        <div class="success-footer">
+            <p>
+                ¿Necesitas ayuda? 
+                <a href="{% url 'landing' %}">Contacta con Soporte</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -4,6 +4,9 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.contrib.auth.models import User
 from django.conf import settings
+import secrets
+from django.utils import timezone
+from datetime import timedelta
 
 class Usuario(AbstractUser):
 
@@ -50,6 +53,63 @@ class Usuario(AbstractUser):
     def tiene_solo_general(self):
         """True si solo tiene acceso general (sin módulo prenatal activo)."""
         return self.rol == 'paciente' and not self.puede_prenatal
+
+
+class CodigoRecuperacionPassword(models.Model):
+    """Modelo para almacenar códigos de recuperación de contraseña"""
+    usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name='codigo_recuperacion')
+    codigo = models.CharField(max_length=6, unique=True)  # Código de 6 dígitos
+    creado_en = models.DateTimeField(auto_now_add=True)
+    expira_en = models.DateTimeField()
+    intentos_fallidos = models.IntegerField(default=0)
+    max_intentos = 5
+    validado = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name = "Código de Recuperación"
+        verbose_name_plural = "Códigos de Recuperación"
+
+    def __str__(self):
+        return f"Código para {self.usuario.username}"
+
+    @staticmethod
+    def generar_codigo():
+        """Genera un código único de 6 dígitos"""
+        while True:
+            codigo = str(int(secrets.token_hex(3), 16))[:6].zfill(6)
+            if not CodigoRecuperacionPassword.objects.filter(codigo=codigo).exists():
+                return codigo
+
+    def es_valido(self):
+        """Verifica si el código aún es válido"""
+        ahora = timezone.now()
+        return (
+            ahora < self.expira_en and 
+            self.intentos_fallidos < self.max_intentos
+        )
+
+    def es_expirado(self):
+        """Verifica si el código ha expirado"""
+        return timezone.now() > self.expira_en
+
+    @classmethod
+    def crear_para_usuario(cls, usuario):
+        """Crea o actualiza el código de recuperación para un usuario"""
+        ahora = timezone.now()
+        codigo = cls.generar_codigo()
+        expira_en = ahora + timedelta(minutes=15)  # Válido por 15 minutos
+        
+        codigo_obj, created = cls.objects.update_or_create(
+            usuario=usuario,
+            defaults={
+                'codigo': codigo,
+                'creado_en': ahora,
+                'expira_en': expira_en,
+                'intentos_fallidos': 0,
+                'validado': False,
+            }
+        )
+        return codigo_obj
 
 
 @receiver(post_save, sender=Usuario)

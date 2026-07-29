@@ -52,7 +52,7 @@
         .toast-close svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5}
 
         /* SIDEBAR */
-        .sidebar{width:var(--sw);min-width:var(--sw);min-height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:350;box-shadow:4px 0 20px rgba(138,37,99,.2);align-self:flex-start;height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch;transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
+        .sidebar{width:var(--sw);min-width:var(--sw);min-height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:350;box-shadow:4px 0 20px rgba(138,37,99,.2);align-self:flex-start;height:calc(100vh - 64px);overflow-y:auto;-webkit-overflow-scrolling:touch;transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
         .sidebar-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
         .sidebar-brand-logo{width:44px;height:44px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .sidebar-brand-logo img{width:40px;height:40px;object-fit:contain}
@@ -79,7 +79,7 @@
         .btn-logout svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
 
         /* MAIN */
-        .main { flex:1; margin-left:var(--sw); padding:2.5rem; min-height:100vh; height:100vh; overflow-y:auto; -webkit-overflow-scrolling:touch; opacity:0; animation:pageIn .4s ease .05s forwards; }
+        .main { flex:1; margin-left:var(--sw); padding:2.5rem; min-height:100vh; height:100vh; overflow-y:auto; -webkit-overflow-scrolling:touch; opacity:0; animation:pageIn .4s ease .05s forwards; width:100%; max-width:100%; box-sizing:border-box; }
 
         /* HEADER */
         .page-header { margin-bottom:1.75rem; }
@@ -145,7 +145,7 @@
         .results-count strong { color:var(--text); }
 
         /* TABLE CARD */
-        .table-card { background:var(--white); border-radius:16px; border:1px solid var(--mg-border); overflow:hidden; margin-bottom:1.5rem; }
+        .table-card { background:var(--white); border-radius:16px; border:1px solid var(--mg-border); overflow:hidden; margin-bottom:1.5rem; width:100%; max-width:100%; box-sizing:border-box; }
         .table-card-header { padding:1.2rem 1.75rem; border-bottom:1px solid var(--mg-border); display:flex; align-items:center; gap:.65rem; background:var(--mg-bg); }
         .table-card-header svg { width:18px; height:18px; stroke:var(--mg); fill:none; stroke-width:1.8; }
         .table-card-header h2 { font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size:1.15rem; font-weight:600; color:var(--text); }
@@ -164,23 +164,38 @@
         tbody tr.mes-row:first-child td { padding-top:.4rem; }
 
         /* ── VISTA TARJETAS (solo móvil) ── */
-        .controles-cards{ display:none; flex-direction:column; gap:.9rem; padding:.25rem 1.1rem 1.1rem; }
+        .controles-cards{ display:none; flex-direction:column; gap:1.2rem; padding:.25rem 1.1rem 1.1rem; width:100%; max-width:100%; box-sizing:border-box; }
         .mes-header{ font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif; font-size:1.05rem; font-weight:600; color:var(--mg-d); padding:.2rem .1rem 0; }
-        .control-card{ background:var(--white); border:1.5px solid var(--mg-border); border-radius:16px; padding:1rem 1.1rem; animation:fadeUp .3s ease both; }
+        .control-card{ background:var(--white); border:2px solid var(--mg-border); border-radius:16px; padding:1rem 1.1rem; animation:fadeUp .3s ease both; box-shadow:0 2px 8px rgba(176,53,128,.08); box-sizing:border-box; width:100%; max-width:100%; overflow:hidden; }
         .cc-top{ display:flex; align-items:center; gap:.7rem; cursor:pointer; padding-bottom:.85rem; margin-bottom:.85rem; border-bottom:1px solid var(--mg-border); }
         .cc-av{ width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--mg-d),var(--mg-l)); display:flex; align-items:center; justify-content:center; font-size:.8rem; font-weight:600; color:white; flex-shrink:0; text-transform:uppercase; }
         .cc-info{ flex:1; min-width:0; }
         .cc-name{ font-weight:600; font-size:.92rem; color:var(--mg); }
         .cc-date{ font-size:.78rem; color:var(--muted); margin-top:.1rem; }
         .cc-arrow{ width:16px; height:16px; stroke:var(--mg); fill:none; stroke-width:2.2; flex-shrink:0; }
-        .cc-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; }
-        .cc-stat{ display:flex; flex-direction:column; align-items:flex-start; gap:.3rem; }
+        .cc-stats{ display:grid; grid-template-columns:repeat(3,1fr); gap:.6rem; width:100%; box-sizing:border-box; }
+        .cc-stat{ display:flex; flex-direction:column; align-items:flex-start; gap:.3rem; min-width:0; box-sizing:border-box; word-wrap:break-word; }
         .cc-stat-label{ font-size:.65rem; font-weight:500; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
-        .cc-obs{ margin-top:.85rem; padding-top:.85rem; border-top:1px solid var(--mg-border); font-size:.82rem; color:var(--text); line-height:1.4; }
+        .cc-obs{ margin-top:.75rem; padding-top:.75rem; border-top:1px solid var(--mg-border); font-size:.82rem; color:var(--text); line-height:1.4; }
         .cc-obs strong{ color:var(--mg-d); font-weight:600; }
-        .cc-pdf{ margin-top:.9rem; width:100%; display:flex; align-items:center; justify-content:center; gap:.5rem; padding:.65rem; border-radius:10px; border:1.5px solid var(--mg-border); background:var(--mg-bg); color:var(--mg-d); font-size:.82rem; font-weight:500; cursor:pointer; transition:all .15s; }
-        .cc-pdf:hover{ background:var(--mg); color:white; border-color:var(--mg); }
-        .cc-pdf svg{ width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; }
+        
+        /* Botones de acción compactos */
+        .cc-actions{ display:flex; gap:.5rem; align-items:center; justify-content:space-between; margin-top:.85rem; padding-top:.85rem; border-top:1px solid var(--mg-border); }
+        .cc-btn-group{ display:flex; gap:.4rem; }
+        .cc-btn{ display:flex; align-items:center; justify-content:center; width:36px; height:36px; border-radius:8px; border:1.5px solid; cursor:pointer; transition:all .2s; }
+        .cc-btn svg{ width:15px; height:15px; stroke:currentColor; fill:none; stroke-width:2; }
+        .cc-btn-edit{ background:var(--green-bg); color:var(--green); border-color:var(--green-border); }
+        .cc-btn-edit:hover{ background:var(--green); color:white; }
+        .cc-btn-delete{ background:var(--red-bg); color:var(--red); border-color:var(--red-border); }
+        .cc-btn-delete:hover{ background:var(--red); color:white; }
+        .cc-btn-pdf{ display:flex; align-items:center; justify-content:center; gap:.4rem; padding:.5rem .9rem; border-radius:8px; background:var(--mg-bg); color:var(--mg-d); border:1.5px solid var(--mg-border); font-size:.8rem; font-weight:500; cursor:pointer; transition:all .15s; }
+        .cc-btn-pdf:hover{ background:var(--mg); color:white; border-color:var(--mg); }
+        .cc-btn-pdf svg{ width:14px; height:14px; stroke:currentColor; fill:none; stroke-width:2; }
+        
+        /* Botón PDF móvil (full-width) */
+        .cc-pdf{ display:flex; align-items:center; justify-content:center; gap:.5rem; padding:.7rem 1rem; width:100%; background:linear-gradient(135deg,var(--mg-d),var(--mg-l)); color:white; border:none; border-radius:10px; font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif; font-size:.85rem; font-weight:500; cursor:pointer; transition:all .2s; }
+        .cc-pdf:hover{ transform:translateY(-1px); box-shadow:0 4px 14px rgba(176,53,128,.3); }
+        .cc-pdf svg{ width:15px; height:15px; stroke:white; fill:none; stroke-width:2; flex-shrink:0; }
 
         /* PACIENTE CLICKABLE */
         .pac-cell { display:flex; align-items:center; gap:.7rem; cursor:pointer; }
@@ -299,13 +314,13 @@
             .sidebar{
                 width:var(--sw);
                 min-width:var(--sw);
-                height:100vh;
-                min-height:100vh;
+                height:calc(100vh - 64px);
+                min-height:calc(100vh - 64px);
                 position:fixed;
-                top:0;
+                top: 64px;
                 left:0;
                 z-index:350;
-                padding-top:64px;
+                padding-top: 0;
                 transform:translateX(-100%);
                 box-shadow:4px 0 20px rgba(0,0,0,.15);
                 animation:none !important;
@@ -313,9 +328,10 @@
                 -webkit-overflow-scrolling:touch;
             }
             .sidebar.open{transform:translateX(0)}
-            .sidebar-overlay{display:block}
+            .sidebar-overlay{display:block;z-index:290;pointer-events:auto}
             .mobile-topbar{display:flex}
             .main{
+                margin-left:0;
                 padding:1.1rem;
                 padding-top:calc(1.1rem + 64px);
                 height:100vh;
@@ -335,6 +351,7 @@
             /* TABLA (desktop) → TARJETAS (móvil) */
             table#controles-table{display:none}
             .controles-cards{display:flex}
+            .table-card{width:100%;max-width:100%;box-sizing:border-box;overflow:hidden}
             .table-card-header{padding:1rem 1.25rem}
 
             /* MODAL BOTTOM SHEET */
@@ -783,27 +800,28 @@
                 </div>
                 <!-- ── BOTÓN PDF ── -->
                 <div style="margin-top:.6rem">
-                <button class="cc-pdf" onclick="generarPDF(this)"
-                    data-paciente="{{ c.paciente.get_full_name|default:c.paciente.username }}"
-                    data-fecha="{{ c.fecha|date:'d/m/Y' }}"
-                    data-semanas="{{ c.semanas_gestacion }}"
-                    data-presion="{{ c.presion_arterial|default:'—' }}"
-                    data-peso="{{ c.peso|default:'—' }}"
-                    data-obs="{{ c.observaciones|default:'Sin observaciones' }}"
-                    data-medico="Dr(a). {{ request.user.get_full_name|default:request.user.username }}"
-                    data-glucosa="{{ c.glucosa|default:'—' }}"
-                    data-fc="{{ c.frecuencia_cardiaca|default:'—' }}"
-                    data-temp="{{ c.temperatura|default:'—' }}"
-                    data-altura="{{ c.altura|default:'—' }}"
-                    data-imc="{{ c.imc|default:'—' }}"
-                    {% if c.prediccion_ia %}
-                    data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
-                    data-ia-pct="{{ c.prediccion_ia.puntuacion_riesgo }}"
-                    data-ia-icono="{{ c.prediccion_ia.icono }}"
-                    {% endif %}>
-                    <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                    Descargar PDF
-                </button>
+                    <button class="cc-pdf" onclick="generarPDF(this)"
+                        data-paciente="{{ c.paciente.get_full_name|default:c.paciente.username }}"
+                        data-fecha="{{ c.fecha|date:'d/m/Y' }}"
+                        data-semanas="{{ c.semanas_gestacion }}"
+                        data-presion="{{ c.presion_arterial|default:'—' }}"
+                        data-peso="{{ c.peso|default:'—' }}"
+                        data-obs="{{ c.observaciones|default:'Sin observaciones' }}"
+                        data-medico="Dr(a). {{ request.user.get_full_name|default:request.user.username }}"
+                        data-glucosa="{{ c.glucosa|default:'—' }}"
+                        data-fc="{{ c.frecuencia_cardiaca|default:'—' }}"
+                        data-temp="{{ c.temperatura|default:'—' }}"
+                        data-altura="{{ c.altura|default:'—' }}"
+                        data-imc="{{ c.imc|default:'—' }}"
+                        {% if c.prediccion_ia %}
+                        data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
+                        data-ia-pct="{{ c.prediccion_ia.puntuacion_riesgo }}"
+                        data-ia-icono="{{ c.prediccion_ia.icono }}"
+                        {% endif %}>
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+                        Descargar PDF
+                    </button>
+                </div>
             </div>
             {% endfor %}
         </div>

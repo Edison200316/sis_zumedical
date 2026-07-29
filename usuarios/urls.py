@@ -1,9 +1,22 @@
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
+from . import views_recuperacion
 
 urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+    
+    # Rutas de recuperación de contraseña PERSONALIZADO (con código)
+    path('recuperar-contrasena/', views_recuperacion.recuperar_contrasena, name='recuperar_contrasena'),
+    path('verificar-codigo/', views_recuperacion.verificar_codigo_recuperacion, name='verificar_codigo_recuperacion'),
+    path('reset-password/', views_recuperacion.reset_password_form, name='reset_password_form'),
+    path('reset-completado/', views_recuperacion.reset_password_completado, name='reset_password_completado'),
+    path('reenviar-codigo/', views_recuperacion.reenviar_codigo, name='reenviar_codigo'),
+    
+    # Validación en tiempo real (AJAX)
+    path('api/validar-usuario/', views_recuperacion.validar_usuario_existe, name='validar_usuario_existe'),
+    path('api/validar-passwords/', views_recuperacion.validar_passwords_coinciden, name='validar_passwords_coinciden'),
 
     path('admin-dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('medico-dashboard/', views.medico_dashboard, name='medico_dashboard'),

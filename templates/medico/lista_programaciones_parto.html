@@ -23,6 +23,19 @@
       }
 
     body{font-family:"DM Sans", "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);display:flex;height:100vh;overflow:hidden;}
+    /* ── MOBILE TOPBAR ── */
+    .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:0 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300;height:64px}
+    .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
+    .mobile-topbar-logo{width:32px;height:32px;background:white;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center}
+    .mobile-topbar-logo img{width:28px;height:28px;object-fit:contain}
+    .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
+    .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+    .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
+    .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+    .hamburger.open span:nth-child(2){opacity:0}
+    .hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+    .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:250;opacity:0;pointer-events:none;transition:opacity .3s ease}
+    .sidebar-overlay.active{opacity:1;pointer-events:auto}
     .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8a2563 0%,#b03580 55%,#cc4d99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:100;overflow-y:auto;}
     .sb-brand{padding:1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;}
     .sb-logo{width:40px;height:40px;background:white;border-radius:50%;display:flex;align-items:center;justify-content:center;overflow:hidden;flex-shrink:0;}
@@ -74,10 +87,37 @@
     .empty{text-align:center;padding:4rem 2rem;color:var(--muted);}
     .empty-icon{font-size:3rem;margin-bottom:.75rem;}
     .empty h3{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.3rem;color:var(--text);margin-bottom:.5rem;}
-    @media(max-width:700px){.main{padding:1.25rem}.partos-grid{grid-template-columns:1fr}}
+    @media(max-width:700px){
+      body{flex-direction:column;height:100vh;overflow:hidden}
+      .sidebar{position:fixed;top: 64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);z-index:300}
+      .sidebar.open{transform:translateX(0)}
+      .sidebar-overlay{display:block;z-index:250}
+      .mobile-topbar{display:flex}
+      .main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px);height:100vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+      .partos-grid{grid-template-columns:1fr}
+      .top-row{flex-direction:column;align-items:stretch}
+      .btn-primary{width:100%;justify-content:center}
+      .page-title{font-size:1.6rem}
+    }
   </style>
 </head>
 <body>
+<!-- OVERLAY -->
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<!-- MOBILE TOPBAR -->
+<div class="mobile-topbar">
+    <div class="mobile-topbar-brand">
+        <div class="mobile-topbar-logo">
+            <img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical">
+        </div>
+        <span>Zumedical</span>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+    </button>
+</div>
+
 {% include 'medico/sidebar_medico.html' %}
 
 <main class="main">
@@ -129,5 +169,19 @@
   </div>
   {% endif %}
 </main>
+
+<script>
+// ── HAMBURGUESA ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('active');
+  document.getElementById('hamburger').classList.toggle('open');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('active');
+  document.getElementById('hamburger').classList.remove('open');
+}
+</script>
 </body>
 </html>

@@ -235,7 +235,9 @@
                 top:0;
                 left:0;
                 z-index:350;
-                padding-top:64px; 
+                padding-top:0; /* Ya no necesitamos padding porque top:64px */
+                top:64px; /* Empieza debajo del header */
+                height:calc(100vh - 64px); /* Altura menos el header */
                 transform:translateX(-100%);
                 box-shadow:4px 0 20px rgba(0,0,0,0.15);
                 animation:none !important;

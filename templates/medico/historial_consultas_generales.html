@@ -119,6 +119,10 @@
 {% include 'medico/sidebar_medico.html' %}
 
 <main class="main">
+  <a href="javascript:history.back()" style="display:inline-flex;align-items:center;gap:8px;color:var(--mg);text-decoration:none;margin-bottom:16px;font-size:14px;font-weight:500;transition:opacity 0.2s;">
+    <svg viewBox="0 0 24 24" style="width:18px;height:18px;stroke:currentColor;stroke-width:2.5;fill:none;stroke-linecap:round;stroke-linejoin:round;"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    Volver a la página anterior
+  </a>
   <div class="top-row">
     <div><div class="page-title">Historial de Consultas Generales</div><p class="page-sub">Registro de todas las consultas médicas generales</p></div>
     <a href="{% url 'registrar_consulta_general' %}" class="btn-primary">+ Nueva Consulta</a>

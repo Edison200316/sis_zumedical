@@ -1,0 +1,459 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verificar Código - ZUMedical</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --magenta: #B03580;
+            --magenta-light: #CC4D99;
+            --magenta-dark: #8A2563;
+            --magenta-border: #E8AAD4;
+            --text: #2A1020;
+            --text-muted: #8A6070;
+            --success: #1a7a4a;
+            --error: #C0392B;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #8A2563 0%, #B03580 50%, #CC4D99 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .recovery-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 450px;
+            width: 100%;
+            padding: 3rem;
+            animation: slideUp 0.6s ease forwards;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .recovery-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .recovery-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--magenta-dark), var(--magenta-light));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+        }
+
+        .recovery-icon svg {
+            width: 32px;
+            height: 32px;
+            stroke: white;
+            fill: none;
+            stroke-width: 2;
+        }
+
+        .recovery-header h1 {
+            font-family: 'Cormorant Garamond', Georgia, serif;
+            font-size: 1.8rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .recovery-header p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+        }
+
+        .usuario-info {
+            background: #FDF5FA;
+            border: 1.5px solid var(--magenta-border);
+            border-radius: 10px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .usuario-info .label {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .usuario-info .nombre {
+            font-size: 1.1rem;
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.6rem;
+        }
+
+        .form-control {
+            border: 1.5px solid var(--magenta-border);
+            border-radius: 10px;
+            padding: 1rem;
+            font-size: 1.5rem;
+            text-align: center;
+            font-weight: 600;
+            letter-spacing: 0.5em;
+            transition: all 0.3s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .form-control:focus {
+            border-color: var(--magenta);
+            box-shadow: 0 0 0 4px rgba(176, 53, 128, 0.1);
+            outline: none;
+        }
+
+        .form-control::placeholder {
+            letter-spacing: normal;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.95rem;
+            background: linear-gradient(135deg, var(--magenta-dark), var(--magenta-light));
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(176, 53, 128, 0.3);
+        }
+
+        .timer-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #EAFAF1;
+            border: 1px solid #A9DFBF;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .timer-info.warning {
+            background: #FFF8E1;
+            border-color: #FFD54F;
+        }
+
+        .timer-info.critical {
+            background: #FDECEA;
+            border-color: #F5C6C2;
+        }
+
+        .tiempo, .intentos {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .timer-info .tiempo {
+            color: var(--success);
+        }
+
+        .timer-info.warning .tiempo {
+            color: #F39C12;
+        }
+
+        .timer-info.critical .tiempo {
+            color: var(--error);
+        }
+
+        .timer-info .intentos {
+            color: var(--text-muted);
+        }
+
+        .errorlist {
+            list-style: none;
+            padding: 0;
+            margin: 0.5rem 0;
+        }
+
+        .errorlist li {
+            padding: 0.6rem 0.8rem;
+            background: #FDECEA;
+            border: 1px solid #F5C6C2;
+            border-radius: 8px;
+            color: #C0392B;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .expired-message {
+            display: none;
+            padding: 1rem;
+            background: #FDECEA;
+            border: 1px solid #F5C6C2;
+            border-radius: 8px;
+            color: #C0392B;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .expired-message.show {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--magenta-border);
+            opacity: 0.5;
+        }
+
+        .divider span {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            white-space: nowrap;
+        }
+
+        .recovery-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .recovery-footer a {
+            color: var(--magenta);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .recovery-footer a:hover {
+            color: var(--magenta-dark);
+        }
+
+        .recovery-footer p {
+            margin: 0.5rem 0;
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .recovery-footer button {
+            background: none;
+            border: none;
+            color: var(--magenta);
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: 500;
+            padding: 0;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .recovery-footer button:hover {
+            color: var(--magenta-dark);
+        }
+
+        /* Fade out del formulario cuando expira */
+        .form-disabled {
+            opacity: 0.5;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="recovery-card">
+        <div class="recovery-header">
+            <div class="recovery-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                </svg>
+            </div>
+            <h1>Verificar Código</h1>
+            <p>Hemos enviado un código de 6 dígitos a tu correo</p>
+        </div>
+
+        <div class="usuario-info">
+            <span class="label">Cuenta de:</span>
+            <div class="nombre">{{ usuario_nombre }}</div>
+            <span class="label" style="margin-top: 0.5rem;">{{ email }}</span>
+        </div>
+
+        <!-- CONTADOR EN TIEMPO REAL -->
+        <div class="timer-info" id="timerInfo">
+            <span class="tiempo" id="tiempoSpan">
+                ⏱️ <span id="minutos">{{ minutos_restantes }}</span>m <span id="segundos">00</span>s
+            </span>
+            <span class="intentos" id="intentosSpan">
+                🔓 <span id="intentos">{{ intentos_restantes }}</span>/5
+            </span>
+        </div>
+
+        <div class="expired-message" id="expiredMessage">
+            ⏰ El código ha expirado. Por favor, solicita uno nuevo.
+        </div>
+
+        {% if form.non_field_errors %}
+            <ul class="errorlist">
+                {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+
+        <form method="POST" novalidate id="codigoForm">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label">Código de Recuperación</label>
+                {{ form.codigo }}
+                
+                {% if form.codigo.errors %}
+                    <ul class="errorlist">
+                        {% for error in form.codigo.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit" id="btnVerificar">Verificar Código</button>
+        </form>
+
+        <div class="divider"><span>Problemas</span></div>
+
+        <div class="recovery-footer">
+            <p>¿No recibiste el código?</p>
+            <form method="POST" action="{% url 'reenviar_codigo' %}" style="margin: 0.5rem 0;">
+                {% csrf_token %}
+                <button type="submit">Reenviar Código</button>
+            </form>
+            <p style="margin-top: 1rem;">
+                <a href="{% url 'recuperar_contrasena' %}">← Volver al paso anterior</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ═══════════════════════════════════════════════════════════════════
+        // CONTADOR EN TIEMPO REAL - ACTUALIZA CADA SEGUNDO
+        // ═══════════════════════════════════════════════════════════════════
+
+        const expiraEn = new Date('{{ expira_timestamp }}').getTime();
+        const codigoInput = document.querySelector('input[name="codigo"]');
+        const timerInfo = document.getElementById('timerInfo');
+        const minutosSpan = document.getElementById('minutos');
+        const segundosSpan = document.getElementById('segundos');
+        const intentosSpan = document.getElementById('intentos');
+        const expiredMessage = document.getElementById('expiredMessage');
+        const codigoForm = document.getElementById('codigoForm');
+        const btnVerificar = document.getElementById('btnVerificar');
+
+        // Auto-focus
+        if (codigoInput) {
+            codigoInput.focus();
+            codigoInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+        }
+
+        // Función para actualizar el contador
+        function actualizarTiempo() {
+            const ahora = new Date().getTime();
+            const diferencia = expiraEn - ahora;
+
+            if (diferencia <= 0) {
+                // ✗ CÓDIGO EXPIRADO
+                minutosSpan.textContent = '0';
+                segundosSpan.textContent = '00';
+                timerInfo.classList.add('critical');
+                expiredMessage.classList.add('show');
+                codigoForm.classList.add('form-disabled');
+                btnVerificar.disabled = true;
+                codigoInput.disabled = true;
+                return;
+            }
+
+            // Calcular minutos y segundos
+            const minutos = Math.floor(diferencia / 60000);
+            const segundos = Math.floor((diferencia % 60000) / 1000);
+
+            // Actualizar display
+            minutosSpan.textContent = minutos;
+            segundosSpan.textContent = segundos.toString().padStart(2, '0');
+
+            // Cambiar colores según tiempo restante
+            if (minutos < 1) {
+                // CRÍTICO: menos de 1 minuto
+                timerInfo.classList.add('critical');
+                timerInfo.classList.remove('warning');
+            } else if (minutos < 3) {
+                // ADVERTENCIA: menos de 3 minutos
+                timerInfo.classList.add('warning');
+                timerInfo.classList.remove('critical');
+            } else {
+                // OK
+                timerInfo.classList.remove('critical', 'warning');
+            }
+        }
+
+        // Actualizar cada segundo
+        setInterval(actualizarTiempo, 1000);
+
+        // Actualización inicial
+        actualizarTiempo();
+    </script>
+</body>
+</html>

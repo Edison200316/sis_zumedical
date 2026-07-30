@@ -253,9 +253,6 @@
             <i class="fa-regular fa-calendar-check"></i> Mis Citas
             {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
         </a>
-        <a href="{% url 'paciente_general_consultas' %}" class="nav-item">
-            <i class="fa-solid fa-file-medical"></i> Mis Consultas
-        </a>
         {% if request.user.paciente.estado_embarazo == 'ACTIVO' %}
         <a href="{% url 'paciente_dashboard' %}" class="nav-item" style="margin-top: 1.5rem;">
             <i class="fa-solid fa-person-pregnant"></i> Mi embarazo
@@ -431,36 +428,6 @@
         <div class="empty-state">
             <i class="fa-regular fa-calendar-xmark"></i>
             <p>No tienes citas registradas aún.</p>
-        </div>
-        {% endif %}
-    </div>
-
-    <!-- ÚLTIMAS CONSULTAS -->
-    <div class="citas-card">
-        <div class="card-header">
-            <div class="card-header-left">
-                <div class="card-header-icon"><i class="fa-solid fa-file-medical"></i></div>
-                <h3>Mis Consultas</h3>
-            </div>
-            <a href="{% url 'paciente_general_consultas' %}" class="card-badge" style="text-decoration:none">Ver todas →</a>
-        </div>
-
-        {% if ultima_consulta %}
-            <div class="cita-item">
-                <div class="cita-fecha-box">
-                    <span class="dia">{{ ultima_consulta.fecha|date:"d" }}</span>
-                    <span class="mes">{{ ultima_consulta.fecha|date:"M" }}</span>
-                </div>
-                <div class="cita-info">
-                    <div class="cita-esp">{{ ultima_consulta.medico.get_full_name|default:"Médico" }}</div>
-                    <div class="cita-meta">{{ ultima_consulta.motivo_consulta|truncatewords:5 }}</div>
-                </div>
-                <span class="badge" style="background:var(--green-bg);color:var(--green)">{{ total_consultas }} consulta{{ total_consultas|pluralize }}</span>
-            </div>
-        {% else %}
-        <div class="empty-state">
-            <i class="fa-solid fa-file-medical"></i>
-            <p>Aún no tienes consultas registradas.</p>
         </div>
         {% endif %}
     </div>

@@ -288,8 +288,8 @@ def admin_dashboard(request):
     total_pacientes = Paciente.objects.count()
     total_pacientes_generales = User.objects.filter(rol='paciente', paciente__estado_embarazo='NINGUNO').count()
     total_pacientes_prenatales = User.objects.filter(
-        rol='paciente'
-    ).filter(q_usuarios_con_acceso_prenatal()).distinct().count()
+        rol='paciente', paciente__estado_embarazo='ACTIVO'
+    ).distinct().count()
     total_citas = Cita.objects.count()
     citas_hoy = Cita.objects.filter(fecha=hoy).count()
     citas_pendientes = Cita.objects.filter(estado='pendiente').count()
@@ -349,8 +349,8 @@ def medico_dashboard(request):
     # ── PACIENTES: solo del tipo que corresponde al médico ──
     if es_prenatal:
         total_pacientes = Usuario.objects.filter(
-            rol='paciente'
-        ).filter(q_usuarios_con_acceso_prenatal()).distinct().count()
+            rol='paciente', paciente__estado_embarazo='ACTIVO'
+        ).distinct().count()
     else:
         total_pacientes = Usuario.objects.filter(
             rol='paciente',
@@ -929,33 +929,6 @@ def pacientes_medico(request):
         })
 
 @login_required
-def activar_embarazo(request, paciente_id):
-    if request.user.rol not in ['medico', 'enfermera', 'admin']:
-        return redirect('landing')
-    
-    from pacientes.models import Paciente
-    paciente = get_object_or_404(Paciente, id=paciente_id)
-    paciente.estado_embarazo = 'ACTIVO'
-
-    # Si quien activa es un médico prenatal, se asigna como médico responsable
-    if request.user.rol == 'medico':
-        try:
-            es_prenatal = request.user.medico.especialidad and \
-                          request.user.medico.especialidad.tipo == 'prenatal'
-        except Exception:
-            es_prenatal = False
-        if es_prenatal and not paciente.medico_prenatal:
-            paciente.medico_prenatal = request.user
-
-    paciente.save()
-    registrar_log(request, 'UPDATE', 'Pacientes',
-        f'Expediente prenatal activado para {paciente.usuario.get_full_name()} por {request.user.rol}', 'INFO')
-    
-    messages.success(request, f'Expediente prenatal activado para {paciente.usuario.get_full_name()}.')
-    referer = request.META.get('HTTP_REFERER')
-    if referer:
-        return redirect(referer)
-    return redirect('pacientes_medico')
 
 
 @login_required
@@ -1203,8 +1176,8 @@ def historial_prenatal(request):
         controles_enriquecidos.append(c)
 
     pacientes = Usuario.objects.filter(
-        rol='paciente'
-    ).filter(q_usuarios_con_acceso_prenatal()).distinct().order_by('first_name', 'last_name')
+        rol='paciente', paciente__estado_embarazo='ACTIVO'
+    ).distinct().order_by('first_name', 'last_name')
  
     return render(request, 'medico/historial.html', {
         'controles': controles_enriquecidos,
@@ -1263,11 +1236,11 @@ def lista_pacientes_enfermera(request):
     from pacientes.models import Paciente
     # Prenatales = tipo prenatal O general con módulo prenatal activado
     pacientes_prenatales = Paciente.objects.filter(
-        q_pacientes_con_acceso_prenatal()
+        estado_embarazo='ACTIVO', usuario__rol='paciente'
     ).select_related('usuario').distinct()
     pacientes_generales = Paciente.objects.exclude(
-        q_pacientes_con_acceso_prenatal()
-    ).select_related('usuario').distinct()
+        estado_embarazo='ACTIVO'
+    ).filter(usuario__rol='paciente').select_related('usuario').distinct()
 
     return render(request, 'enfermera/lista_pacientes_enfermera.html', {
         'pacientes_prenatales': pacientes_prenatales,
@@ -1829,11 +1802,11 @@ def lista_pacientes(request):
 
     from pacientes.models import Paciente
     pacientes_prenatales = Paciente.objects.filter(
-        q_pacientes_con_acceso_prenatal()
+        estado_embarazo='ACTIVO', usuario__rol='paciente'
     ).select_related('usuario').distinct()
     pacientes_generales = Paciente.objects.exclude(
-        q_pacientes_con_acceso_prenatal()
-    ).select_related('usuario').distinct()
+        estado_embarazo='ACTIVO'
+    ).filter(usuario__rol='paciente').select_related('usuario').distinct()
 
     return render(request, 'admin/lista_pacientes.html', {
         'pacientes_prenatales': pacientes_prenatales,
@@ -2605,14 +2578,15 @@ def ver_consulta_general(request, consulta_id):
 def programar_parto(request):
     """El médico prenatal programa una fecha/hora de parto para una paciente."""
     from paciente_general.models import ProgramacionParto
+    from pacientes.models import Paciente
     import json
 
     if request.user.rol != 'medico':
         return redireccionar_por_rol(request.user)
 
     pacientes_prenatales = Usuario.objects.filter(
-        rol='paciente', is_active=True
-    ).filter(q_usuarios_con_acceso_prenatal()).distinct().order_by('first_name', 'last_name')
+        rol='paciente', is_active=True, paciente__estado_embarazo='ACTIVO'
+    ).distinct().order_by('first_name', 'last_name')
 
     # Preparar JSON de pacientes para búsqueda en tiempo real
     pacientes_json = json.dumps([{
@@ -2637,8 +2611,8 @@ def programar_parto(request):
 
         try:
             paciente_obj = Usuario.objects.filter(
-                id=paciente_id, rol='paciente'
-            ).filter(q_usuarios_con_acceso_prenatal()).distinct().get()
+                id=paciente_id, rol='paciente', paciente__estado_embarazo='ACTIVO'
+            ).distinct().get()
         except Usuario.DoesNotExist:
             messages.error(request, 'Paciente prenatal no encontrada.')
             return render(request, 'medico/programar_parto.html',
@@ -2698,8 +2672,8 @@ def editar_parto(request, parto_id):
         return redirect('lista_programaciones_parto')
 
     pacientes_prenatales = Usuario.objects.filter(
-        rol='paciente', is_active=True
-    ).filter(q_usuarios_con_acceso_prenatal()).distinct().order_by('first_name')
+        rol='paciente', is_active=True, paciente__estado_embarazo='ACTIVO'
+    ).distinct().order_by('first_name')
     
     # Preparar JSON de pacientes para búsqueda en tiempo real
     pacientes_json = json.dumps([{
@@ -3340,7 +3314,7 @@ def activar_embarazo(request, paciente_id):
     # Verificar que el médico sea prenatal
     try:
         medico_obj = Medico.objects.get(usuario=request.user)
-        if 'prenatal' not in medico_obj.especialidad.nombre.lower():
+        if not medico_obj.especialidad or medico_obj.especialidad.tipo != 'prenatal':
             messages.error(request, 'Solo médicos prenatales pueden activar embarazos.')
             return redirect('ficha_paciente', paciente_id=paciente_id)
     except:

@@ -145,31 +145,9 @@ def editar_control(request, control_id):
 
 @login_required
 def mi_historial(request):
-    """Muestra el historial prenatal de la paciente logueada."""
-    if request.user.rol != 'paciente':
-        messages.error(request, 'Solo pacientes pueden ver su historial.')
-        return redirect('home')
-    
-    try:
-        historia = HistoriaClinica.objects.get(paciente=request.user)
-        controles = request.user.controles_paciente.all().order_by('-fecha')
-    except HistoriaClinica.DoesNotExist:
-        historia = None
-        controles = []
-    
-    # Contexto adicional para el sidebar
-    from datetime import date
-    citas_pendientes = request.user.citas_paciente.filter(
-        estado='pendiente',
-        fecha__gte=date.today()
-    ).count()
-    
-    return render(request, 'control_prenatal/mi_historial.html', {
-        'historia': historia,
-        'controles': controles,
-        'user': request.user,
-        'citas_pendientes': citas_pendientes
-    })
+    """Bloqueado por política del centro médico - Los pacientes no pueden ver su historial."""
+    messages.warning(request, 'Por política del centro médico, los pacientes no tienen acceso al historial de controles prenatales.')
+    return redirect('paciente_dashboard')
 
 
 # ── API Endpoints para editar/eliminar controles ────────────────────────

@@ -177,9 +177,6 @@
     <a href="{% url 'ver_citas' %}" class="nav-item">
       <i class="fa-regular fa-calendar-check"></i> Mis Citas
     </a>
-    <a href="{% url 'mi_historial' %}" class="nav-item">
-      <i class="fa-solid fa-heart-pulse"></i> Controles Prenatales
-    </a>
     <div class="nav-lbl">Inteligencia Artificial</div>
     <a href="{% url 'chatbot_page' %}" class="nav-item">
       <i class="fa-solid fa-comments"></i> Asistente Virtual
@@ -222,28 +219,35 @@
         <input type="hidden" name="medico_id" id="medico_id_input" />
         <input type="hidden" name="hora" id="hora_input" />
 
-        <!-- PASO 1: MÉDICO -->
+        <!-- PASO 1: ESPECIALIDAD -->
         <div style="margin-bottom:1.5rem;">
           <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.85rem;padding-bottom:.4rem;border-bottom:1px solid var(--mg-border);">
-            1. Selecciona tu médico obstetra
+            1. Selecciona la especialidad
           </div>
-          <div class="medicos-grid" id="medicos-grid">
-            {% for medico in medicos %}
-            <div class="medico-card" data-id="{{ medico.usuario.id }}" onclick="seleccionarMedico(this)">
-              <div class="medico-av">{{ medico.usuario.first_name|slice:":1" }}{{ medico.usuario.last_name|slice:":1" }}</div>
-              <div class="medico-nombre">Dr(a). {{ medico.usuario.get_full_name }}</div>
-              <div class="medico-esp">{{ medico.especialidad.nombre|default:"Obstetricia" }}</div>
-            </div>
-            {% empty %}
-            <p style="color:var(--muted);font-size:.9rem;">No hay médicos disponibles en este momento.</p>
-            {% endfor %}
+          <div class="form-group">
+            <select name="especialidad" id="select-especialidad" required>
+              <option value="">— Selecciona una especialidad —</option>
+              {% for esp in especialidades %}
+              <option value="{{ esp.id }}">{{ esp.nombre }}</option>
+              {% endfor %}
+            </select>
           </div>
         </div>
 
-        <!-- PASO 2: FECHA -->
+        <!-- PASO 2: MÉDICO -->
+        <div style="margin-bottom:1.5rem;">
+          <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.85rem;padding-bottom:.4rem;border-bottom:1px solid var(--mg-border);">
+            2. Selecciona tu médico
+          </div>
+          <div class="medicos-grid" id="medicos-grid">
+            <p style="color:var(--muted);font-size:.9rem;">Primero selecciona una especialidad.</p>
+          </div>
+        </div>
+
+        <!-- PASO 3: FECHA -->
         <div class="form-grid-2" style="margin-bottom:1.5rem;">
           <div class="form-group">
-            <label>2. Fecha de la cita</label>
+            <label>3. Fecha de la cita</label>
             <input type="date" name="fecha" id="fecha-input"
               min="{{ today|default:'' }}"
               onchange="cargarHoras()" required />
@@ -254,10 +258,10 @@
           </div>
         </div>
 
-        <!-- PASO 3: HORA -->
+        <!-- PASO 4: HORA -->
         <div style="margin-bottom:1.5rem;">
           <div style="font-size:.78rem;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:.85rem;padding-bottom:.4rem;border-bottom:1px solid var(--mg-border);">
-            3. Selecciona una hora disponible
+            4. Selecciona una hora disponible
           </div>
           <div class="horas-loading" id="horas-loading">⏳ Cargando horas disponibles...</div>
           <div class="horas-grid" id="horas-grid">
@@ -283,6 +287,9 @@
   document.getElementById('fecha-input').setAttribute('min', today);
 
   let medicoSeleccionado = null;
+
+  // Event listener para especialidad
+  document.getElementById('select-especialidad').addEventListener('change', cargarMedicosPorEspecialidad);
 
   function seleccionarMedico(card) {
     document.querySelectorAll('.medico-card').forEach(c => c.classList.remove('selected'));
@@ -368,6 +375,54 @@
   }
 
   document.getElementById('fecha-input').addEventListener('change', verificarFormulario);
+
+  function cargarMedicosPorEspecialidad() {
+    const especialidadId = document.getElementById('select-especialidad').value;
+    const medicosGrid = document.getElementById('medicos-grid');
+    
+    // Reset
+    medicoSeleccionado = null;
+    document.getElementById('medico_id_input').value = '';
+    document.getElementById('hora_input').value = '';
+    document.getElementById('horas-grid').innerHTML = '<p style="font-size:.88rem;color:var(--muted);">Primero selecciona un médico y una fecha.</p>';
+    verificarFormulario();
+    
+    if (!especialidadId) {
+      medicosGrid.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Primero selecciona una especialidad.</p>';
+      return;
+    }
+    
+    medicosGrid.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">⏳ Cargando médicos...</p>';
+    
+    fetch(`/paciente-general/medicos-disponibles/?especialidad_id=${especialidadId}`)
+      .then(r => r.json())
+      .then(data => {
+        if (!data.medicos || data.medicos.length === 0) {
+          medicosGrid.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">No hay médicos disponibles para esta especialidad.</p>';
+          return;
+        }
+        
+        medicosGrid.innerHTML = '';
+        data.medicos.forEach(m => {
+          const card = document.createElement('div');
+          card.className = 'medico-card';
+          card.dataset.id = m.id;
+          card.onclick = () => seleccionarMedico(card);
+          
+          const iniciales = m.nombre.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+          
+          card.innerHTML = `
+            <div class="medico-av">${iniciales}</div>
+            <div class="medico-nombre">${m.nombre}</div>
+          `;
+          
+          medicosGrid.appendChild(card);
+        });
+      })
+      .catch(() => {
+        medicosGrid.innerHTML = '<p style="color:var(--muted);font-size:.9rem;">Error al cargar médicos. Intenta de nuevo.</p>';
+      });
+  }
 
   // HAMBURGUESA
   function toggleSidebar() {

@@ -57,5 +57,11 @@ class ControlPrenatalForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         medico = kwargs.pop('medico', None)
         super().__init__(*args, **kwargs)
-        # Filtrar solo pacientes en el campo paciente
-        self.fields['paciente'].queryset = settings.AUTH_USER_MODEL.objects.filter(rol='paciente')
+        # Filtrar solo pacientes prenatales (con embarazo activo)
+        from pacientes.models import Paciente
+        pacientes_prenatales_ids = Paciente.objects.filter(
+            estado_embarazo='ACTIVO'
+        ).values_list('usuario_id', flat=True)
+        self.fields['paciente'].queryset = settings.AUTH_USER_MODEL.objects.filter(
+            id__in=pacientes_prenatales_ids, rol='paciente'
+        )

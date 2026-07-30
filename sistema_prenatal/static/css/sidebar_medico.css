@@ -59,9 +59,7 @@ body .sidebar {
   bottom: auto !important;
   z-index: 200 !important;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  overflow-x: hidden !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
+  overflow: hidden !important;
   box-shadow: 4px 0 24px rgba(138, 37, 99, 0.22) !important;
   border: none !important;
   border-radius: 0 !important;
@@ -388,6 +386,7 @@ aside#sidebar > .sidebar-brand:first-of-type {
   padding: 1rem 0.75rem !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
@@ -786,8 +785,7 @@ aside#sidebar > .sidebar-brand:first-of-type {
     transform: translateX(-100%) !important;
     z-index: 250 !important;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2) !important;
-    overflow-y: auto !important;
-    -webkit-overflow-scrolling: touch !important;
+    overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
   }

@@ -17,7 +17,7 @@ function abrirEditarControl(controlId) {
     currentControlId = controlId;
     
     // Fetch datos del control desde la API
-    fetch(`/control_prenatal/api/control/${controlId}/editar/`, {
+    fetch(`/control-prenatal/api/control/${controlId}/editar/`, {
         method: 'GET',
         headers: {
             'Accept': 'application/json',
@@ -59,6 +59,25 @@ function preFillEditForm(data) {
     document.getElementById('me-temp').value = data.temperatura || '';
     document.getElementById('me-proteinuria').value = data.proteinuria || 'Negativa';
     document.getElementById('me-obs').value = data.observaciones || '';
+    
+    // Obtener nombre del paciente desde el botón clickeado
+    const btn = document.querySelector(`[data-control-id="${currentControlId}"]`);
+    if (btn) {
+        const card = btn.closest('.control-card');
+        const row = btn.closest('tr');
+        
+        if (card) {
+            const nombreEl = card.querySelector('.cc-name');
+            const inicialesEl = card.querySelector('.cc-av');
+            if (nombreEl) document.getElementById('me-nombre').textContent = nombreEl.textContent;
+            if (inicialesEl) document.getElementById('me-av').textContent = inicialesEl.textContent;
+        } else if (row) {
+            const pacienteCell = row.querySelector('.pac-name');
+            const inicialesCell = row.querySelector('.pac-av');
+            if (pacienteCell) document.getElementById('me-nombre').textContent = pacienteCell.textContent;
+            if (inicialesCell) document.getElementById('me-av').textContent = inicialesCell.textContent;
+        }
+    }
     
     // Limpiar errores previos
     document.getElementById('me-errors').style.display = 'none';
@@ -208,7 +227,7 @@ function guardarControl(event) {
     btnGuardar.textContent = 'Guardando...';
     
     // POST a la API
-    fetch(`/control_prenatal/api/control/${currentControlId}/editar/`, {
+    fetch(`/control-prenatal/api/control/${currentControlId}/editar/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -256,7 +275,7 @@ function confirmarEliminar() {
     }
     
     // POST a la API para eliminar
-    fetch(`/control_prenatal/api/control/${currentControlId}/eliminar/`, {
+    fetch(`/control-prenatal/api/control/${currentControlId}/eliminar/`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

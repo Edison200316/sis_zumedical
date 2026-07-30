@@ -23,9 +23,6 @@
             <i class="fa-regular fa-calendar-check"></i> Mis Citas
             {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
         </a>
-        <a href="{% url 'mi_historial' %}" class="nav-item {% if '/mi-historial/' in request.path or '/historial/' in request.path %}active{% endif %}">
-            <i class="fa-solid fa-heart-pulse"></i> Controles Prenatales
-        </a>
         <div class="nav-lbl">Inteligencia Artificial</div>
         <a href="{% url 'chatbot_page' %}" class="nav-item {% if '/chatbot/' in request.path %}active{% endif %}">
             <i class="fa-solid fa-comments"></i> Asistente Virtual

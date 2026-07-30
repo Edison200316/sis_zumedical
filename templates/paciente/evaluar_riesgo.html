@@ -222,7 +222,6 @@
             .stats-grid{grid-template-columns:1fr}
             .acciones-grid{grid-template-columns:1fr 1fr}
         }
-    th:100px;}
 
     /* ═══ RESULTADO CARD ═══ */
     .resultado-card{border-radius:18px;overflow:hidden;box-shadow:0 8px 28px rgba(176,53,128,.12);margin-bottom:2rem;animation:slideUp .5s ease .2s both;}
@@ -260,14 +259,14 @@
     .complicaciones-list li:hover{transform:translateX(4px);box-shadow:0 4px 12px rgba(176,106,0,.12);}
     .complicaciones-list li::before{content:'🔶';font-size:1rem;flex-shrink:0;margin-top:.05rem;}
 
-    .explicacion-box{background:linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 100%);border:1px solid #bae6fd;border-radius:14px;padding:1.4rem 1.6rem;font-size:.92rem;color:#0c4a6e;line-height:1.7;box-shadow:0 2px 8px rgba(3,102,214,.08);}
+    .explicacion-box{background:linear-gradient(135deg,#f0f9ff 0%,#e0f2fe 100%);border:1px solid #bae6fd;border-radius:14px;padding:1.4rem 1.6rem;font-size:.92rem;color:#0c4a6e;line-height:1.7;box-shadow:0 2px 8px rgba(3,102,214,.08);word-wrap:break-word;overflow-wrap:break-word;}
     .explicacion-box::before{content:'🔬';margin-right:.5rem;font-size:1rem;}
 
-    .disclaimer{display:flex;align-items:flex-start;gap:.8rem;background:linear-gradient(135deg,#fce7f3 0%,#fbf0f7 100%);border:1.5px solid #e8aad4;border-radius:14px;padding:1.2rem 1.4rem;font-size:.84rem;color:var(--mg-d);margin-top:1.5rem;line-height:1.6;}
+    .disclaimer{display:flex;align-items:flex-start;gap:.8rem;background:linear-gradient(135deg,#fce7f3 0%,#fbf0f7 100%);border:1.5px solid #e8aad4;border-radius:14px;padding:1.2rem 1.4rem;font-size:.84rem;color:var(--mg-d);margin-top:1.5rem;line-height:1.6;word-wrap:break-word;overflow-wrap:break-word;}
     .disclaimer::before{content:'⚕️';font-size:1.2rem;flex-shrink:0;margin-top:.05rem;}
 
     /* ═══ AVISO IA ═══ */
-    .aviso-ia{display:flex;align-items:flex-start;gap:1rem;background:linear-gradient(135deg,#e0e7ff 0%,#ede9fe 100%);border:1.5px solid #c7d2fe;border-radius:14px;padding:1.3rem 1.5rem;margin-bottom:2rem;font-size:.92rem;color:#3730a3;line-height:1.6;animation:slideUp .4s ease .1s both;}
+    .aviso-ia{display:flex;align-items:flex-start;gap:1rem;background:linear-gradient(135deg,#e0e7ff 0%,#ede9fe 100%);border:1.5px solid #c7d2fe;border-radius:14px;padding:1.3rem 1.5rem;margin-bottom:2rem;font-size:.92rem;color:#3730a3;line-height:1.6;animation:slideUp .4s ease .1s both;word-wrap:break-word;overflow-wrap:break-word;}
     .aviso-ia .icon{font-size:1.4rem;flex-shrink:0;margin-top:.05rem;}
     .aviso-ia strong{font-weight:600;color:#4f46e5;}
 
@@ -278,6 +277,41 @@
     
     .historial-grid{display:flex;flex-direction:column;gap:.8rem;}
     .historial-item{display:flex;align-items:center;gap:1.2rem;padding:1.2rem 1.5rem;border-radius:13px;border:1px solid var(--mg-border);background:linear-gradient(135deg,#fce7f3 0%,#fbf0f7 100%);transition:all .25s;cursor:pointer;}
+
+    /* ═══ RESPONSIVE MOBILE ═══ */
+    @media(max-width:768px){
+        .resultado-header{padding:1.5rem 1.25rem;flex-direction:column;align-items:flex-start;}
+        .resultado-nivel{flex-direction:column;align-items:flex-start;gap:1rem;}
+        .resultado-icono{font-size:2.5rem;}
+        .resultado-titulo h2{font-size:1.6rem;}
+        .resultado-titulo p{font-size:.82rem;}
+        .prob-badge{align-self:flex-start;padding:1rem 1.5rem;min-width:100px;}
+        .prob-badge .num{font-size:2.2rem;}
+        .prob-badge .lbl{font-size:.68rem;}
+        .resultado-body{padding:1.25rem 1rem;}
+        .resultado-section h3{font-size:.78rem;}
+        .factores-list li,.recomendaciones-list li,.complicaciones-list li{padding:.85rem 1rem;font-size:.86rem;}
+        .factores-list li::before,.complicaciones-list li::before{font-size:1rem;}
+        .recomendaciones-list li::before{font-size:1.1rem;}
+        .explicacion-box,.disclaimer,.aviso-ia{padding:1rem 1.2rem;font-size:.86rem;}
+        .card{padding:1.25rem 1rem;}
+        .card h2{font-size:1.3rem;}
+        .historial-item{padding:1rem;gap:.85rem;flex-wrap:wrap;}
+        .hist-badge{min-width:75px;padding:.35rem .65rem;font-size:.75rem;}
+        .hist-info{flex:1 1 100%;min-width:100%;}
+        .hist-fecha{font-size:.76rem;}
+        .hist-detalle{font-size:.82rem;}
+        .hist-prob{font-size:1.3rem;}
+    }
+    
+    @media(max-width:400px){
+        .resultado-header{padding:1.25rem 1rem;}
+        .resultado-titulo h2{font-size:1.4rem;}
+        .resultado-body{padding:1rem .85rem;}
+        .factores-list li,.recomendaciones-list li,.complicaciones-list li{padding:.75rem .85rem;font-size:.82rem;gap:.6rem;}
+        .explicacion-box,.disclaimer,.aviso-ia{padding:.85rem 1rem;font-size:.82rem;}
+        .card{padding:1rem .85rem;}
+    }
     .historial-item:hover{transform:translateX(6px);box-shadow:0 6px 18px rgba(176,53,128,.15);border-color:var(--mg);}
     
     .hist-badge{min-width:90px;text-align:center;padding:.45rem .8rem;border-radius:20px;font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;gap:.4rem;flex-shrink:0;}
@@ -347,9 +381,6 @@
         <a href="{% url 'ver_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Mis Citas
             {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
-        </a>
-        <a href="{% url 'mi_historial' %}" class="nav-item">
-            <i class="fa-solid fa-heart-pulse"></i> Controles Prenatales
         </a>
         <div class="nav-lbl">Inteligencia Artificial</div>
         <a href="{% url 'chatbot_page' %}" class="nav-item">

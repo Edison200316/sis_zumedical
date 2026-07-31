@@ -114,7 +114,9 @@
     .alert-error{background:var(--red-bg);border:1px solid #fca5a5;color:var(--red);padding:1rem 1.5rem;border-radius:10px;margin-bottom:1.5rem;font-size:.9rem;}
     @media(max-width:800px){.grid2,.grid3,.grid4{grid-template-columns:1fr}.main{padding:1.25rem}}
   </style>
-</head>
+
+    <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}?v=2">
+  </head>
 <body>
 <!-- OVERLAY -->
 <div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
@@ -316,4 +318,5 @@ function closeSidebar() {
 </script>
 </body>
 </html>
+
 

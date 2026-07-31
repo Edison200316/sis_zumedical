@@ -1,9 +1,9 @@
-﻿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zumedical — Controles Prenatales</title>
+    <title>Zumedical � Controles Prenatales</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
         @keyframes fadeIn{to{opacity:1}}
         @keyframes slideUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 
-        /* ── SIDEBAR ── */
+        /* -- SIDEBAR -- */
         .sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;overflow:hidden;transition:transform .3s ease;box-shadow:4px 0 24px rgba(138,37,99,.2)}
         .sb-brand{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
         .sb-logo{width:42px;height:42px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
@@ -28,7 +28,7 @@
         .sb-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:500;color:white;flex-shrink:0;text-transform:uppercase}
         .sb-user-info p{font-size:.72rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.1rem}
         .sb-user-info h3{font-size:.88rem;font-weight:500;color:white}
-        .sb-nav{flex:1;padding:1rem .75rem;overflow-y:auto}
+        .sb-nav{flex:1;min-height:0;padding:1rem .75rem;overflow-y:auto}
         .nav-lbl{font-size:.68rem;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.75rem}
         .nav-item{display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;border-radius:10px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.88rem;transition:all .2s;margin-bottom:.2rem}
         .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white}
@@ -38,7 +38,7 @@
         .btn-logout{display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;border-radius:10px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;transition:all .2s}
         .btn-logout:hover{background:rgba(255,255,255,.15);color:white}
 
-        /* ── TOPBAR MÓVIL ── */
+        /* -- TOPBAR M�VIL -- */
         .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300}
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
         .mobile-topbar-brand img{width:32px;height:32px;background:white;border-radius:50%;padding:2px;object-fit:contain}
@@ -51,7 +51,7 @@
         .sidebar-overlay{display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s}
         .sidebar-overlay.active{opacity:1;pointer-events:auto}
 
-        /* ── MAIN ── */
+        /* -- MAIN -- */
         .main{margin-left:var(--sw);flex:1;padding:2.5rem;min-height:100vh}
         .page-header{margin-bottom:2rem;display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:1rem}
         .page-header h1{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
@@ -60,7 +60,7 @@
         .back-btn:hover{background:var(--mg-bg);border-color:var(--mg)}
         .back-btn svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
 
-        /* ── STATS ── */
+        /* -- STATS -- */
         .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.75rem}
         .stat-card{background:var(--white);border:1px solid var(--mg-border);border-radius:14px;padding:1.2rem 1.25rem;display:flex;align-items:center;gap:.9rem;animation:slideUp .4s ease both}
         .stat-card:nth-child(1){animation-delay:.05s}
@@ -76,7 +76,7 @@
         .stat-info strong{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.7rem;font-weight:600;color:var(--text);line-height:1}
         .stat-info span{font-size:.75rem;color:var(--muted);font-weight:300}
 
-        /* ── TABLA ── */
+        /* -- TABLA -- */
         .table-card{background:var(--white);border-radius:16px;border:1px solid var(--mg-border);overflow:hidden;animation:slideUp .5s .25s ease both}
         .table-toolbar{padding:1.1rem 1.5rem;border-bottom:1px solid var(--mg-border);display:flex;align-items:center;gap:.85rem;flex-wrap:wrap}
         .search-wrap{position:relative;flex:1;min-width:200px}
@@ -94,7 +94,7 @@
         tbody tr{transition:background .15s;cursor:pointer}
         tbody tr:hover{background:var(--mg-bg)}
 
-        /* ── CELDA PACIENTE ── */
+        /* -- CELDA PACIENTE -- */
         .pac-cell{display:flex;align-items:center;gap:.7rem}
         .pac-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase}
         .pac-name{font-weight:600;color:var(--mg-d);font-size:.87rem;transition:color .2s}
@@ -108,7 +108,7 @@
         .empty-state{padding:3.5rem;text-align:center;color:var(--muted)}
         .empty-state i{font-size:40px;color:var(--mg-border);display:block;margin-bottom:.75rem}
 
-        /* ── MODAL ── */
+        /* -- MODAL -- */
         .modal-overlay{position:fixed;inset:0;background:rgba(42,16,32,.55);backdrop-filter:blur(5px);z-index:500;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .25s}
         .modal-overlay.visible{opacity:1;pointer-events:all}
         .modal{background:white;border-radius:20px;width:100%;max-width:560px;max-height:90vh;overflow-y:auto;box-shadow:0 24px 60px rgba(42,16,32,.2);transform:translateY(20px) scale(.97);transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .25s;opacity:0}
@@ -147,10 +147,10 @@
         .modal-btn-delete{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;background:#FEF0F0;color:#8B2020;border:1.5px solid #F5AAAA;border-radius:9px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:.83rem;font-weight:500;text-decoration:none;transition:all .2s}
         .modal-btn-delete:hover{background:#D63B3B;color:white;border-color:#D63B3B}
 
-        /* ── RESPONSIVE ── */
+        /* -- RESPONSIVE -- */
         @media(max-width:768px){
             body{flex-direction:column}
-            .sidebar{position:fixed;top:64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%)}
+            .sidebar{position:fixed;top:64px;left:0;bottom: 0; height: auto;transform:translateX(-100%)}
             .sidebar.open{transform:translateX(0)}
             .mobile-topbar{display:flex}
             .main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px)}
@@ -184,14 +184,14 @@
     </div>
     <div class="sb-user">
         <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}</div>
-        <div class="sb-user-info"><p>Sesión activa</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
+        <div class="sb-user-info"><p>Sesi�n activa</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
     </div>
     <nav class="sb-nav">
         <div class="nav-lbl">Panel</div>
         <a href="{% url 'admin_dashboard' %}" class="nav-item"><i class="fa-solid fa-grid-2"></i> Inicio</a>
-        <div class="nav-lbl">Gestión</div>
+        <div class="nav-lbl">Gesti�n</div>
         <a href="{% url 'lista_usuarios' %}" class="nav-item"><i class="fa-solid fa-users"></i> Usuarios</a>
-        <a href="{% url 'lista_medicos' %}" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Médicos</a>
+        <a href="{% url 'lista_medicos' %}" class="nav-item"><i class="fa-solid fa-user-doctor"></i> M�dicos</a>
         <a href="{% url 'lista_pacientes' %}" class="nav-item"><i class="fa-solid fa-hospital-user"></i> Pacientes</a>
         <a href="{% url 'todas_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Citas
@@ -199,10 +199,10 @@
         </a>
         <a href="{% url 'controles_admin' %}" class="nav-item active"><i class="fa-solid fa-heart-pulse"></i> Controles Prenatales</a>
         <div class="nav-lbl">Sistema</div>
-        <a href="{% url 'auditoria_admin' %}" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Auditoría</a>
+        <a href="{% url 'auditoria_admin' %}" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Auditor�a</a>
     </nav>
     <div class="sb-footer">
-        <a href="{% url 'logout' %}" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión</a>
+        <a href="{% url 'logout' %}" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesi�n</a>
     </div>
 </aside>
 
@@ -210,7 +210,7 @@
     <div class="page-header">
         <div>
             <h1>Controles Prenatales</h1>
-            <p>Registro de controles de embarazo — haz clic en una paciente para ver el detalle</p>
+            <p>Registro de controles de embarazo � haz clic en una paciente para ver el detalle</p>
         </div>
         <a href="{% url 'admin_dashboard' %}" class="back-btn">
             <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Volver
@@ -229,11 +229,11 @@
         </div>
         <div class="stat-card">
             <div class="stat-icon si-green"><i class="fa-solid fa-user-doctor"></i></div>
-            <div class="stat-info"><p>Médico activo</p><strong id="stat-medico">—</strong></div>
+            <div class="stat-info"><p>M�dico activo</p><strong id="stat-medico">�</strong></div>
         </div>
         <div class="stat-card">
             <div class="stat-icon si-amber"><i class="fa-regular fa-calendar"></i></div>
-            <div class="stat-info"><p>Prom. semanas</p><strong id="stat-semanas">—</strong><span>de gestación</span></div>
+            <div class="stat-info"><p>Prom. semanas</p><strong id="stat-semanas">�</strong><span>de gestaci�n</span></div>
         </div>
     </div>
 
@@ -242,7 +242,7 @@
         <div class="table-toolbar">
             <div class="search-wrap">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por paciente, médico...">
+                <input type="text" id="searchInput" placeholder="Buscar por paciente, m�dico...">
             </div>
             <span class="count-pill" id="countPill">{{ controles|length }} control{{ controles|length|pluralize:"es" }}</span>
         </div>
@@ -251,10 +251,10 @@
                 <thead>
                     <tr>
                         <th>Paciente</th>
-                        <th>Médico</th>
+                        <th>M�dico</th>
                         <th>Fecha</th>
                         <th>Semanas</th>
-                        <th>Presión</th>
+                        <th>Presi�n</th>
                         <th>Peso</th>
                         <th>Observaciones</th>
                         <th style="text-align:center">Ver</th>
@@ -278,7 +278,7 @@
                                 <div class="pac-avatar">{{ c.paciente.first_name|slice:":1"|upper }}{{ c.paciente.last_name|slice:":1" }}</div>
                                 <div>
                                     <div class="pac-name">{{ c.paciente.get_full_name|default:c.paciente.username }}</div>
-                                    <div class="pac-email">{{ c.paciente.email|default:"—" }}</div>
+                                    <div class="pac-email">{{ c.paciente.email|default:"�" }}</div>
                                 </div>
                             </div>
                         </td>
@@ -287,7 +287,7 @@
                         <td><span class="badge-semanas"><i class="fa-regular fa-clock"></i> {{ c.semanas_gestacion }} sem.</span></td>
                         <td>{{ c.presion_arterial }}</td>
                         <td>{{ c.peso }} kg</td>
-                        <td><div class="obs-cell" title="{{ c.observaciones }}">{{ c.observaciones|default:"—" }}</div></td>
+                        <td><div class="obs-cell" title="{{ c.observaciones }}">{{ c.observaciones|default:"�" }}</div></td>
                         <td style="text-align:center">
                             <span class="click-hint"><i class="fa-solid fa-eye"></i> Ver</span>
                         </td>
@@ -308,54 +308,54 @@
         <div class="modal-header">
             <div class="modal-avatar" id="modal-avatar">VM</div>
             <div class="modal-header-info">
-                <h2 id="modal-paciente">—</h2>
+                <h2 id="modal-paciente">�</h2>
                 <p id="modal-subtitulo">Control prenatal</p>
             </div>
             <button class="modal-close" id="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
-        <!-- SECCIÓN: Datos del control -->
+        <!-- SECCI�N: Datos del control -->
         <div class="modal-section">
             <div class="modal-section-title"><i class="fa-solid fa-stethoscope"></i> Datos del control</div>
             <div class="modal-grid">
                 <div class="modal-item">
                     <div class="modal-item-label"><i class="fa-regular fa-calendar"></i> Fecha</div>
-                    <div class="modal-item-valor" id="modal-fecha">—</div>
+                    <div class="modal-item-valor" id="modal-fecha">�</div>
                 </div>
                 <div class="modal-item">
-                    <div class="modal-item-label"><i class="fa-solid fa-user-doctor"></i> Médico</div>
-                    <div class="modal-item-valor" id="modal-medico">—</div>
+                    <div class="modal-item-label"><i class="fa-solid fa-user-doctor"></i> M�dico</div>
+                    <div class="modal-item-valor" id="modal-medico">�</div>
                 </div>
                 <div class="modal-item">
-                    <div class="modal-item-label"><i class="fa-regular fa-clock"></i> Semanas de gestación</div>
-                    <div class="modal-item-valor highlight" id="modal-semanas">—</div>
+                    <div class="modal-item-label"><i class="fa-regular fa-clock"></i> Semanas de gestaci�n</div>
+                    <div class="modal-item-valor highlight" id="modal-semanas">�</div>
                     <div class="semanas-bar"><div class="semanas-fill" id="modal-semanas-bar" style="width:0%"></div></div>
                 </div>
                 <div class="modal-item">
                     <div class="modal-item-label"><i class="fa-solid fa-weight-scale"></i> Peso</div>
-                    <div class="modal-item-valor" id="modal-peso">—</div>
+                    <div class="modal-item-valor" id="modal-peso">�</div>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN: Signos vitales -->
+        <!-- SECCI�N: Signos vitales -->
         <div class="modal-section">
             <div class="modal-section-title"><i class="fa-solid fa-heart-pulse"></i> Signos vitales</div>
             <div class="modal-grid">
                 <div class="modal-item">
-                    <div class="modal-item-label"><i class="fa-solid fa-droplet"></i> Presión arterial</div>
-                    <div class="modal-item-valor highlight" id="modal-presion">—</div>
+                    <div class="modal-item-label"><i class="fa-solid fa-droplet"></i> Presi�n arterial</div>
+                    <div class="modal-item-valor highlight" id="modal-presion">�</div>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN: Observaciones -->
+        <!-- SECCI�N: Observaciones -->
         <div class="modal-section">
             <div class="modal-section-title"><i class="fa-regular fa-comment-dots"></i> Observaciones</div>
             <div class="modal-grid">
                 <div class="modal-item full">
-                    <div class="modal-item-label"><i class="fa-regular fa-file-lines"></i> Notas clínicas</div>
-                    <div class="modal-item-valor" id="modal-obs" style="white-space:pre-wrap;line-height:1.6">—</div>
+                    <div class="modal-item-label"><i class="fa-regular fa-file-lines"></i> Notas cl�nicas</div>
+                    <div class="modal-item-valor" id="modal-obs" style="white-space:pre-wrap;line-height:1.6">�</div>
                 </div>
             </div>
         </div>
@@ -390,7 +390,7 @@ function closeSidebar() {
 document.addEventListener('DOMContentLoaded', function() {
     var rows = document.querySelectorAll('.control-row');
 
-    // ── Stats dinámicos ──
+    // -- Stats din�micos --
     var totalSemanas = 0;
     var medicosSet = new Set();
     rows.forEach(function(r) {
@@ -407,10 +407,10 @@ document.addEventListener('DOMContentLoaded', function() {
     } else if (medicosSet.size > 1) {
         document.getElementById('stat-medico').textContent = medicosSet.size;
         document.querySelector('.stat-card:nth-child(3) .stat-info span') && 
-            (document.querySelector('.stat-card:nth-child(3) .stat-info').innerHTML += '<span>médicos</span>');
+            (document.querySelector('.stat-card:nth-child(3) .stat-info').innerHTML += '<span>m�dicos</span>');
     }
 
-    // ── Búsqueda ──
+    // -- B�squeda --
     var countPill = document.getElementById('countPill');
     document.getElementById('searchInput').addEventListener('input', function() {
         var q = this.value.toLowerCase();
@@ -423,7 +423,7 @@ document.addEventListener('DOMContentLoaded', function() {
         countPill.textContent = visible + ' control' + (visible !== 1 ? 'es' : '');
     });
 
-    // ── Modal ──
+    // -- Modal --
     var overlay = document.getElementById('modal-overlay');
     var closeBtn = document.getElementById('modal-close-btn');
     var footerClose = document.getElementById('modal-footer-close');
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var d = row.dataset;
             document.getElementById('modal-avatar').textContent   = d.pacienteIni;
             document.getElementById('modal-paciente').textContent = d.paciente;
-            document.getElementById('modal-subtitulo').textContent = 'Control #' + d.id + ' — ' + d.fecha;
+            document.getElementById('modal-subtitulo').textContent = 'Control #' + d.id + ' � ' + d.fecha;
             document.getElementById('modal-fecha').textContent    = d.fecha;
             document.getElementById('modal-medico').textContent   = d.medico;
             document.getElementById('modal-semanas').textContent  = d.semanas + ' semanas';
@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('modal-obs').textContent      = d.observaciones;
             document.getElementById('modal-delete-link').href     = d.deleteUrl;
 
-            // Barra de progreso semanas (máx 42)
+            // Barra de progreso semanas (m�x 42)
             var pct = Math.min(100, Math.round((parseInt(d.semanas) / 42) * 100));
             document.getElementById('modal-semanas-bar').style.width = pct + '%';
 

@@ -41,7 +41,7 @@
         .sb-user-info h3{font-size:0.9rem;font-weight:500;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .sb-user-arrow{flex-shrink:0}
         .sb-user-arrow svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2}
-        .sb-nav{flex:1;padding:1rem 0.75rem}
+        .sb-nav{flex:1;min-height:0;padding:1rem 0.75rem;overflow-y:auto;}
         .nav-lbl{font-size:0.7rem;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;padding:0.5rem 0.75rem;margin-top:0.5rem}
         .nav-item{display:flex;align-items:center;gap:0.75rem;padding:0.75rem 1rem;border-radius:10px;color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.9rem;font-weight:400;transition:all 0.2s;margin-bottom:0.25rem}
         .nav-item:hover,.nav-item.active{background:rgba(255,255,255,0.18);color:white}
@@ -154,7 +154,7 @@
 
         @media(max-width:768px){
             body{flex-direction:column}
-            .sidebar{position:fixed;top:64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);width:var(--sw);z-index:250}
+            .sidebar{position:fixed;top:64px;left:0;bottom: 0; height: auto;transform:translateX(-100%);width:var(--sw);z-index:250}
             .sidebar.open{transform:translateX(0)}
             .sidebar-overlay{display:block;z-index:200}
             .mobile-topbar{display:flex}

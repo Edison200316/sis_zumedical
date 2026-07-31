@@ -1,6 +1,9 @@
 from django import forms
 from .models import HistoriaClinica, ControlPrenatal
 from django.conf import settings
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
 
 
 class HistoriaClinicaForm(forms.ModelForm):
@@ -31,7 +34,7 @@ class HistoriaClinicaForm(forms.ModelForm):
         medico = kwargs.pop('medico', None)
         super().__init__(*args, **kwargs)
         # Filtrar solo pacientes en el campo paciente
-        self.fields['paciente'].queryset = settings.AUTH_USER_MODEL.objects.filter(rol='paciente')
+        self.fields['paciente'].queryset = User.objects.filter(rol='paciente')
 
 
 class ControlPrenatalForm(forms.ModelForm):
@@ -53,15 +56,32 @@ class ControlPrenatalForm(forms.ModelForm):
             'observaciones': forms.Textarea(attrs={'rows': 3}),
             'proxima_cita': forms.DateInput(attrs={'type': 'date'}),
         }
+        labels = {
+            'paciente': 'Paciente Prenatal',
+        }
 
     def __init__(self, *args, **kwargs):
         medico = kwargs.pop('medico', None)
         super().__init__(*args, **kwargs)
-        # Filtrar solo pacientes prenatales (con embarazo activo)
         from pacientes.models import Paciente
-        pacientes_prenatales_ids = Paciente.objects.filter(
-            estado_embarazo='ACTIVO'
-        ).values_list('usuario_id', flat=True)
-        self.fields['paciente'].queryset = settings.AUTH_USER_MODEL.objects.filter(
-            id__in=pacientes_prenatales_ids, rol='paciente'
-        )
+        from citas.models import Cita
+        
+        if medico:
+            ids_asignadas = Paciente.objects.filter(
+                medico_prenatal=medico
+            ).values_list('usuario_id', flat=True)
+            ids_con_citas = Cita.objects.filter(
+                medico=medico
+            ).values_list('paciente_id', flat=True)
+            todos_ids = set(ids_asignadas) | set(ids_con_citas)
+            
+            self.fields['paciente'].queryset = User.objects.filter(
+                id__in=todos_ids,
+                rol='paciente'
+            ).select_related('paciente').order_by('first_name', 'last_name')
+        else:
+            self.fields['paciente'].queryset = User.objects.filter(
+                rol='paciente'
+            ).select_related('paciente').order_by('first_name', 'last_name')
+        # Personalizar la representación de cada paciente en el select
+        self.fields['paciente'].label_from_instance = lambda obj: f"{obj.get_full_name() or obj.username} - {getattr(obj.paciente, 'cedula', 'Sin cédula')}"

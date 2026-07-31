@@ -52,7 +52,7 @@
         .toast-close svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:2.5}
 
         /* SIDEBAR */
-        .sidebar{width:var(--sw);min-width:var(--sw);min-height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:350;box-shadow:4px 0 20px rgba(138,37,99,.2);align-self:flex-start;height:calc(100vh - 64px);overflow-y:auto;-webkit-overflow-scrolling:touch;transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
+        .sidebar{width:var(--sw);min-width:var(--sw);bottom:0;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:350;box-shadow:4px 0 20px rgba(138,37,99,.2);align-self:flex-start;overflow: hidden;transition:transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);}
         .sidebar-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
         .sidebar-brand-logo{width:44px;height:44px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .sidebar-brand-logo img{width:40px;height:40px;object-fit:contain}
@@ -66,7 +66,7 @@
         .sidebar-user-info h3{font-size:.9rem;font-weight:500;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .sidebar-user-arrow{flex-shrink:0;opacity:.5}
         .sidebar-user-arrow svg{width:14px;height:14px;stroke:white;fill:none;stroke-width:2}
-        .sidebar-nav{flex:1;padding:1rem .75rem}
+        .sidebar-nav, .sb-nav{flex:1;min-height:0;padding:1rem .75rem;overflow-y:auto}
         .nav-label{font-size:.7rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.5rem}
         .nav-item{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:10px;color:rgba(255,255,255,.85);text-decoration:none;font-size:.9rem;font-weight:400;transition:all .2s;margin-bottom:.25rem;position:relative}
         .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white}
@@ -79,7 +79,7 @@
         .btn-logout svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
 
         /* MAIN */
-        .main { flex:1; margin-left:var(--sw); padding:2.5rem; min-height:100vh; height:100vh; overflow-y:auto; -webkit-overflow-scrolling:touch; opacity:0; animation:pageIn .4s ease .05s forwards; width:100%; max-width:100%; box-sizing:border-box; }
+        .main { flex:1; margin-left:var(--sw); padding:2.5rem; min-height:100vh; height:100vh; overflow: hidden; opacity:0; animation:pageIn .4s ease .05s forwards; width:100%; max-width:100%; box-sizing:border-box; }
 
         /* HEADER */
         .page-header { margin-bottom:1.75rem; }
@@ -314,8 +314,8 @@
             .sidebar{
                 width:var(--sw);
                 min-width:var(--sw);
-                height:calc(100vh - 64px);
-                min-height:calc(100vh - 64px);
+                bottom: 0;
+                padding-bottom: env(safe-area-inset-bottom, 20px);
                 position:fixed;
                 top: 64px;
                 left:0;

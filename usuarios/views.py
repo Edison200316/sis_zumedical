@@ -958,7 +958,7 @@ def registrar_control(request):
     """
     try:
         if request.method == 'POST':
-            form = ControlPrenatalForm(request.POST)
+            form = ControlPrenatalForm(request.POST, medico=request.user)
             if form.is_valid():
                 control = form.save(commit=False)
                 control.medico = request.user
@@ -975,7 +975,7 @@ def registrar_control(request):
                     messages.success(request, 'Control prenatal registrado. No se pudo generar la evaluación IA automáticamente.')
                     return redirect('historial_prenatal')
         else:
-            form = ControlPrenatalForm()
+            form = ControlPrenatalForm(medico=request.user)
 
         return render(request, 'medico/registrar_control.html', {'form': form})
     
@@ -2584,8 +2584,17 @@ def programar_parto(request):
     if request.user.rol != 'medico':
         return redireccionar_por_rol(request.user)
 
+    from citas.models import Cita
+    ids_asignadas = Paciente.objects.filter(
+        medico_prenatal=request.user
+    ).values_list('usuario_id', flat=True)
+    ids_con_citas = Cita.objects.filter(
+        medico=request.user
+    ).values_list('paciente_id', flat=True)
+    todos_ids = set(ids_asignadas) | set(ids_con_citas)
+
     pacientes_prenatales = Usuario.objects.filter(
-        rol='paciente', is_active=True, paciente__estado_embarazo='ACTIVO'
+        id__in=todos_ids, rol='paciente', is_active=True
     ).distinct().order_by('first_name', 'last_name')
 
     # Preparar JSON de pacientes para búsqueda en tiempo real
@@ -2611,7 +2620,7 @@ def programar_parto(request):
 
         try:
             paciente_obj = Usuario.objects.filter(
-                id=paciente_id, rol='paciente', paciente__estado_embarazo='ACTIVO'
+                id=paciente_id, rol='paciente', id__in=todos_ids
             ).distinct().get()
         except Usuario.DoesNotExist:
             messages.error(request, 'Paciente prenatal no encontrada.')
@@ -2631,10 +2640,22 @@ def programar_parto(request):
         )
         registrar_log(request, 'CREATE', 'Programación de Partos',
             f'{parto.get_tipo_display()} programado para {paciente_obj.get_full_name()} - Fecha: {fecha_programada} {hora_programada}', 'INFO')
+        # Parsear las fechas que vienen como strings desde el POST
+        from datetime import datetime
+        try:
+            f_str = datetime.strptime(str(fecha_programada), "%Y-%m-%d").strftime("%d/%m/%Y")
+        except:
+            f_str = str(fecha_programada)
+        
+        try:
+            h_str = datetime.strptime(str(hora_programada), "%H:%M").strftime("%H:%M")
+        except:
+            h_str = str(hora_programada)[:5]
+
         messages.success(
             request,
             f'{parto.get_tipo_display()} programado para {paciente_obj.get_full_name()} '
-            f'el {parto.fecha_programada.strftime("%d/%m/%Y")} a las {parto.hora_programada.strftime("%H:%M")}.'
+            f'el {f_str} a las {h_str}.'
         )
         return redirect('lista_programaciones_parto')
 

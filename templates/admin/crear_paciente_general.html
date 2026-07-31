@@ -1,9 +1,9 @@
-ï»¿{% load static %}
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zumedical â€” Crear Paciente General</title>
+<title>Zumedical — Crear Paciente General</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -32,7 +32,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 .sb-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:500;color:white;flex-shrink:0;text-transform:uppercase}
 .sb-user-info p{font-size:.72rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.1rem}
 .sb-user-info h3{font-size:.88rem;font-weight:500;color:white}
-.sb-nav{flex:1;padding:1rem .75rem;overflow-y:auto}
+.sb-nav{flex:1;min-height:0;padding:1rem .75rem;overflow-y:auto}
 .nav-lbl{font-size:.68rem;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.75rem}
 .nav-item{display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;border-radius:10px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.88rem;transition:all .2s;margin-bottom:.2rem}
 .nav-badge{margin-left:auto;background:rgba(255,255,255,.25);color:white;font-size:.68rem;font-weight:600;padding:.15rem .5rem;border-radius:999px;min-width:20px;text-align:center}
@@ -104,7 +104,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 .back-btn i{font-size:13px}
 .info-box{background:var(--purple-bg);border:1px solid var(--purple-border);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;max-width:700px;display:flex;align-items:flex-start;gap:.75rem;font-size:.85rem;color:var(--purple)}
 .info-box i{font-size:1rem;margin-top:.05rem;flex-shrink:0}
-@media(max-width:768px){body{flex-direction:column}.sidebar{position:fixed;top:64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);width:var(--sw)}.sidebar.open{transform:translateX(0)}.sidebar-overlay{display:block;z-index:150}.mobile-topbar{display:flex}.main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px)}.form-row{grid-template-columns:1fr}}
+@media(max-width:768px){body{flex-direction:column}.sidebar{position:fixed;top:64px;left:0;bottom: 0; height: auto;transform:translateX(-100%);width:var(--sw)}.sidebar.open{transform:translateX(0)}.sidebar-overlay{display:block;z-index:150}.mobile-topbar{display:flex}.main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px)}.form-row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -125,14 +125,14 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
     </div>
     <div class="sb-user">
         <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}</div>
-        <div class="sb-user-info"><p>SesiÃ³n activa</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
+        <div class="sb-user-info"><p>Sesión activa</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
     </div>
     <nav class="sb-nav">
         <div class="nav-lbl">Panel</div>
         <a href="{% url 'admin_dashboard' %}" class="nav-item"><i class="fa-solid fa-grid-2"></i> Inicio</a>
-        <div class="nav-lbl">GestiÃ³n</div>
+        <div class="nav-lbl">Gestión</div>
         <a href="{% url 'lista_usuarios' %}" class="nav-item"><i class="fa-solid fa-users"></i> Usuarios</a>
-        <a href="{% url 'lista_medicos' %}" class="nav-item"><i class="fa-solid fa-user-doctor"></i> MÃ©dicos</a>
+        <a href="{% url 'lista_medicos' %}" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Médicos</a>
         <a href="{% url 'lista_pacientes' %}" class="nav-item active"><i class="fa-solid fa-hospital-user"></i> Pacientes</a>
         <a href="{% url 'todas_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Citas
@@ -140,10 +140,10 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
         </a>
         <a href="{% url 'controles_admin' %}" class="nav-item"><i class="fa-solid fa-heart-pulse"></i> Controles Prenatales</a>
         <div class="nav-lbl">Sistema</div>
-        <a href="{% url 'auditoria_admin' %}" class="nav-item"><i class="fa-solid fa-shield-halved"></i> AuditorÃ­a</a>
+        <a href="{% url 'auditoria_admin' %}" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Auditoría</a>
     </nav>
     <div class="sb-footer">
-        <a href="{% url 'logout' %}" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesiÃ³n</a>
+        <a href="{% url 'logout' %}" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión</a>
     </div>
 </aside>
 
@@ -151,7 +151,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
     <div class="page-header">
         <div>
             <h1>Registrar Paciente General</h1>
-            <p>AÃ±adir un nuevo paciente de consulta general al sistema</p>
+            <p>Añadir un nuevo paciente de consulta general al sistema</p>
             <span class="tipo-badge"><i class="fa-solid fa-user-group"></i> Paciente General</span>
         </div>
         <a href="{% url 'lista_pacientes' %}" class="back-btn">
@@ -176,7 +176,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 
     <div class="info-box">
         <i class="fa-solid fa-circle-info"></i>
-        <span>Este formulario crea un paciente de <strong>consulta general</strong> (OdontologÃ­a, EcografÃ­a, Medicina General, etc.). No incluye datos obstÃ©tricos. Para pacientes prenatales usa el formulario correspondiente.</span>
+        <span>Este formulario crea un paciente de <strong>consulta general</strong> (Odontología, Ecografía, Medicina General, etc.). No incluye datos obstétricos. Para pacientes prenatales usa el formulario correspondiente.</span>
     </div>
 
     <div class="form-card">
@@ -186,9 +186,9 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
         <form method="POST">
             {% csrf_token %}
 
-            <!-- INFORMACIÃ“N PERSONAL -->
+            <!-- INFORMACIÓN PERSONAL -->
             <div class="form-section">
-                <div class="form-section-title">InformaciÃ³n personal</div>
+                <div class="form-section-title">Información personal</div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Nombre</label>
@@ -217,7 +217,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                         <div class="field-msg" id="msg_email"></div>
                     </div>
                     <div class="form-group">
-                        <label>CÃ©dula</label>
+                        <label>Cédula</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-id-card"></i>
                             <input type="text" id="id_cedula" name="cedula" placeholder="1234567890" maxlength="10" inputmode="numeric">
@@ -227,7 +227,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>TelÃ©fono</label>
+                        <label>Teléfono</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-phone"></i>
                             <input type="text" id="id_telefono" name="telefono" placeholder="0999999999" maxlength="10" inputmode="numeric">
@@ -243,15 +243,15 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>DirecciÃ³n</label>
+                    <label>Dirección</label>
                     <div class="input-wrap">
                         <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" name="direccion" placeholder="DirecciÃ³n completa" maxlength="60">
+                        <input type="text" name="direccion" placeholder="Dirección completa" maxlength="60">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>GÃ©nero</label>
+                        <label>Género</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-venus-mars"></i>
                             <select name="genero">
@@ -278,17 +278,17 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                         <div class="field-msg" id="msg_username"></div>
                     </div>
                     <div class="form-group">
-                        <label>ContraseÃ±a</label>
+                        <label>Contraseña</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-lock"></i>
-                            <input type="password" id="id_password" name="password" placeholder="MÃ­nimo 8 caracteres" required>
+                            <input type="password" id="id_password" name="password" placeholder="Mínimo 8 caracteres" required>
                         </div>
                         <div class="pwd-meter" id="pwd_meter"><div class="pwd-meter-bar" id="pwd_meter_bar"></div></div>
                         <ul class="pwd-checklist" id="pwd_checklist">
-                            <li id="chk_len"><i class="fa-solid fa-circle-xmark"></i> MÃ­nimo 8 caracteres</li>
-                            <li id="chk_upper"><i class="fa-solid fa-circle-xmark"></i> Una mayÃºscula</li>
-                            <li id="chk_num"><i class="fa-solid fa-circle-xmark"></i> Un nÃºmero</li>
-                            <li id="chk_sym"><i class="fa-solid fa-circle-xmark"></i> Un sÃ­mbolo</li>
+                            <li id="chk_len"><i class="fa-solid fa-circle-xmark"></i> Mínimo 8 caracteres</li>
+                            <li id="chk_upper"><i class="fa-solid fa-circle-xmark"></i> Una mayúscula</li>
+                            <li id="chk_num"><i class="fa-solid fa-circle-xmark"></i> Un número</li>
+                            <li id="chk_sym"><i class="fa-solid fa-circle-xmark"></i> Un símbolo</li>
                         </ul>
                     </div>
                 </div>
@@ -319,9 +319,9 @@ function closeSidebar() {
     document.getElementById('hamburger').classList.remove('open');
 }
 
-// â”€â”€ ValidaciÃ³n en tiempo real â”€â”€
+// -- Validación en tiempo real --
 (function() {
-    const NAME_RE = /^[A-Za-zÃÃ‰ÃÃ“ÃšÃ‘ÃœÃ¡Ã©Ã­Ã³ÃºÃ±Ã¼\s]*$/;
+    const NAME_RE = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]*$/;
     const fields = {};
 
     function setMsg(id, text, cls) {
@@ -342,7 +342,7 @@ function closeSidebar() {
             if (!NAME_RE.test(e.key)) e.preventDefault();
         });
         input.addEventListener('input', function() {
-            input.value = input.value.replace(/[^A-Za-zÃÃ‰ÃÃ“ÃšÃ‘ÃœÃ¡Ã©Ã­Ã³ÃºÃ±Ã¼\s]/g, '');
+            input.value = input.value.replace(/[^A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]/g, '');
             const valid = input.value.trim().length > 0;
             fields[id] = valid;
             setInputState(input, input.value === '' ? null : (valid ? 'valid' : 'invalid'));
@@ -360,7 +360,7 @@ function closeSidebar() {
             const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
             fields.email = valid;
             setInputState(input, valid ? 'valid' : 'invalid');
-            setMsg('email', valid ? '' : 'Formato de correo invÃ¡lido', 'error');
+            setMsg('email', valid ? '' : 'Formato de correo inválido', 'error');
             updateSubmit();
         });
     })();
@@ -378,7 +378,7 @@ function closeSidebar() {
             const valid = v.length === 10;
             fields.cedula = valid;
             setInputState(input, valid ? 'valid' : 'invalid');
-            setMsg('cedula', valid ? '' : 'Debe tener 10 dÃ­gitos', 'error');
+            setMsg('cedula', valid ? '' : 'Debe tener 10 dígitos', 'error');
             updateSubmit();
         });
     })();
@@ -396,7 +396,7 @@ function closeSidebar() {
             const valid = v.length === 10;
             fields.telefono = valid;
             setInputState(input, valid ? 'valid' : 'invalid');
-            setMsg('telefono', valid ? '' : 'Debe tener 10 dÃ­gitos', 'error');
+            setMsg('telefono', valid ? '' : 'Debe tener 10 dígitos', 'error');
             updateSubmit();
         });
     })();
@@ -410,7 +410,7 @@ function closeSidebar() {
             const valid = v.length >= 3;
             fields.username = valid;
             setInputState(input, v === '' ? null : (valid ? 'valid' : 'invalid'));
-            setMsg('username', v === '' || valid ? '' : 'MÃ­nimo 3 caracteres', 'error');
+            setMsg('username', v === '' || valid ? '' : 'Mínimo 3 caracteres', 'error');
             updateSubmit();
         });
     })();

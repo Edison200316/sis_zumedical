@@ -61,22 +61,23 @@ function preFillEditForm(data) {
     document.getElementById('me-obs').value = data.observaciones || '';
     
     // Obtener nombre del paciente desde el botón clickeado
-    const btn = document.querySelector(`[data-control-id="${currentControlId}"]`);
-    if (btn) {
-        const card = btn.closest('.control-card');
-        const row = btn.closest('tr');
-        
-        if (card) {
-            const nombreEl = card.querySelector('.cc-name');
-            const inicialesEl = card.querySelector('.cc-av');
-            if (nombreEl) document.getElementById('me-nombre').textContent = nombreEl.textContent;
-            if (inicialesEl) document.getElementById('me-av').textContent = inicialesEl.textContent;
-        } else if (row) {
-            const pacienteCell = row.querySelector('.pac-name');
-            const inicialesCell = row.querySelector('.pac-av');
-            if (pacienteCell) document.getElementById('me-nombre').textContent = pacienteCell.textContent;
-            if (inicialesCell) document.getElementById('me-av').textContent = inicialesCell.textContent;
-        }
+    const btns = document.querySelectorAll(`[data-control-id="${currentControlId}"]`);
+    let card = null, row = null;
+    btns.forEach(b => {
+        if (b.closest('.cc-card')) card = b.closest('.cc-card');
+        if (b.closest('tr')) row = b.closest('tr');
+    });
+
+    if (card) {
+        const nombreEl = card.querySelector('.cc-name');
+        const inicialesEl = card.querySelector('.cc-av');
+        if (nombreEl) document.getElementById('me-nombre').textContent = nombreEl.textContent;
+        if (inicialesEl) document.getElementById('me-av').textContent = inicialesEl.textContent;
+    } else if (row) {
+        const pacienteCell = row.querySelector('.pac-name');
+        const inicialesCell = row.querySelector('.pac-av');
+        if (pacienteCell) document.getElementById('me-nombre').textContent = pacienteCell.textContent;
+        if (inicialesCell) document.getElementById('me-av').textContent = inicialesCell.textContent;
     }
     
     // Limpiar errores previos
@@ -117,40 +118,35 @@ function cerrarEditarModal(event) {
  */
 function abrirConfirmarEliminar(controlId) {
     currentControlId = controlId;
-    
-    // Buscar el control en la tabla/cards para obtener sus datos
-    const row = document.querySelector(`[data-control-id="${controlId}"]`);
+    const btns = document.querySelectorAll(`[data-control-id="${currentControlId}"]`);
+    let card = null, row = null;
+    btns.forEach(b => {
+        if (b.closest('.cc-card')) card = b.closest('.cc-card');
+        if (b.closest('tr')) row = b.closest('tr');
+    });
+
     if (row) {
-        // Si estamos en la fila de la tabla, obtener datos de las celdas
-        const tr = row.closest('tr');
-        if (tr) {
-            const celdaPaciente = tr.querySelector('[data-label="Paciente"] .pac-name');
-            const celdaFecha = tr.querySelector('[data-label="Fecha"]');
-            const celdaSemanas = tr.querySelector('[data-label="Semanas"]');
-            const celdaPresion = tr.querySelector('[data-label="Presión arterial"]');
-            
-            if (celdaPaciente && celdaFecha && celdaSemanas && celdaPresion) {
-                document.getElementById('me-del-nombre').textContent = celdaPaciente.textContent.trim();
-                document.getElementById('me-del-fecha').textContent = celdaFecha.textContent.trim();
-                document.getElementById('me-del-semanas').textContent = celdaSemanas.textContent.trim();
-                document.getElementById('me-del-presion').textContent = celdaPresion.textContent.trim();
-            }
+        const celdaPaciente = row.querySelector('.pac-name');
+        const celdaFecha = row.querySelector('td:nth-child(2)');
+        const celdaSemanas = row.querySelector('td:nth-child(3)');
+        const celdaPresion = row.querySelector('td:nth-child(4)');
+        
+        if (celdaPaciente && celdaFecha && celdaSemanas && celdaPresion) {
+            document.getElementById('me-del-nombre').textContent = celdaPaciente.textContent.trim();
+            document.getElementById('me-del-fecha').textContent = celdaFecha.textContent.trim();
+            document.getElementById('me-del-semanas').textContent = celdaSemanas.textContent.trim();
+            document.getElementById('me-del-presion').textContent = celdaPresion.textContent.trim();
         }
-        // Si estamos en un botón de card, obtener datos del card
-        else {
-            const card = row.closest('.control-card');
-            if (card) {
-                const nombreEl = card.querySelector('.cc-name');
-                const dateEl = card.querySelector('.cc-date');
-                const semanasEl = card.querySelector('.semanas-badge');
-                const presionEl = card.querySelector('[class*="presion"]');
-                
-                if (nombreEl) document.getElementById('me-del-nombre').textContent = nombreEl.textContent;
-                if (dateEl) document.getElementById('me-del-fecha').textContent = dateEl.textContent;
-                if (semanasEl) document.getElementById('me-del-semanas').textContent = semanasEl.textContent;
-                if (presionEl) document.getElementById('me-del-presion').textContent = presionEl.textContent;
-            }
-        }
+    } else if (card) {
+        const nombreEl = card.querySelector('.cc-name');
+        const dateEl = card.querySelector('.cc-date');
+        const semanasEl = card.querySelector('.cc-badge');
+        const presionEl = card.querySelector('[class*="presion"]');
+        
+        if (nombreEl) document.getElementById('me-del-nombre').textContent = nombreEl.textContent;
+        if (dateEl) document.getElementById('me-del-fecha').textContent = dateEl.textContent;
+        if (semanasEl) document.getElementById('me-del-semanas').textContent = semanasEl.textContent;
+        if (presionEl) document.getElementById('me-del-presion').textContent = presionEl.textContent;
     }
     
     abrirModalEliminar();

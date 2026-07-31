@@ -27,6 +27,18 @@ RAILWAY_PUBLIC_DOMAIN = os.environ.get('RAILWAY_PUBLIC_DOMAIN', '')
 if RAILWAY_PUBLIC_DOMAIN and RAILWAY_PUBLIC_DOMAIN not in ALLOWED_HOSTS:
     ALLOWED_HOSTS.append(RAILWAY_PUBLIC_DOMAIN)
 
+# También agregar el dominio completo si viene en RAILWAY_STATIC_URL
+RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL', '')
+if RAILWAY_STATIC_URL:
+    # Extraer dominio limpio sin https://
+    domain_clean = RAILWAY_STATIC_URL.replace('https://', '').replace('http://', '').split('/')[0]
+    if domain_clean and domain_clean not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(domain_clean)
+
+# Asegurar que el dominio específico de producción esté incluido
+if 'zumedicalsis-production.up.railway.app' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('zumedicalsis-production.up.railway.app')
+
 # CSRF — dominios de confianza para requests POST en producción
 CSRF_TRUSTED_ORIGINS = config(
     'CSRF_TRUSTED_ORIGINS',

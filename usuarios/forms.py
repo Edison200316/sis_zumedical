@@ -206,19 +206,76 @@ class ControlPrenatalForm(forms.ModelForm):
     class Meta:
         model = ControlPrenatal
         fields = [
-            'paciente', 'semanas_gestacion', 'presion_arterial', 'peso',
-            'glucosa', 'frecuencia_cardiaca', 'diagnostico', 'tratamiento'
+            'paciente', 'semanas_gestacion', 'presion_arterial', 'peso', 'altura',
+            'glucosa', 'frecuencia_cardiaca', 'temperatura', 'embarazos_previos',
+            'complicaciones_previas', 'diabetes_preexistente', 'diabetes_gestacional',
+            'proteinuria', 'diagnostico', 'tratamiento', 'proxima_cita',
+            'examen_fisico', 'resultado_examenes', 'evolucion', 'observaciones'
         ]
         widgets = {
             'paciente': forms.Select(attrs={'class': 'form-control'}),
             'semanas_gestacion': forms.NumberInput(attrs={'class': 'form-control'}),
             'presion_arterial': forms.TextInput(attrs={'class': 'form-control', 'placeholder': '120/80'}),
             'peso': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
+            'altura': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
             'glucosa': forms.NumberInput(attrs={'class': 'form-control'}),
             'frecuencia_cardiaca': forms.NumberInput(attrs={'class': 'form-control'}),
+            'temperatura': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.1'}),
+            'embarazos_previos': forms.NumberInput(attrs={'class': 'form-control'}),
+            'complicaciones_previas': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'diabetes_preexistente': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'diabetes_gestacional': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+            'proteinuria': forms.TextInput(attrs={'class': 'form-control'}),
+            'proxima_cita': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
             'diagnostico': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'tratamiento': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'examen_fisico': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'resultado_examenes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'evolucion': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            'observaciones': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
+        labels = {
+            'paciente': 'Paciente Prenatal',
+        }
+
+    def __init__(self, *args, **kwargs):
+        # Extraer el parámetro medico si existe (para compatibilidad)
+        medico = kwargs.pop('medico', None)
+        super().__init__(*args, **kwargs)
+        
+        from pacientes.models import Paciente
+        from citas.models import Cita
+        from django.contrib.auth import get_user_model
+        
+        User = get_user_model()
+        
+        if medico:
+            ids_asignadas = Paciente.objects.filter(
+                medico_prenatal=medico
+            ).values_list('usuario_id', flat=True)
+            ids_con_citas = Cita.objects.filter(
+                medico=medico
+            ).values_list('paciente_id', flat=True)
+            todos_ids = set(ids_asignadas) | set(ids_con_citas)
+            
+            self.fields['paciente'].queryset = User.objects.filter(
+                id__in=todos_ids,
+                rol='paciente'
+            ).select_related('paciente').order_by('first_name', 'last_name')
+        else:
+            self.fields['paciente'].queryset = User.objects.filter(
+                rol='paciente'
+            ).select_related('paciente').order_by('first_name', 'last_name')
+        
+        # Personalizar la representación de cada paciente en el select
+        def label_from_instance(obj):
+            cedula = getattr(obj.paciente, 'cedula', '') if hasattr(obj, 'paciente') else ''
+            nombre = obj.get_full_name() or obj.username
+            if cedula:
+                return f"{nombre} - {cedula}"
+            return nombre
+        
+        self.fields['paciente'].label_from_instance = label_from_instance
 
 
 class EditarPacienteEnfermeraForm(forms.ModelForm):

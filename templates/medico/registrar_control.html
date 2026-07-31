@@ -85,7 +85,7 @@
       .sidebar {
         width: var(--sw);
         min-width: var(--sw);
-        min-height: calc(100vh - 64px);
+        bottom: 0;
         background: linear-gradient(
           175deg,
           #8a2563 0%,
@@ -198,9 +198,10 @@
         fill: none;
         stroke-width: 2;
       }
-      .sidebar-nav {
+      .sidebar-nav, .sb-nav {
         flex: 1;
         padding: 1rem 0.75rem;
+        overflow-y: auto;
       }
       .nav-label {
         font-size: 0.7rem;
@@ -952,10 +953,10 @@
         .sidebar {
           width: var(--sw);
           min-width: var(--sw);
-          height: calc(100vh - 64px);
-          min-height: 100vh;
+          bottom: 0;
+          padding-bottom: env(safe-area-inset-bottom, 20px);
           position: fixed;
-          top:  64px;
+          top: 64px;
           left: 0;
           z-index: 350;
           padding-top: 0;
@@ -978,7 +979,6 @@
           margin-left: 0;
           padding: 1.1rem;
           padding-top: calc(1.1rem + 64px);
-          height: 100vh;
           overflow-y: auto;
           -webkit-overflow-scrolling: touch;
         }

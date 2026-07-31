@@ -46,7 +46,7 @@
     .sb-av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase;}
     .sb-user-info p{font-size:.7rem;color:rgba(255,255,255,.6);text-transform:uppercase;}
     .sb-user-info h3{font-size:.88rem;font-weight:500;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;}
-    .sb-nav{flex:1;padding:1rem .75rem;}
+    .sb-nav{flex:1;min-height:0;padding:1rem .75rem;overflow-y:auto;}
     .nav-lbl{font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.5rem;}
     .nav-item{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;border-radius:10px;color:rgba(255,255,255,.85);text-decoration:none;font-size:.88rem;margin-bottom:.2rem;transition:all .2s;}
     .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white;}
@@ -89,7 +89,7 @@
     .empty h3{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.3rem;color:var(--text);margin-bottom:.5rem;}
     @media(max-width:700px){
       body{flex-direction:column;height:100vh;overflow:hidden}
-      .sidebar{position:fixed;top: 64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);z-index:300}
+      .sidebar{position:fixed;top: 64px;left:0;bottom: 0; height: auto;transform:translateX(-100%);z-index:300}
       .sidebar.open{transform:translateX(0)}
       .sidebar-overlay{display:block;z-index:250}
       .mobile-topbar{display:flex}
@@ -141,7 +141,7 @@
         </span>
       </div>
       <div class="parto-card-body">
-        <div class="parto-fecha">{{ p.fecha_programada|date:"d 'de' F 'de' Y" }}</div>
+        <div class="parto-fecha">{{ p.fecha_programada|date:"d \d\e F \d\e Y" }}</div>
         <div class="parto-hora">🕐 {{ p.hora_programada|time:"H:i" }} hrs{% if p.semanas_gestacion %} · Semana {{ p.semanas_gestacion }}{% endif %}</div>
         <div class="parto-lugar">📍 {{ p.lugar }}</div>
         {% if p.indicaciones %}

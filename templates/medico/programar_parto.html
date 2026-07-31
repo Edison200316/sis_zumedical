@@ -46,7 +46,7 @@
     .sb-av{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:600;color:white;flex-shrink:0;text-transform:uppercase;}
     .sb-user-info p{font-size:.7rem;color:rgba(255,255,255,.6);text-transform:uppercase;}
     .sb-user-info h3{font-size:.88rem;font-weight:500;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;}
-    .sb-nav{flex:1;padding:1rem .75rem;}
+    .sb-nav{flex:1;min-height:0;padding:1rem .75rem;overflow-y:auto;}
     .nav-lbl{font-size:.68rem;color:rgba(255,255,255,.5);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.5rem;}
     .nav-item{display:flex;align-items:center;gap:.75rem;padding:.7rem 1rem;border-radius:10px;color:rgba(255,255,255,.85);text-decoration:none;font-size:.88rem;margin-bottom:.2rem;transition:all .2s;}
     .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white;}
@@ -89,7 +89,7 @@
     .alert-error{background:var(--red-bg);border:1px solid #fca5a5;color:var(--red);padding:1rem 1.5rem;border-radius:10px;margin-bottom:1.5rem;font-size:.9rem;}
     @media(max-width:700px){
       body{flex-direction:column;height:100vh;overflow:hidden}
-      .sidebar{position:fixed;top: 64px;left:0;height:calc(100vh - 64px);transform:translateX(-100%);z-index:300}
+      .sidebar{position:fixed;top: 64px;left:0;bottom: 0; height: auto;transform:translateX(-100%);z-index:300}
       .sidebar.open{transform:translateX(0)}
       .sidebar-overlay{display:block;z-index:250}
       .mobile-topbar{display:flex}
@@ -233,24 +233,25 @@ function selectTipo(el, val) {
 
 // Búsqueda de pacientes en tiempo real
 document.addEventListener('DOMContentLoaded', function() {
-  const pacientes = {{ pacientes_json|safe }};
+  const pacientesData = {{ pacientes_json|safe }};
   const searchInput = document.getElementById('paciente-search');
   const pacienteList = document.getElementById('paciente-list');
   const pacienteId = document.getElementById('paciente-id');
   const pacienteError = document.getElementById('paciente-error');
   
-  searchInput.addEventListener('input', function() {
-    const query = this.value.toLowerCase().trim();
+  console.log('Pacientes cargados:', pacientesData.length);
+  
+  if (!pacientesData || pacientesData.length === 0) {
+    console.warn('No hay pacientes prenatales disponibles');
+  }
+  
+  function renderList() {
+    const query = searchInput.value.toLowerCase().trim();
     pacienteList.innerHTML = '';
     
-    if (query.length === 0) {
-      pacienteList.style.display = 'none';
-      return;
-    }
-    
-    const filtrados = pacientes.filter(p => {
-      const nombre = p.nombre.toLowerCase();
-      const cedula = p.cedula.toLowerCase();
+    const filtrados = query.length === 0 ? pacientesData : pacientesData.filter(p => {
+      const nombre = (p.nombre || '').toLowerCase();
+      const cedula = (p.cedula || '').toLowerCase();
       return nombre.includes(query) || cedula.includes(query);
     });
     
@@ -263,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function() {
     filtrados.forEach(p => {
       const li = document.createElement('li');
       li.style.cssText = 'padding:0.7rem 1rem;cursor:pointer;border-bottom:1px solid var(--mg-border);transition:background 0.2s;';
-      li.innerHTML = `<div style="font-weight:500;color:var(--text);">${p.nombre}</div><div style="font-size:0.8rem;color:var(--text-muted);">ID: ${p.cedula}</div>`;
+      li.innerHTML = `<div style="font-weight:500;color:var(--text);font-size:0.9rem;">${p.nombre}</div><div style="font-size:0.8rem;color:var(--muted);">Cédula: ${p.cedula}</div>`;
       li.addEventListener('mouseenter', () => li.style.background = 'var(--mg-bg)');
       li.addEventListener('mouseleave', () => li.style.background = 'transparent');
       li.addEventListener('click', () => {
@@ -271,13 +272,17 @@ document.addEventListener('DOMContentLoaded', function() {
         pacienteId.value = p.id;
         pacienteList.style.display = 'none';
         pacienteError.style.display = 'none';
-        searchInput.style.borderColor = '1.5px solid var(--mg-border)';
+        searchInput.style.borderColor = '';
       });
       pacienteList.appendChild(li);
     });
     
     pacienteList.style.display = 'block';
-  });
+  }
+
+  searchInput.addEventListener('input', renderList);
+  searchInput.addEventListener('focus', renderList);
+  searchInput.addEventListener('click', renderList);
   
   // Cerrar lista al hacer click fuera
   document.addEventListener('click', function(e) {
@@ -292,6 +297,7 @@ document.addEventListener('DOMContentLoaded', function() {
       e.preventDefault();
       pacienteError.style.display = 'block';
       searchInput.style.borderColor = 'var(--red)';
+      searchInput.focus();
     }
   });
 });

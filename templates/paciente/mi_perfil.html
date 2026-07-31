@@ -330,7 +330,7 @@
  
         @media (max-width: 768px) {
             body { flex-direction: column; }
-            .sidebar { width: var(--sidebar-w); position: fixed; top: 64px; left: 0; bottom: 0; height: auto; transform: translateX(-100%); z-index: 250; overflow-y: auto; }
+            .sidebar { width: var(--sidebar-w); position: fixed; top: 64px; left: 0; bottom: 0; height: auto; transform: translateX(-100%); z-index: 250; overflow: hidden; }
             .sidebar.open { transform: translateX(0); }
             .sidebar-overlay { display: block; z-index: 200; }
             .mobile-topbar { display: flex; }
@@ -1029,3 +1029,4 @@
     <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
 </html>
+

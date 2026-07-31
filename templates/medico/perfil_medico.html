@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
+    
     <style>
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
       html {
@@ -26,7 +26,7 @@
         body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;background:var(--bg);min-height:100vh;display:flex;opacity:0;animation:pageIn .35s ease .05s forwards}
 
         /* ── SIDEBAR ── */
-        .sidebar{width:var(--sw);min-height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:sticky;top:0;left:0;z-index:100;align-self:flex-start;height:100vh;overflow-y:auto;flex-shrink:0}
+        .sidebar{width:var(--sw);min-height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:sticky;top:0;left:0;z-index:100;align-self:flex-start;height:100vh;overflow: hidden;flex-shrink:0}
         .sb-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,0.12);display:flex;align-items:center;gap:0.75rem}
         .sb-logo{width:44px;height:44px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
         .sb-logo img{width:40px;height:40px;object-fit:contain}
@@ -748,3 +748,4 @@ document.addEventListener('DOMContentLoaded', function () {
 </script>
 </body>
 </html>
+

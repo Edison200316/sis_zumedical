@@ -9,7 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-    <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}">
+    
     <style>
         *, *::before, *::after {
             box-sizing: border-box;
@@ -83,7 +83,7 @@
             left: 0;
             z-index: 350;
             transition: transform .3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow-y: auto;
+            overflow: hidden;
             -webkit-overflow-scrolling: touch;
             box-shadow: 4px 0 24px rgba(138,37,99,.22);
         }
@@ -241,7 +241,7 @@
                 transform:translateX(-100%);
                 box-shadow:4px 0 20px rgba(0,0,0,0.15);
                 animation:none !important;
-                overflow-y:auto;
+                overflow: hidden;
                 -webkit-overflow-scrolling:touch;
             }
             .sidebar.open{transform:translateX(0)}
@@ -465,3 +465,4 @@ document.querySelectorAll('.nav-link').forEach(function(link) {
 </script>
 </body>
 </html>
+

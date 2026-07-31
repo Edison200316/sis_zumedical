@@ -402,6 +402,75 @@
         </div>
     </div>
 
+    <!-- PARTO PROGRAMADO -->
+    {% if parto_programado %}
+    <div class="card" style="margin-bottom:1.75rem;border:2px solid var(--mg);animation:slideUp .4s ease .28s both">
+        <div class="card-header" style="background:linear-gradient(135deg,var(--mg-d),var(--mg-l));border-bottom:none">
+            <div class="card-header-left">
+                <div class="card-header-icon" style="background:rgba(255,255,255,.2);color:white">
+                    <i class="fa-solid fa-baby"></i>
+                </div>
+                <h3 style="color:white">🌟 {{ parto_programado.get_tipo_display }}</h3>
+            </div>
+            <span class="badge" style="background:rgba(255,255,255,.95);color:var(--mg);font-weight:600">{{ parto_programado.get_estado_display }}</span>
+        </div>
+        <div class="card-body" style="padding:1.5rem 1.4rem;background:linear-gradient(to bottom,var(--mg-bg),var(--white))">
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem">
+                <div>
+                    <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">
+                        <i class="fa-regular fa-calendar"></i> Fecha programada
+                    </div>
+                    <div style="font-size:1.1rem;font-weight:600;color:var(--text)">
+                        {{ parto_programado.fecha_programada|date:"d/m/Y" }}
+                    </div>
+                </div>
+                <div>
+                    <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">
+                        <i class="fa-regular fa-clock"></i> Hora
+                    </div>
+                    <div style="font-size:1.1rem;font-weight:600;color:var(--text)">
+                        {{ parto_programado.hora_programada|time:"H:i" }} hrs
+                    </div>
+                </div>
+                {% if parto_programado.semanas_gestacion %}
+                <div>
+                    <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">
+                        <i class="fa-solid fa-heart-pulse"></i> Semana
+                    </div>
+                    <div style="font-size:1.1rem;font-weight:600;color:var(--text)">
+                        Semana {{ parto_programado.semanas_gestacion }}
+                    </div>
+                </div>
+                {% endif %}
+                <div>
+                    <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.3rem">
+                        <i class="fa-solid fa-location-dot"></i> Lugar
+                    </div>
+                    <div style="font-size:1.1rem;font-weight:600;color:var(--text)">
+                        {{ parto_programado.lugar }}
+                    </div>
+                </div>
+            </div>
+            {% if parto_programado.indicaciones %}
+            <div style="margin-top:1.2rem;padding:1rem;background:white;border-radius:12px;border:1px solid var(--mg-border)">
+                <div style="font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.5rem;font-weight:600">
+                    <i class="fa-solid fa-clipboard-list"></i> Indicaciones
+                </div>
+                <div style="font-size:.88rem;color:var(--text);line-height:1.5">
+                    {{ parto_programado.indicaciones|linebreaks }}
+                </div>
+            </div>
+            {% endif %}
+            <div style="margin-top:1rem;padding:.8rem 1rem;background:rgba(176,53,128,.06);border-left:3px solid var(--mg);border-radius:8px">
+                <div style="font-size:.82rem;color:var(--text)">
+                    <i class="fa-solid fa-user-doctor" style="color:var(--mg)"></i>
+                    <strong>Dr(a). {{ parto_programado.medico.get_full_name|default:parto_programado.medico }}</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
     <!-- ÚLTIMAS CITAS -->
     <div class="citas-card">
         <div class="card-header">

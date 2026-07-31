@@ -33,10 +33,23 @@ CSRF_TRUSTED_ORIGINS = config(
     default='http://localhost,http://127.0.0.1',
     cast=Csv()
 )
+
+# Agregar automáticamente el dominio de Railway
 if RAILWAY_PUBLIC_DOMAIN:
     railway_origin = f'https://{RAILWAY_PUBLIC_DOMAIN}'
     if railway_origin not in CSRF_TRUSTED_ORIGINS:
         CSRF_TRUSTED_ORIGINS.append(railway_origin)
+
+# Agregar también dominios alternativos de Railway
+RAILWAY_STATIC_URL = os.environ.get('RAILWAY_STATIC_URL', '')
+if RAILWAY_STATIC_URL:
+    if RAILWAY_STATIC_URL.startswith('https://'):
+        if RAILWAY_STATIC_URL not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(RAILWAY_STATIC_URL)
+    else:
+        full_url = f'https://{RAILWAY_STATIC_URL}'
+        if full_url not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(full_url)
 
 
 # ============================================================

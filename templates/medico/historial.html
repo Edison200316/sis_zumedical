@@ -79,7 +79,7 @@
         .btn-logout svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
 
         /* MAIN */
-        .main { flex:1; margin-left:var(--sw); padding:2.5rem; min-height:100vh; height:100vh; overflow: hidden; opacity:0; animation:pageIn .4s ease .05s forwards; width:100%; max-width:100%; box-sizing:border-box; }
+        .main { flex:1; margin-left:var(--sw); padding:2.5rem; min-height:100vh; overflow-y: auto; opacity:0; animation:pageIn .4s ease .05s forwards; width:100%; max-width:100%; box-sizing:border-box; }
 
         /* HEADER */
         .page-header { margin-bottom:1.75rem; }
@@ -372,6 +372,240 @@
         }
         @media(max-width:420px){
             .page-header h1{font-size:1.5rem}
+        }
+
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* ESTILOS PARA MODALES DE EDITAR Y ELIMINAR */
+        /* ═══════════════════════════════════════════════════════════════ */
+        
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(42, 16, 32, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.25s ease;
+        }
+        
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .modal-overlay-inner {
+            width: 100%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        #modal-editar,
+        #modal-eliminar {
+            background: var(--white);
+            border-radius: 18px;
+            box-shadow: 0 24px 64px rgba(138, 37, 99, 0.3);
+            transform: translateY(20px) scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s;
+            opacity: 0;
+            width: 100%;
+        }
+        
+        .modal-overlay.open #modal-editar,
+        .modal-overlay.open #modal-eliminar {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        
+        #modal-editar .modal-header,
+        #modal-eliminar .modal-header {
+            padding: 1.75rem;
+            border-bottom: 1px solid var(--mg-border);
+        }
+        
+        #modal-editar .modal-header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+        
+        #modal-editar .modal-badge {
+            display: inline-block;
+            padding: 0.35rem 0.75rem;
+            background: var(--mg-bg);
+            color: var(--mg);
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        #modal-editar .modal-close,
+        #modal-eliminar .modal-close {
+            background: rgba(176, 53, 128, 0.1);
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        
+        #modal-editar .modal-close:hover,
+        #modal-eliminar .modal-close:hover {
+            background: rgba(176, 53, 128, 0.2);
+        }
+        
+        #modal-editar .modal-pac-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        #modal-editar .modal-av {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--mg-d), var(--mg-l));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+        }
+        
+        #modal-editar .modal-pac-name {
+            font-family: 'Cormorant Garamond', Georgia, 'Times New Roman', serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text);
+        }
+        
+        #modal-editar .modal-pac-sub {
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        #modal-editar .modal-body,
+        #modal-eliminar .modal-body {
+            padding: 1.5rem 1.75rem;
+        }
+        
+        #modal-editar .modal-section {
+            margin-bottom: 1.5rem;
+        }
+        
+        #modal-editar .modal-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        #modal-editar .modal-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--mg);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--mg-bg);
+        }
+        
+        #modal-editar .modal-section-title svg {
+            width: 16px;
+            height: 16px;
+            stroke: var(--mg);
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        #modal-editar .modal-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        #modal-editar .modal-field {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+        
+        #modal-editar .modal-field-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        #modal-editar .modal-obs {
+            background: transparent;
+            border: none;
+            padding: 0;
+        }
+        
+        #modal-editar .modal-obs-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        #modal-editar .modal-obs-label svg {
+            width: 14px;
+            height: 14px;
+            stroke: var(--mg);
+            fill: none;
+            stroke-width: 2;
+        }
+        
+        #modal-editar .modal-footer,
+        #modal-eliminar .modal-footer {
+            padding: 1rem 1.75rem 1.75rem;
+            border-top: 1px solid var(--mg-border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.75rem;
+        }
+        
+        @media (max-width: 640px) {
+            .modal-overlay-inner {
+                max-width: 100%;
+            }
+            
+            #modal-editar .modal-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            #modal-editar .modal-footer,
+            #modal-eliminar .modal-footer {
+                flex-direction: column-reverse;
+            }
+            
+            #modal-editar .modal-footer button,
+            #modal-eliminar .modal-footer button {
+                width: 100%;
+            }
         }
     </style>
 

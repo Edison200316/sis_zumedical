@@ -382,7 +382,9 @@ aside#sidebar > .sidebar-brand:first-of-type {
    ============================================================== */
 .sidebar .sb-nav,
 .sidebar .sidebar-nav {
-  flex: 1 !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: calc(100vh - 280px) !important;
   padding: 1rem 0.75rem !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -395,7 +397,6 @@ aside#sidebar > .sidebar-brand:first-of-type {
   background: transparent !important;
   width: 100% !important;
   margin: 0 !important;
-  min-height: 0 !important;
 }
 
 .sidebar .nav-lbl,
@@ -551,6 +552,35 @@ aside#sidebar > .sidebar-brand:first-of-type {
   opacity: 1 !important;
 }
 
+/* Scroll interno del sidebar nav */
+.sidebar .sb-nav::-webkit-scrollbar {
+  width: 5px !important;
+}
+.sidebar .sb-nav::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+.sidebar .sb-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 3px !important;
+}
+.sidebar .sb-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35) !important;
+}
+
+.sidebar .sidebar-nav::-webkit-scrollbar {
+  width: 5px !important;
+}
+.sidebar .sidebar-nav::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+.sidebar .sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 3px !important;
+}
+.sidebar .sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35) !important;
+}
+
 /* ==============================================================
    FOOTER / LOGOUT
    ( .sb-footer  y  .sidebar-footer )
@@ -566,6 +596,11 @@ aside#sidebar > .sidebar-brand:first-of-type {
   width: 100% !important;
   background: transparent !important;
   margin: 0 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
 }
 
 .sidebar a.btn-logout,
@@ -599,6 +634,10 @@ aside#sidebar > .sidebar-brand:first-of-type {
     sans-serif !important;
   box-sizing: border-box !important;
   margin: 0 !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
 }
 
 .sidebar a.btn-logout:link,
@@ -799,7 +838,8 @@ aside#sidebar > .sidebar-brand:first-of-type {
   /* Ensure navigation has scroll in mobile */
   .sidebar .sb-nav,
   .sidebar .sidebar-nav {
-    flex: 1 !important;
+    flex: 1 1 auto !important;
+    max-height: calc(100vh - 340px) !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
@@ -811,6 +851,9 @@ aside#sidebar > .sidebar-brand:first-of-type {
   .sidebar .sidebar-footer {
     flex-shrink: 0 !important;
     border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 }
 

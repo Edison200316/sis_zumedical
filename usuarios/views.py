@@ -2577,108 +2577,122 @@ def ver_consulta_general(request, consulta_id):
 @no_cache_view
 def programar_parto(request):
     """El médico prenatal programa una fecha/hora de parto para una paciente."""
-    from paciente_general.models import ProgramacionParto
-    from pacientes.models import Paciente
     import json
-
-    if request.user.rol != 'medico':
-        return redireccionar_por_rol(request.user)
-
-    from citas.models import Cita
+    import logging
     
-    # Solo pacientes con EMBARAZO ACTIVO
-    ids_embarazo_activo = Paciente.objects.filter(
-        estado_embarazo='ACTIVO'
-    ).values_list('usuario_id', flat=True)
+    logger = logging.getLogger(__name__)
     
-    ids_asignadas = Paciente.objects.filter(
-        medico_prenatal=request.user
-    ).values_list('usuario_id', flat=True)
-    ids_con_citas = Cita.objects.filter(
-        medico=request.user
-    ).values_list('paciente_id', flat=True)
-    todos_ids = set(ids_asignadas) | set(ids_con_citas)
-    
-    # Filtrar: solo pacientes del médico Y con embarazo activo
-    todos_ids = todos_ids & ids_embarazo_activo
+    try:
+        from paciente_general.models import ProgramacionParto
+        from pacientes.models import Paciente
+        from citas.models import Cita
 
-    pacientes_prenatales = Usuario.objects.filter(
-        id__in=todos_ids, rol='paciente', is_active=True
-    ).distinct().order_by('first_name', 'last_name')
+        if request.user.rol != 'medico':
+            return redireccionar_por_rol(request.user)
+        
+        # Solo pacientes con EMBARAZO ACTIVO
+        ids_embarazo_activo = Paciente.objects.filter(
+            estado_embarazo='ACTIVO'
+        ).values_list('usuario_id', flat=True)
+        
+        ids_asignadas = Paciente.objects.filter(
+            medico_prenatal=request.user
+        ).values_list('usuario_id', flat=True)
+        ids_con_citas = Cita.objects.filter(
+            medico=request.user
+        ).values_list('paciente_id', flat=True)
+        todos_ids = set(ids_asignadas) | set(ids_con_citas)
+        
+        # Filtrar: solo pacientes del médico Y con embarazo activo
+        todos_ids = todos_ids & set(ids_embarazo_activo)
 
-    # Preparar JSON de pacientes para búsqueda en tiempo real
-    pacientes_json = json.dumps([{
-        'id': p.id,
-        'nombre': p.get_full_name() or p.username,
-        'cedula': p.username,  # Usar username como identificador
-    } for p in pacientes_prenatales])
+        pacientes_prenatales = Usuario.objects.filter(
+            id__in=todos_ids, rol='paciente', is_active=True
+        ).distinct().order_by('first_name', 'last_name')
+
+        # Preparar JSON de pacientes para búsqueda en tiempo real
+        pacientes_json = json.dumps([{
+            'id': p.id,
+            'nombre': p.get_full_name() or p.username,
+            'cedula': p.username,  # Usar username como identificador
+        } for p in pacientes_prenatales])
+    except Exception as e:
+        logger.error(f"Error en programar_parto (GET): {str(e)}", exc_info=True)
+        messages.error(request, f'Error al cargar la página: {str(e)}')
+        return redirect('dashboard_medico')
 
     if request.method == 'POST':
-        paciente_id      = request.POST.get('paciente')
-        tipo             = request.POST.get('tipo', 'parto_natural')
-        fecha_programada = request.POST.get('fecha_programada')
-        hora_programada  = request.POST.get('hora_programada')
-        semanas          = request.POST.get('semanas_gestacion') or None
-        lugar            = request.POST.get('lugar', 'Zumedical — Centro Médico').strip()
-        indicaciones     = request.POST.get('indicaciones', '').strip()
-
-        if not all([paciente_id, fecha_programada, hora_programada]):
-            messages.error(request, 'Paciente, fecha y hora son obligatorios.')
-            return render(request, 'medico/programar_parto.html',
-                          {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
-
         try:
-            paciente_obj = Usuario.objects.filter(
-                id=paciente_id, rol='paciente', id__in=todos_ids
-            ).distinct().get()
-            
-            # Verificar que tenga embarazo activo
-            paciente_perfil = Paciente.objects.get(usuario=paciente_obj)
-            if paciente_perfil.estado_embarazo != 'ACTIVO':
-                messages.error(request, 'La paciente debe tener un embarazo activo para programar el parto.')
+            paciente_id      = request.POST.get('paciente')
+            tipo             = request.POST.get('tipo', 'parto_natural')
+            fecha_programada = request.POST.get('fecha_programada')
+            hora_programada  = request.POST.get('hora_programada')
+            semanas          = request.POST.get('semanas_gestacion') or None
+            lugar            = request.POST.get('lugar', 'Zumedical — Centro Médico').strip()
+            indicaciones     = request.POST.get('indicaciones', '').strip()
+
+            if not all([paciente_id, fecha_programada, hora_programada]):
+                messages.error(request, 'Paciente, fecha y hora son obligatorios.')
                 return render(request, 'medico/programar_parto.html',
                               {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
+
+            try:
+                paciente_obj = Usuario.objects.filter(
+                    id=paciente_id, rol='paciente', id__in=todos_ids
+                ).distinct().get()
                 
-        except Usuario.DoesNotExist:
-            messages.error(request, 'Paciente prenatal no encontrada.')
+                # Verificar que tenga embarazo activo
+                paciente_perfil = Paciente.objects.get(usuario=paciente_obj)
+                if paciente_perfil.estado_embarazo != 'ACTIVO':
+                    messages.error(request, 'La paciente debe tener un embarazo activo para programar el parto.')
+                    return render(request, 'medico/programar_parto.html',
+                                  {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
+                    
+            except Usuario.DoesNotExist:
+                messages.error(request, 'Paciente prenatal no encontrada.')
+                return render(request, 'medico/programar_parto.html',
+                              {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
+            except Paciente.DoesNotExist:
+                messages.error(request, 'Perfil de paciente no encontrado.')
+                return render(request, 'medico/programar_parto.html',
+                              {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
+
+            parto = ProgramacionParto.objects.create(
+                paciente          = paciente_obj,
+                medico            = request.user,
+                tipo              = tipo,
+                fecha_programada  = fecha_programada,
+                hora_programada   = hora_programada,
+                semanas_gestacion = int(semanas) if semanas else None,
+                lugar             = lugar or 'Zumedical — Centro Médico',
+                indicaciones      = indicaciones,
+                estado            = 'programado',
+            )
+            registrar_log(request, 'CREATE', 'Programación de Partos',
+                f'{parto.get_tipo_display()} programado para {paciente_obj.get_full_name()} - Fecha: {fecha_programada} {hora_programada}', 'INFO')
+            # Parsear las fechas que vienen como strings desde el POST
+            from datetime import datetime
+            try:
+                f_str = datetime.strptime(str(fecha_programada), "%Y-%m-%d").strftime("%d/%m/%Y")
+            except:
+                f_str = str(fecha_programada)
+            
+            try:
+                h_str = datetime.strptime(str(hora_programada), "%H:%M").strftime("%H:%M")
+            except:
+                h_str = str(hora_programada)[:5]
+
+            messages.success(
+                request,
+                f'{parto.get_tipo_display()} programado para {paciente_obj.get_full_name()} '
+                f'el {f_str} a las {h_str}.'
+            )
+            return redirect('lista_programaciones_parto')
+        except Exception as e:
+            logger.error(f"Error en programar_parto (POST): {str(e)}", exc_info=True)
+            messages.error(request, f'Error al guardar la programación: {str(e)}')
             return render(request, 'medico/programar_parto.html',
                           {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
-        except Paciente.DoesNotExist:
-            messages.error(request, 'Perfil de paciente no encontrado.')
-            return render(request, 'medico/programar_parto.html',
-                          {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
-
-        parto = ProgramacionParto.objects.create(
-            paciente          = paciente_obj,
-            medico            = request.user,
-            tipo              = tipo,
-            fecha_programada  = fecha_programada,
-            hora_programada   = hora_programada,
-            semanas_gestacion = int(semanas) if semanas else None,
-            lugar             = lugar or 'Zumedical — Centro Médico',
-            indicaciones      = indicaciones,
-            estado            = 'programado',
-        )
-        registrar_log(request, 'CREATE', 'Programación de Partos',
-            f'{parto.get_tipo_display()} programado para {paciente_obj.get_full_name()} - Fecha: {fecha_programada} {hora_programada}', 'INFO')
-        # Parsear las fechas que vienen como strings desde el POST
-        from datetime import datetime
-        try:
-            f_str = datetime.strptime(str(fecha_programada), "%Y-%m-%d").strftime("%d/%m/%Y")
-        except:
-            f_str = str(fecha_programada)
-        
-        try:
-            h_str = datetime.strptime(str(hora_programada), "%H:%M").strftime("%H:%M")
-        except:
-            h_str = str(hora_programada)[:5]
-
-        messages.success(
-            request,
-            f'{parto.get_tipo_display()} programado para {paciente_obj.get_full_name()} '
-            f'el {f_str} a las {h_str}.'
-        )
-        return redirect('lista_programaciones_parto')
 
     return render(request, 'medico/programar_parto.html',
                   {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
@@ -2688,65 +2702,88 @@ def programar_parto(request):
 @no_cache_view
 def editar_parto(request, parto_id):
     """Edita o cambia el estado de una programación de parto."""
-    from paciente_general.models import ProgramacionParto
     import json
+    import logging
+    
+    logger = logging.getLogger(__name__)
+    
+    try:
+        from paciente_general.models import ProgramacionParto
 
-    if request.user.rol != 'medico':
-        return redireccionar_por_rol(request.user)
+        if request.user.rol != 'medico':
+            return redireccionar_por_rol(request.user)
 
-    parto = get_object_or_404(ProgramacionParto, id=parto_id)
+        parto = get_object_or_404(ProgramacionParto, id=parto_id)
 
-    if request.method == 'POST':
-        parto.tipo             = request.POST.get('tipo', parto.tipo)
-        parto.fecha_programada = request.POST.get('fecha_programada', str(parto.fecha_programada))
-        parto.hora_programada  = request.POST.get('hora_programada', str(parto.hora_programada))
-        parto.lugar            = request.POST.get('lugar', parto.lugar).strip() or parto.lugar
-        parto.indicaciones     = request.POST.get('indicaciones', parto.indicaciones).strip()
-        nuevo_estado           = request.POST.get('estado', parto.estado)
-        sem = request.POST.get('semanas_gestacion')
-        if sem:
-            try: parto.semanas_gestacion = int(sem)
-            except: pass
-        parto.save()
-        registrar_log(request, 'UPDATE', 'Programación de Partos',
-            f'Programación de parto #{parto.id} actualizada - Nuevo estado: {nuevo_estado}', 'INFO')
-        messages.success(request, 'Programación de parto actualizada.')
+        if request.method == 'POST':
+            try:
+                parto.tipo             = request.POST.get('tipo', parto.tipo)
+                parto.fecha_programada = request.POST.get('fecha_programada', str(parto.fecha_programada))
+                parto.hora_programada  = request.POST.get('hora_programada', str(parto.hora_programada))
+                parto.lugar            = request.POST.get('lugar', parto.lugar).strip() or parto.lugar
+                parto.indicaciones     = request.POST.get('indicaciones', parto.indicaciones).strip()
+                nuevo_estado           = request.POST.get('estado', parto.estado)
+                parto.estado           = nuevo_estado
+                sem = request.POST.get('semanas_gestacion')
+                if sem:
+                    try: parto.semanas_gestacion = int(sem)
+                    except: pass
+                parto.save()
+                registrar_log(request, 'UPDATE', 'Programación de Partos',
+                    f'Programación de parto #{parto.id} actualizada - Nuevo estado: {nuevo_estado}', 'INFO')
+                messages.success(request, 'Programación de parto actualizada.')
+                return redirect('lista_programaciones_parto')
+            except Exception as e:
+                logger.error(f"Error en editar_parto (POST): {str(e)}", exc_info=True)
+                messages.error(request, f'Error al actualizar la programación: {str(e)}')
+
+        pacientes_prenatales = Usuario.objects.filter(
+            rol='paciente', is_active=True, paciente__estado_embarazo='ACTIVO'
+        ).distinct().order_by('first_name')
+        
+        # Preparar JSON de pacientes para búsqueda en tiempo real
+        pacientes_json = json.dumps([{
+            'id': p.id,
+            'nombre': p.get_full_name() or p.username,
+            'cedula': p.username,
+        } for p in pacientes_prenatales])
+        
+        return render(request, 'medico/programar_parto.html', {
+            'pacientes': pacientes_prenatales,
+            'pacientes_json': pacientes_json,
+            'parto':     parto,
+            'modo':      'editar',
+        })
+    except Exception as e:
+        logger.error(f"Error en editar_parto (GET): {str(e)}", exc_info=True)
+        messages.error(request, f'Error al cargar la programación: {str(e)}')
         return redirect('lista_programaciones_parto')
-
-    pacientes_prenatales = Usuario.objects.filter(
-        rol='paciente', is_active=True, paciente__estado_embarazo='ACTIVO'
-    ).distinct().order_by('first_name')
-    
-    # Preparar JSON de pacientes para búsqueda en tiempo real
-    pacientes_json = json.dumps([{
-        'id': p.id,
-        'nombre': p.get_full_name() or p.username,
-        'cedula': p.username,
-    } for p in pacientes_prenatales])
-    
-    return render(request, 'medico/programar_parto.html', {
-        'pacientes': pacientes_prenatales,
-        'pacientes_json': pacientes_json,
-        'parto':     parto,
-        'modo':      'editar',
-    })
 
 
 @login_required
 @no_cache_view
 def lista_programaciones_parto(request):
     """Lista todas las programaciones de parto del médico."""
-    from paciente_general.models import ProgramacionParto
+    import logging
+    
+    logger = logging.getLogger(__name__)
+    
+    try:
+        from paciente_general.models import ProgramacionParto
 
-    if request.user.rol != 'medico':
-        return redireccionar_por_rol(request.user)
+        if request.user.rol != 'medico':
+            return redireccionar_por_rol(request.user)
 
-    programaciones = ProgramacionParto.objects.select_related(
-        'paciente', 'medico'
-    ).order_by('fecha_programada')
+        programaciones = ProgramacionParto.objects.select_related(
+            'paciente', 'medico'
+        ).order_by('fecha_programada')
 
-    return render(request, 'medico/lista_programaciones_parto.html',
-                  {'programaciones': programaciones})
+        return render(request, 'medico/lista_programaciones_parto.html',
+                      {'programaciones': programaciones})
+    except Exception as e:
+        logger.error(f"Error en lista_programaciones_parto: {str(e)}", exc_info=True)
+        messages.error(request, f'Error al cargar las programaciones: {str(e)}')
+        return redirect('dashboard_medico')
 
 
 @login_required

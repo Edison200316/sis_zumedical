@@ -225,6 +225,7 @@ def editar_control_prenatal(request, control_id):
 
 
 @login_required
+@login_required
 @require_http_methods(["POST"])
 def eliminar_control_prenatal(request, control_id):
     """

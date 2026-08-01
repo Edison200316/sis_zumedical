@@ -163,11 +163,11 @@
 
     <div class="patient-info">
         <div class="patient-avatar">
-            {{ paciente.usuario.first_name|first }}{{ paciente.usuario.last_name|first }}
+            {% if paciente.usuario.first_name %}{{ paciente.usuario.first_name|first|upper }}{% endif %}{% if paciente.usuario.last_name %}{{ paciente.usuario.last_name|first|upper }}{% endif %}
         </div>
         <div class="patient-details">
-            <h3>{{ paciente.usuario.get_full_name }}</h3>
-            <p>Cédula: {{ paciente.cedula }}</p>
+            <h3>{{ paciente.usuario.get_full_name|default:paciente.usuario.username }}</h3>
+            <p>Cédula: {{ paciente.cedula|default:"No registrada" }}</p>
         </div>
     </div>
 
@@ -188,7 +188,7 @@
             <button type="submit" class="btn btn-primary">
                 <i class="fa-solid fa-check"></i> Activar Embarazo
             </button>
-            <a href="{% url 'ficha_paciente' paciente.id %}" class="btn btn-secondary">
+            <a href="{% url 'ficha_paciente' paciente.pk %}" class="btn btn-secondary">
                 <i class="fa-solid fa-times"></i> Cancelar
             </a>
         </div>

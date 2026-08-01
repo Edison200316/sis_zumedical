@@ -943,129 +943,232 @@ document.addEventListener('DOMContentLoaded', function () {
             var doc = new jsPDF({ unit: 'mm', format: 'a4' });
             var W = 210, pad = 18;
 
-            // Fondo header
-            doc.setFillColor(138, 37, 99);
-            doc.rect(0, 0, W, 28, 'F');
+            // Cargar logo de Zumedical
+            const logoUrl = 'https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png';
+            const logoImg = new Image();
+            logoImg.crossOrigin = 'anonymous';
+            
+            logoImg.onload = function() {
+                // ── HEADER CON DEGRADADO MEJORADO ──
+                // Fondo principal más oscuro
+                doc.setFillColor(118, 25, 79);
+                doc.rect(0, 0, W, 38, 'F');
+                
+                // Degradado con múltiples tonos
+                doc.setFillColor(138, 37, 99);
+                doc.rect(0, 26, W, 6, 'F');
+                doc.setFillColor(165, 45, 115);
+                doc.rect(0, 32, W, 6, 'F');
 
-            // Logo texto
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(18);
-            doc.setTextColor(255, 255, 255);
-            doc.text('Zumedical', pad, 13);
+                // Logo circular con fondo blanco
+                try {
+                    // Círculo blanco de fondo
+                    doc.setFillColor(255, 255, 255);
+                    doc.circle(pad + 7, 14, 8.5, 'F');
+                    doc.addImage(logoImg, 'PNG', pad - 1, 7, 16, 16);
+                } catch(e) {
+                    // Fallback si no carga
+                    doc.setFillColor(255, 255, 255);
+                    doc.circle(pad + 7, 14, 8, 'F');
+                    doc.setTextColor(138, 37, 99);
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(14);
+                    doc.text('Z', pad + 4, 17);
+                }
 
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(7.5);
-            doc.setTextColor(220, 180, 210);
-            doc.text('CENTRO MÉDICO — SECRETARÍA', pad, 19);
+                // Texto del header con mejor jerarquía
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(22);
+                doc.setTextColor(255, 255, 255);
+                doc.text('Zumedical', pad + 20, 13);
 
-            // Título derecha
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(8);
-            doc.setTextColor(255, 255, 255);
-            doc.text('COMPROBANTE DE CITA', W - pad, 13, { align: 'right' });
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(255, 255, 255);
+                doc.text('Centro Médico — Secretaría de Citas', pad + 20, 19);
+                
+                doc.setFontSize(6.5);
+                doc.setTextColor(240, 200, 230);
+                doc.text('🌐 www.zumedical.com  |  📞 (593) 2-XXX-XXXX', pad + 20, 24);
 
-            // Badge estado
-            doc.setFillColor(col[0], col[1], col[2]);
-            doc.roundedRect(W - pad - 28, 16, 28, 7, 3, 3, 'F');
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(7);
-            doc.setTextColor(255, 255, 255);
-            doc.text(estadoLabel.toUpperCase(), W - pad - 14, 21, { align: 'center' });
-
-            var y = 38;
-
-            // Sección: Información de la cita
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(11);
-            doc.setTextColor(138, 37, 99);
-            doc.setFillColor(204, 77, 153);
-            doc.rect(pad, y - 4, 3, 6, 'F');
-            doc.text('Información de la cita', pad + 6, y);
-            y += 6;
-
-            // Grid 2x2 info
-            var items1 = [
-                ['FECHA', d.fecha || ''],
-                ['HORA',  d.hora  || ''],
-                ['MOTIVO', d.motivo || ''],
-                ['ESTADO', estadoLabel]
-            ];
-            var colW = (W - pad*2 - 6) / 2;
-            var rowH = 18;
-            for (var i = 0; i < items1.length; i++) {
-                var cx = pad + (i % 2) * (colW + 6);
-                var cy = y + Math.floor(i / 2) * (rowH + 4);
-                doc.setFillColor(253, 245, 250);
-                doc.setDrawColor(232, 170, 212);
-                doc.roundedRect(cx, cy, colW, rowH, 3, 3, 'FD');
+                // Badge del documento con mejor diseño
+                doc.setFillColor(255, 255, 255, 0.95);
+                doc.roundedRect(W - pad - 52, 6, 52, 24, 4, 4, 'F');
+                
+                // Borde sutil
+                doc.setDrawColor(220, 180, 210);
+                doc.setLineWidth(0.5);
+                doc.roundedRect(W - pad - 52, 6, 52, 24, 4, 4, 'S');
+                
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8);
+                doc.setTextColor(138, 37, 99);
+                doc.text('COMPROBANTE', W - pad - 26, 13, { align: 'center', charSpace:.15 });
+                doc.setFontSize(8.5);
+                doc.text('DE CITA', W - pad - 26, 18.5, { align: 'center' });
+                
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(6.5);
                 doc.setTextColor(138, 96, 112);
-                doc.text(items1[i][0], cx + 5, cy + 6);
+                var hoy = new Date();
+                doc.text('Emisión: ' + hoy.toLocaleDateString('es-EC'), W - pad - 26, 24, { align: 'center' });
+                doc.text(hoy.toLocaleTimeString('es-EC', {hour:'2-digit',minute:'2-digit'}), W - pad - 26, 28, { align: 'center' });
+
+                // Badge estado con color en header
+                doc.setFillColor(col[0], col[1], col[2]);
+                doc.roundedRect(pad, 32, 38, 6, 2, 2, 'F');
                 doc.setFont('helvetica', 'bold');
-                doc.setFontSize(9.5);
+                doc.setFontSize(7);
+                doc.setTextColor(255, 255, 255);
+                doc.text(estadoLabel.toUpperCase(), pad + 19, 36, { align: 'center' });
+
+                var y = 45;
+
+                // ── SECCIÓN: INFORMACIÓN DE LA CITA ──
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(11);
+                doc.setTextColor(138, 37, 99);
+                doc.setFillColor(204, 77, 153);
+                doc.rect(pad, y - 4, 3, 6, 'F');
+                doc.text('📅 Información de la cita', pad + 6, y);
+                y += 8;
+
+                // Grid 2x2 con mejor diseño
+                var items1 = [
+                    ['FECHA', d.fecha || '—'],
+                    ['HORA',  d.hora  || '—'],
+                    ['MOTIVO', d.motivo || 'Consulta general'],
+                    ['ESTADO', estadoLabel]
+                ];
+                var colW = (W - pad*2 - 6) / 2;
+                var rowH = 18;
+                
+                for (var i = 0; i < items1.length; i++) {
+                    var cx = pad + (i % 2) * (colW + 6);
+                    var cy = y + Math.floor(i / 2) * (rowH + 4);
+                    
+                    // Fondo y borde
+                    doc.setFillColor(253, 245, 250);
+                    doc.setDrawColor(232, 170, 212);
+                    doc.setLineWidth(0.5);
+                    doc.roundedRect(cx, cy, colW, rowH, 3, 3, 'FD');
+                    
+                    // Label
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(7);
+                    doc.setTextColor(138, 96, 112);
+                    doc.text(items1[i][0], cx + 5, cy + 6);
+                    
+                    // Value
+                    doc.setFont('helvetica', 'bold');
+                    doc.setFontSize(10);
+                    doc.setTextColor(42, 16, 32);
+                    doc.text(String(items1[i][1]), cx + 5, cy + 13);
+                }
+                y += 2 * (rowH + 4) + 10;
+
+                // ── SECCIÓN: PACIENTE Y MÉDICO ──
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(11);
+                doc.setTextColor(138, 37, 99);
+                doc.setFillColor(204, 77, 153);
+                doc.rect(pad, y - 4, 3, 6, 'F');
+                doc.text('👤 Paciente', pad + 6, y);
+                y += 8;
+
+                // Card paciente (izquierda)
+                doc.setFillColor(253, 245, 250);
+                doc.setDrawColor(232, 170, 212);
+                doc.setLineWidth(0.5);
+                doc.roundedRect(pad, y, colW, 24, 3, 3, 'FD');
+                
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7);
+                doc.setTextColor(138, 96, 112);
+                doc.text('NOMBRE COMPLETO', pad + 5, y + 7);
+                
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
                 doc.setTextColor(42, 16, 32);
-                doc.text(String(items1[i][1]), cx + 5, cy + 13);
-            }
-            y += 2 * (rowH + 4) + 8;
+                var nombrePaciente = doc.splitTextToSize(String(d.paciente || '—'), colW - 10);
+                doc.text(nombrePaciente, pad + 5, y + 14);
+                
+                if (d.cedula) {
+                    doc.setFont('helvetica', 'normal');
+                    doc.setFontSize(8);
+                    doc.setTextColor(138, 96, 112);
+                    doc.text('Cédula: ' + d.cedula, pad + 5, y + 21);
+                }
 
-            // Sección: Paciente
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(11);
-            doc.setTextColor(138, 37, 99);
-            doc.setFillColor(204, 77, 153);
-            doc.rect(pad, y - 4, 3, 6, 'F');
-            doc.text('Paciente', pad + 6, y);
-            y += 6;
+                // Card médico (derecha)
+                var cx2 = pad + colW + 6;
+                doc.setFillColor(253, 245, 250);
+                doc.setDrawColor(232, 170, 212);
+                doc.setLineWidth(0.5);
+                doc.roundedRect(cx2, y, colW, 24, 3, 3, 'FD');
+                
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7);
+                doc.setTextColor(138, 96, 112);
+                doc.text('MÉDICO ASIGNADO', cx2 + 5, y + 7);
+                
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(10);
+                doc.setTextColor(42, 16, 32);
+                var nombreMedico = doc.splitTextToSize('Dr(a). ' + String(d.medico || '—'), colW - 10);
+                doc.text(nombreMedico, cx2 + 5, y + 14);
+                
+                y += 32;
 
-            // Card paciente
-            doc.setFillColor(253, 245, 250);
-            doc.setDrawColor(232, 170, 212);
-            doc.roundedRect(pad, y, colW, 22, 3, 3, 'FD');
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(6.5);
-            doc.setTextColor(138, 96, 112);
-            doc.text('NOMBRE COMPLETO', pad + 5, y + 7);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(9.5);
-            doc.setTextColor(42, 16, 32);
-            doc.text(String(d.paciente || ''), pad + 5, y + 14);
-            if (d.cedula) {
+                // ── NOTA INFORMATIVA ──
+                doc.setFillColor(255, 249, 235);
+                doc.setDrawColor(232, 170, 212);
+                doc.setLineWidth(0.3);
+                doc.roundedRect(pad, y, W - pad*2, 16, 3, 3, 'FD');
+                
+                doc.setFont('helvetica', 'bold');
+                doc.setFontSize(8);
+                doc.setTextColor(138, 37, 99);
+                doc.text('ℹ️ Nota importante:', pad + 4, y + 6);
+                
+                doc.setFont('helvetica', 'normal');
+                doc.setFontSize(7.5);
+                doc.setTextColor(42, 16, 32);
+                doc.text('Por favor, llegue 10 minutos antes de su cita.', pad + 4, y + 11);
+                doc.text('Presente este comprobante en recepción.', pad + 4, y + 15);
+                
+                y += 24;
+
+                // ── FOOTER ──
+                doc.setFillColor(251, 240, 247);
+                doc.rect(0, y, W, 15, 'F');
+                doc.setDrawColor(232, 170, 212);
+                doc.setLineWidth(0.4);
+                doc.line(0, y, W, y);
+                
                 doc.setFont('helvetica', 'normal');
                 doc.setFontSize(8);
                 doc.setTextColor(138, 96, 112);
-                doc.text('Cédula: ' + d.cedula, pad + 5, y + 20);
-            }
+                doc.text('Zumedical — Centro Médico', pad, y + 7);
+                
+                var hoy = new Date().toLocaleDateString('es-EC', { year: 'numeric', month: 'long', day: 'numeric' });
+                doc.text('Generado el ' + hoy, W - pad, y + 7, { align: 'right' });
+                
+                doc.setFontSize(6.5);
+                doc.text('Este documento es confidencial y de uso exclusivo del paciente.', W/2, y + 12, { align: 'center' });
 
-            // Card médico
-            var cx2 = pad + colW + 6;
-            doc.setFillColor(253, 245, 250);
-            doc.setDrawColor(232, 170, 212);
-            doc.roundedRect(cx2, y, colW, 22, 3, 3, 'FD');
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(6.5);
-            doc.setTextColor(138, 96, 112);
-            doc.text('MÉDICO ASIGNADO', cx2 + 5, y + 7);
-            doc.setFont('helvetica', 'bold');
-            doc.setFontSize(9.5);
-            doc.setTextColor(42, 16, 32);
-            doc.text('Dr(a). ' + String(d.medico || ''), cx2 + 5, y + 14);
-            y += 30;
-
-            // Pie de página
-            doc.setDrawColor(232, 170, 212);
-            doc.setLineWidth(0.4);
-            doc.line(pad, y, W - pad, y);
-            y += 5;
-            doc.setFont('helvetica', 'normal');
-            doc.setFontSize(7.5);
-            doc.setTextColor(138, 96, 112);
-            var hoy = new Date().toLocaleDateString('es-EC', { year: 'numeric', month: 'long', day: 'numeric' });
-            doc.text('Zumedical — Centro Médico', pad, y);
-            doc.text('Generado el ' + hoy, W - pad, y, { align: 'right' });
-
-            var nombre_archivo = 'cita_' + (d.paciente || 'paciente').replace(/\s+/g, '_') + '_' + (d.fecha || '').replace(/\s+/g, '_') + '.pdf';
-            doc.save(nombre_archivo);
+                // Guardar PDF
+                var nombre_archivo = 'comprobante-cita-' + (d.paciente || 'paciente').replace(/\s+/g, '-').toLowerCase() + '-' + (d.fecha || '').replace(/\s+/g, '-') + '.pdf';
+                doc.save(nombre_archivo);
+            };
+            
+            logoImg.onerror = function() {
+                // Si falla la carga, generar sin logo
+                console.warn('No se pudo cargar el logo, generando PDF sin imagen');
+                logoImg.onload();
+            };
+            
+            logoImg.src = logoUrl;
         }
 
         if (window.jspdf && window.jspdf.jsPDF) {

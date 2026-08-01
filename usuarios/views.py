@@ -2585,6 +2585,12 @@ def programar_parto(request):
         return redireccionar_por_rol(request.user)
 
     from citas.models import Cita
+    
+    # Solo pacientes con EMBARAZO ACTIVO
+    ids_embarazo_activo = Paciente.objects.filter(
+        estado_embarazo='ACTIVO'
+    ).values_list('usuario_id', flat=True)
+    
     ids_asignadas = Paciente.objects.filter(
         medico_prenatal=request.user
     ).values_list('usuario_id', flat=True)
@@ -2592,6 +2598,9 @@ def programar_parto(request):
         medico=request.user
     ).values_list('paciente_id', flat=True)
     todos_ids = set(ids_asignadas) | set(ids_con_citas)
+    
+    # Filtrar: solo pacientes del médico Y con embarazo activo
+    todos_ids = todos_ids & ids_embarazo_activo
 
     pacientes_prenatales = Usuario.objects.filter(
         id__in=todos_ids, rol='paciente', is_active=True
@@ -2622,8 +2631,20 @@ def programar_parto(request):
             paciente_obj = Usuario.objects.filter(
                 id=paciente_id, rol='paciente', id__in=todos_ids
             ).distinct().get()
+            
+            # Verificar que tenga embarazo activo
+            paciente_perfil = Paciente.objects.get(usuario=paciente_obj)
+            if paciente_perfil.estado_embarazo != 'ACTIVO':
+                messages.error(request, 'La paciente debe tener un embarazo activo para programar el parto.')
+                return render(request, 'medico/programar_parto.html',
+                              {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
+                
         except Usuario.DoesNotExist:
             messages.error(request, 'Paciente prenatal no encontrada.')
+            return render(request, 'medico/programar_parto.html',
+                          {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
+        except Paciente.DoesNotExist:
+            messages.error(request, 'Perfil de paciente no encontrado.')
             return render(request, 'medico/programar_parto.html',
                           {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
 
@@ -3338,34 +3359,48 @@ def activar_embarazo(request, paciente_id):
         if not medico_obj.especialidad or medico_obj.especialidad.tipo != 'prenatal':
             messages.error(request, 'Solo médicos prenatales pueden activar embarazos.')
             return redirect('ficha_paciente', paciente_id=paciente_id)
-    except:
+    except Medico.DoesNotExist:
         messages.error(request, 'Debe ser médico prenatal para activar embarazos.')
         return redirect('ficha_paciente', paciente_id=paciente_id)
 
     if request.method == 'POST':
-        fecha_inicio = request.POST.get('fecha_inicio')
-        semanas_inicio = int(request.POST.get('semanas_gestacion', 0))
+        try:
+            fecha_inicio = request.POST.get('fecha_inicio')
+            semanas_inicio = request.POST.get('semanas_gestacion', '0')
+            
+            if not fecha_inicio:
+                messages.error(request, 'La fecha de inicio es obligatoria.')
+                return render(request, 'admin/activar_embarazo.html', {'paciente': paciente})
+            
+            try:
+                semanas_inicio = int(semanas_inicio)
+            except (ValueError, TypeError):
+                semanas_inicio = 0
+            
+            if semanas_inicio < 0:
+                messages.error(request, 'Las semanas de gestación no pueden ser negativas.')
+                return render(request, 'admin/activar_embarazo.html', {'paciente': paciente})
 
-        if not fecha_inicio or semanas_inicio < 0:
-            messages.error(request, 'Datos inválidos.')
+            # Crear nuevo embarazo
+            embarazo = Embarazo.objects.create(
+                paciente=paciente,
+                medico_prenatal=request.user,
+                fecha_inicio=fecha_inicio,
+                semanas_gestacion_inicio=semanas_inicio,
+                estado='Activo'
+            )
+
+            # Activar embarazo (actualiza paciente)
+            embarazo.activar()
+
+            registrar_log(request, 'CREATE', 'Embarazos',
+                f'Embarazo activado para {paciente.usuario.get_full_name()}', 'INFO')
+            messages.success(request, f'Embarazo activado para {paciente.usuario.first_name}')
             return redirect('ficha_paciente', paciente_id=paciente_id)
-
-        # Crear nuevo embarazo
-        embarazo = Embarazo.objects.create(
-            paciente=paciente,
-            medico_prenatal=request.user,
-            fecha_inicio=fecha_inicio,
-            semanas_gestacion_inicio=semanas_inicio,
-            estado='Activo'
-        )
-
-        # Activar embarazo (actualiza paciente)
-        embarazo.activar()
-
-        registrar_log(request, 'CREATE', 'Embarazos',
-            f'Embarazo activado para {paciente.usuario.get_full_name()}', 'INFO')
-        messages.success(request, f'Embarazo activado para {paciente.usuario.first_name}')
-        return redirect('ficha_paciente', paciente_id=paciente_id)
+        
+        except Exception as e:
+            messages.error(request, f'Error al activar embarazo: {str(e)}')
+            return render(request, 'admin/activar_embarazo.html', {'paciente': paciente})
 
     return render(request, 'admin/activar_embarazo.html', {'paciente': paciente})
 

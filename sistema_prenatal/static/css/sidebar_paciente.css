@@ -59,8 +59,7 @@ body .sidebar {
   z-index: 99999 !important;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   overflow-x: hidden !important;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch !important;
+  overflow-y: hidden !important;
   box-shadow: 4px 0 24px rgba(138, 37, 99, 0.22) !important;
   border: none !important;
   border-radius: 0 !important;
@@ -322,10 +321,13 @@ aside#sidebar > .sb-brand:first-of-type {
 
 /* ── NAVEGACIÓN / MENÚ ── */
 .sidebar .sb-nav {
-  flex: 1 !important;
+  flex: 1 1 auto !important;
+  min-height: 0 !important;
+  max-height: calc(100vh - 280px) !important;
   padding: 1rem 0.75rem !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
+  -webkit-overflow-scrolling: touch !important;
   display: flex !important;
   flex-direction: column !important;
   align-items: stretch !important;
@@ -500,6 +502,21 @@ aside#sidebar > .sb-brand:first-of-type {
   opacity: 1 !important;
 }
 
+/* Scroll interno de la navegación */
+.sidebar .sb-nav::-webkit-scrollbar {
+  width: 5px !important;
+}
+.sidebar .sb-nav::-webkit-scrollbar-track {
+  background: transparent !important;
+}
+.sidebar .sb-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border-radius: 3px !important;
+}
+.sidebar .sb-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.35) !important;
+}
+
 /* ── FOOTER / LOGOUT ── */
 .sidebar .sb-footer {
   padding: 1rem 0.75rem !important;
@@ -511,6 +528,11 @@ aside#sidebar > .sb-brand:first-of-type {
   width: 100% !important;
   background: transparent !important;
   margin: 0 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  position: relative !important;
+  z-index: 10 !important;
 }
 
 .sidebar a.btn-logout,
@@ -692,13 +714,32 @@ aside#sidebar > .sb-brand:first-of-type {
     padding-top: 0 !important;
     transform: translateX(-105%) !important;
     z-index: 99999 !important;
-    overflow-y: auto !important;
+    overflow-y: hidden !important;
   }
   body aside.sidebar#sidebar.open,
   body .sidebar#sidebar.open,
   body .sidebar.open {
     transform: translateX(0) !important;
   }
+  
+  /* Navegación con scroll en mobile */
+  .sidebar .sb-nav {
+    flex: 1 1 auto !important;
+    max-height: calc(100vh - 340px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    min-height: 0 !important;
+  }
+  
+  /* Footer siempre visible en mobile */
+  .sidebar .sb-footer {
+    flex-shrink: 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
   .sidebar-overlay {
     display: block !important;
   }

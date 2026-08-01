@@ -3355,28 +3355,62 @@ def buscar_paciente(request):
 @login_required
 def ficha_paciente(request, paciente_id):
     """Vista para ver ficha completa del paciente (Admin/Secretaria)"""
-    if request.user.rol not in ['admin', 'secretaria', 'enfermera', 'medico']:
-        return redireccionar_por_rol(request.user)
-
-    from pacientes.models import Paciente, Embarazo
-    from paciente_general.models import ConsultaGeneral
-
-    paciente = get_object_or_404(Paciente, id=paciente_id)
+    import logging
+    logger = logging.getLogger(__name__)
     
-    # Datos del paciente
-    embarazos = paciente.embarazos.all().order_by('-fecha_inicio')
-    embarazo_activo = paciente.embarazo_activo
-    consultas_generales = ConsultaGeneral.objects.filter(paciente=paciente.usuario).order_by('-fecha')[:5]
-    
-    context = {
-        'paciente': paciente,
-        'embarazos': embarazos,
-        'embarazo_activo': embarazo_activo,
-        'consultas_generales': consultas_generales,
-        'total_consultas': paciente.total_consultas_generales,
-        'total_embarazos': paciente.total_embarazos,
-    }
-    return render(request, 'admin/ficha_paciente.html', context)
+    try:
+        if request.user.rol not in ['admin', 'secretaria', 'enfermera', 'medico']:
+            return redireccionar_por_rol(request.user)
+
+        from pacientes.models import Paciente, Embarazo
+        from paciente_general.models import ConsultaGeneral
+
+        paciente = get_object_or_404(Paciente, id=paciente_id)
+        
+        # Datos del paciente
+        try:
+            embarazos = paciente.embarazos.all().order_by('-fecha_inicio')
+        except Exception as e:
+            logger.error(f"Error al obtener embarazos: {str(e)}")
+            embarazos = []
+        
+        try:
+            embarazo_activo = paciente.embarazo_activo
+        except Exception as e:
+            logger.error(f"Error al obtener embarazo activo: {str(e)}")
+            embarazo_activo = None
+        
+        try:
+            consultas_generales = ConsultaGeneral.objects.filter(paciente=paciente.usuario).order_by('-fecha')[:5]
+        except Exception as e:
+            logger.error(f"Error al obtener consultas generales: {str(e)}")
+            consultas_generales = []
+        
+        try:
+            total_consultas = paciente.total_consultas_generales
+        except Exception as e:
+            logger.error(f"Error al obtener total consultas: {str(e)}")
+            total_consultas = 0
+        
+        try:
+            total_embarazos = paciente.total_embarazos
+        except Exception as e:
+            logger.error(f"Error al obtener total embarazos: {str(e)}")
+            total_embarazos = 0
+        
+        context = {
+            'paciente': paciente,
+            'embarazos': embarazos,
+            'embarazo_activo': embarazo_activo,
+            'consultas_generales': consultas_generales,
+            'total_consultas': total_consultas,
+            'total_embarazos': total_embarazos,
+        }
+        return render(request, 'admin/ficha_paciente.html', context)
+    except Exception as e:
+        logger.error(f"Error en ficha_paciente: {str(e)}", exc_info=True)
+        messages.error(request, f'Error al cargar la ficha del paciente: {str(e)}')
+        return redirect('pacientes_admin')
 
 
 @login_required

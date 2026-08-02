@@ -921,6 +921,30 @@ def pacientes_medico(request):
         })
 
 @login_required
+def activar_embarazo(request, paciente_id):
+    """Activa el embarazo de una paciente desde el panel del médico (método simple)"""
+    if request.user.rol not in ['medico', 'enfermera', 'admin']:
+        return redirect('landing')
+
+    from pacientes.models import Paciente
+    paciente = get_object_or_404(Paciente, id=paciente_id)
+    nombre = paciente.usuario.get_full_name()
+    
+    # Activar embarazo
+    paciente.estado_embarazo = 'ACTIVO'
+    paciente.medico_prenatal = request.user
+    paciente.mensaje_prenatal_visto = False
+    paciente.save()
+
+    registrar_log(request, 'UPDATE', 'Pacientes',
+        f'Embarazo activado para {nombre} por {request.user.get_full_name()}', 'INFO')
+    messages.success(request, f'Seguimiento prenatal activado para {nombre}.')
+    
+    # Redirigir al referer o a pacientes
+    referer = request.META.get('HTTP_REFERER')
+    if referer:
+        return redirect(referer)
+    return redirect('pacientes_medico')
 
 
 @login_required
@@ -3465,7 +3489,12 @@ def activar_embarazo(request, paciente_id):
             registrar_log(request, 'CREATE', 'Embarazos',
                 f'Embarazo activado para {paciente.usuario.get_full_name()}', 'INFO')
             messages.success(request, f'Embarazo activado para {paciente.usuario.first_name}')
-            return redirect('ficha_paciente', paciente_id=paciente_id)
+            
+            # Redirigir según el rol del usuario
+            if request.user.rol == 'medico':
+                return redirect('pacientes_medico')
+            else:
+                return redirect('ficha_paciente', paciente_id=paciente_id)
         
         except Exception as e:
             messages.error(request, f'Error al activar embarazo: {str(e)}')

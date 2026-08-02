@@ -8,9 +8,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- jsPDF Library para generación de PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       html {
@@ -1350,6 +1350,13 @@ document.getElementById('m-btn-pdf').addEventListener('click', function(){
 
 // ── GENERAR PDF ──
 function generarPDF(btn, data){
+    // Verificar que jsPDF esté disponible
+    if (!window.jspdf || !window.jspdf.jsPDF) {
+        console.error('❌ jsPDF no está cargado');
+        mostrarToast('Error: Librería PDF no disponible. Recarga la página.', 'error');
+        return;
+    }
+
     var d = data || {
         paciente: btn.getAttribute('data-paciente'),
         fecha:    btn.getAttribute('data-fecha'),
@@ -1368,6 +1375,13 @@ function generarPDF(btn, data){
         iaIcono:  btn.getAttribute('data-ia-icono')
     };
 
+    // Validar datos mínimos
+    if (!d.paciente || !d.fecha) {
+        console.error('❌ Datos insuficientes para generar PDF');
+        mostrarToast('Error: Faltan datos del control para generar el PDF', 'error');
+        return;
+    }
+
     var paciente = d.paciente, fecha = d.fecha, semanas = d.semanas;
     var presion  = d.presion,  peso  = d.peso,  obs    = d.obs;
     var medico   = d.medico || '';
@@ -1375,29 +1389,31 @@ function generarPDF(btn, data){
     var altura   = d.altura || '—', imc = d.imc || '—';
     var iaNivel  = d.iaNivel || '', iaPct = d.iaPct || '', iaIcono = d.iaIcono || '';
 
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF({ unit:'mm', format:'a4' });
-    const W = 210, mg = 20;
-    let y = 0;
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF({ unit:'mm', format:'a4' });
+        const W = 210, mg = 20;
+        let y = 0;
 
-    // Logo de Zumedical (cargar desde Cloudinary)
-    const logoUrl = 'https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png';
-    const logoImg = new Image();
-    logoImg.crossOrigin = 'anonymous';
-    
-    logoImg.onload = function() {
-        // ── HEADER CON DEGRADADO MEJORADO ──
-        // Fondo principal más oscuro
-        doc.setFillColor(118, 25, 79);
-        doc.rect(0, 0, W, 45, 'F');
+        // Logo de Zumedical (cargar desde Cloudinary)
+        const logoUrl = 'https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png';
+        const logoImg = new Image();
+        logoImg.crossOrigin = 'anonymous';
         
-        // Degradado con múltiples tonos
-        doc.setFillColor(138, 37, 99);
-        doc.rect(0, 28, W, 8, 'F');
-        doc.setFillColor(165, 45, 115);
-        doc.rect(0, 36, W, 9, 'F');
+        logoImg.onload = function() {
+            try {
+                // ── HEADER CON DEGRADADO MEJORADO ──
+                // Fondo principal más oscuro
+                doc.setFillColor(118, 25, 79);
+                doc.rect(0, 0, W, 45, 'F');
+                
+                // Degradado con múltiples tonos
+                doc.setFillColor(138, 37, 99);
+                doc.rect(0, 28, W, 8, 'F');
+                doc.setFillColor(165, 45, 115);
+                doc.rect(0, 36, W, 9, 'F');
 
-        // Logo circular con borde blanco
+                // Logo circular con borde blanco
         try {
             // Círculo blanco de fondo para el logo
             doc.setFillColor(255, 255, 255);
@@ -1682,18 +1698,89 @@ function generarPDF(btn, data){
 
         // Guardar PDF
         doc.save('control-prenatal-'+paciente.replace(/\s+/g,'-').toLowerCase()+'-'+fecha.replace(/\//g,'-')+'.pdf');
-    };
-    
-    logoImg.onerror = function() {
-        // Si falla la carga, generar sin logo
-        console.warn('No se pudo cargar el logo, generando PDF sin imagen');
-        logoImg.onload();
-    };
-    
-    logoImg.src = logoUrl;
+        mostrarToast('✓ PDF generado correctamente', 'success');
+            } catch (pdfError) {
+                console.error('❌ Error al generar contenido del PDF:', pdfError);
+                mostrarToast('Error al generar el contenido del PDF', 'error');
+            }
+        };
+        
+        logoImg.onerror = function() {
+            // Si falla la carga, generar sin logo
+            console.warn('⚠️ No se pudo cargar el logo, generando PDF sin imagen');
+            logoImg.onload();
+        };
+        
+        logoImg.src = logoUrl;
+    } catch (error) {
+        console.error('❌ Error general al generar PDF:', error);
+        mostrarToast('Error al generar el PDF: ' + error.message, 'error');
+    }
 }
 </script>
 <script src="{% static 'js/historial-controles.js' %}?v=3"></script>
+
+<!-- Script de verificación e inicialización -->
+<script>
+// Verificar que todos los componentes estén cargados
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔍 Verificando componentes del historial prenatal...');
+    
+    // Verificar jsPDF
+    if (window.jspdf && window.jspdf.jsPDF) {
+        console.log('✅ jsPDF cargado correctamente');
+    } else {
+        console.error('❌ jsPDF NO está disponible');
+        mostrarToast('Error: Librería PDF no cargada. Recarga la página.', 'error');
+    }
+    
+    // Verificar funciones
+    const funciones = {
+        abrirEditarControl: typeof abrirEditarControl === 'function',
+        abrirConfirmarEliminar: typeof abrirConfirmarEliminar === 'function',
+        generarPDF: typeof generarPDF === 'function',
+        guardarControl: typeof guardarControl === 'function',
+        confirmarEliminar: typeof confirmarEliminar === 'function'
+    };
+    
+    console.log('📋 Funciones disponibles:', funciones);
+    
+    const todasDisponibles = Object.values(funciones).every(v => v === true);
+    if (todasDisponibles) {
+        console.log('✅ Todas las funciones cargadas correctamente');
+    } else {
+        console.error('❌ Algunas funciones NO están disponibles:', 
+            Object.keys(funciones).filter(k => !funciones[k]));
+    }
+    
+    // Verificar modales
+    const modales = {
+        'modal-editar-overlay': !!document.getElementById('modal-editar-overlay'),
+        'modal-eliminar-overlay': !!document.getElementById('modal-eliminar-overlay')
+    };
+    
+    console.log('🎭 Modales en DOM:', modales);
+    
+    if (Object.values(modales).every(v => v === true)) {
+        console.log('✅ Todos los modales están en el DOM');
+    } else {
+        console.error('❌ Algunos modales NO están en el DOM');
+    }
+    
+    // Verificar botones
+    const botonesEditar = document.querySelectorAll('.btn-edit, .btn-action.btn-edit');
+    const botonesEliminar = document.querySelectorAll('.btn-delete, .btn-action.btn-delete');
+    const botonesPDF = document.querySelectorAll('.btn-pdf, .cc-pdf');
+    
+    console.log('🔘 Botones encontrados:', {
+        editar: botonesEditar.length,
+        eliminar: botonesEliminar.length,
+        pdf: botonesPDF.length
+    });
+    
+    console.log('✅ Historial prenatal inicializado correctamente');
+});
+</script>
 </body>
 </html>
 

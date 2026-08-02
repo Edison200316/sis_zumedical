@@ -471,21 +471,13 @@ def registro_paciente(request):
     if request.method == 'POST':
         form = RegistroPacienteForm(request.POST)
         if form.is_valid():
-            user = form.save(commit=False)
-            user.rol = 'paciente'
-            user.genero = form.cleaned_data.get('genero', '')
-            user.save()
-
-            from pacientes.models import Paciente
-            paciente, _ = Paciente.objects.get_or_create(usuario=user)
-            paciente.cedula = form.cleaned_data.get('cedula', '')
-            paciente.telefono = form.cleaned_data.get('telefono', '')
-            paciente.estado_embarazo = 'NINGUNO'
-            paciente.save()
-
-            login(request, user)
-            messages.success(request, f'¡Cuenta creada con éxito! Bienvenido/a, {user.first_name}.')
-            return redirect('paciente_general_dashboard')
+            try:
+                user = form.save(commit=True)
+                login(request, user)
+                messages.success(request, f'¡Cuenta creada con éxito! Bienvenido/a, {user.first_name}.')
+                return redirect('paciente_general_dashboard')
+            except Exception as e:
+                messages.error(request, f'Error al crear la cuenta: {str(e)}')
         else:
             # Recopilar todos los errores del form en mensajes legibles
             for field, errors in form.errors.items():
@@ -1198,32 +1190,38 @@ def registrar_paciente(request, tipo='prenatal'):
     if request.method == 'POST':
         form = RegistroPacienteForm(request.POST)
         if form.is_valid():
-            username = form.cleaned_data.get('username')
-
-            # Verifica si el usuario ya existe
-            if User.objects.filter(username=username).exists():
-                messages.error(request, f'Ya existe una paciente con el usuario "{username}". Por favor elige otro.')
-                return render(request, 'enfermera/registrar_paciente.html', {'form': form, 'tipo': tipo})
-
-            user = form.save(commit=False)
-            user.rol = 'paciente'
-            user.paciente.estado_embarazo = 'ACTIVO' if tipo == 'prenatal' else 'NINGUNO'
-            user.paciente.save()
-            user.genero = form.cleaned_data.get('genero', '')
-            user.save()
-
-            from pacientes.models import Paciente
-            paciente, _ = Paciente.objects.get_or_create(usuario=user)
-            paciente.cedula = form.cleaned_data.get('cedula', '')
-            paciente.telefono = form.cleaned_data.get('telefono', '')
-            paciente.save()
-
-            messages.success(request, f'Paciente {user.get_full_name()} registrada correctamente como paciente {tipo}.')
-            return redirect('lista_pacientes_enfermera')
+            try:
+                # El formulario ya crea el usuario y el perfil de paciente
+                user = form.save(commit=True)
+                
+                # Si es prenatal, actualizar el estado del embarazo
+                if tipo == 'prenatal':
+                    from pacientes.models import Paciente
+                    paciente = Paciente.objects.get(usuario=user)
+                    paciente.estado_embarazo = 'ACTIVO'
+                    paciente.save()
+                
+                # Registrar en log de auditoría
+                registrar_log(request, 'CREATE', 'Pacientes',
+                    f'{request.user.rol.title()} registró nueva paciente: {user.get_full_name()} (tipo: {tipo})', 'INFO')
+                
+                messages.success(request, f'Paciente {user.get_full_name()} registrada correctamente como paciente {tipo}.')
+                return redirect('lista_pacientes_enfermera')
+            except Exception as e:
+                messages.error(request, f'Error al registrar paciente: {str(e)}')
+        else:
+            # Mostrar errores del formulario
+            for field, errors in form.errors.items():
+                for error in errors:
+                    if field == '__all__':
+                        messages.error(request, error)
+                    else:
+                        label = form.fields[field].label if field in form.fields else field
+                        messages.error(request, f'{label}: {error}')
     else:
         form = RegistroPacienteForm()
 
-    return render(request, 'enfermera/registrar_paciente.html', {'form': form, 'tipo': tipo})
+    return render(request, 'enfermera/registrar_paciente_enfermera.html', {'form': form, 'tipo': tipo})
 
 
 @login_required

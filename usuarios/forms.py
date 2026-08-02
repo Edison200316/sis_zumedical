@@ -136,39 +136,120 @@ class ResetPasswordForm(forms.Form):
 
 class RegistroPacienteForm(forms.ModelForm):
     """Formulario para registro de pacientes"""
+    username = forms.CharField(
+        label='Usuario/Cédula',
+        max_length=150,
+        required=True,
+        help_text='Ingresa tu número de cédula como usuario',
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ej: 1234567890'
+        })
+    )
     first_name = forms.CharField(
         label='Nombre',
         max_length=150,
         required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombres'})
     )
     last_name = forms.CharField(
         label='Apellido',
         max_length=150,
         required=True,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Apellidos'})
     )
     email = forms.EmailField(
-        label='Correo',
+        label='Correo Electrónico',
+        required=False,
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control', 
+            'placeholder': 'correo@ejemplo.com (opcional)'
+        })
+    )
+    cedula = forms.CharField(
+        label='Cédula',
+        max_length=20,
         required=True,
-        widget=forms.EmailInput(attrs={'class': 'form-control'})
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Número de cédula'
+        })
+    )
+    telefono = forms.CharField(
+        label='Teléfono',
+        max_length=20,
+        required=True,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Ej: 0987654321'
+        })
+    )
+    genero = forms.ChoiceField(
+        label='Género',
+        choices=[('', 'Seleccionar...'), ('femenino', 'Femenino'), ('masculino', 'Masculino'), ('otro', 'Otro')],
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
     password = forms.CharField(
         label='Contraseña',
-        widget=forms.PasswordInput(attrs={'class': 'form-control'}),
-        min_length=8
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Mínimo 8 caracteres'
+        }),
+        min_length=8,
+        help_text='Mínimo 8 caracteres'
+    )
+    password_confirm = forms.CharField(
+        label='Confirmar Contraseña',
+        widget=forms.PasswordInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Repite la contraseña'
+        }),
+        required=True
     )
 
     class Meta:
         model = Usuario
-        fields = ['first_name', 'last_name', 'email', 'password']
+        fields = ['username', 'first_name', 'last_name', 'email', 'password']
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        if Usuario.objects.filter(username=username).exists():
+            raise forms.ValidationError('Este usuario/cédula ya está registrado.')
+        return username
+
+    def clean_cedula(self):
+        from pacientes.models import Paciente
+        cedula = self.cleaned_data.get('cedula')
+        if Paciente.objects.filter(cedula=cedula).exists():
+            raise forms.ValidationError('Esta cédula ya está registrada.')
+        return cedula
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        password_confirm = cleaned_data.get('password_confirm')
+
+        if password and password_confirm and password != password_confirm:
+            raise forms.ValidationError('Las contraseñas no coinciden.')
+
+        return cleaned_data
 
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data['password'])
         user.rol = 'paciente'
+        user.genero = self.cleaned_data.get('genero', '')
         if commit:
             user.save()
+            # Crear perfil de paciente
+            from pacientes.models import Paciente
+            Paciente.objects.create(
+                usuario=user,
+                cedula=self.cleaned_data.get('cedula', ''),
+                telefono=self.cleaned_data.get('telefono', ''),
+                estado_embarazo='NINGUNO'
+            )
         return user
 
 

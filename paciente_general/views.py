@@ -106,14 +106,23 @@ def dashboard(request):
     ).order_by('-fecha').first()
     total_consultas = ConsultaGeneral.objects.filter(paciente=user).count()
     
-    from .models import ProgramacionParto
-    parto_programado = ProgramacionParto.objects.filter(
-        paciente=user,
-        estado__in=['programado', 'confirmado']
-    ).first()
+    perfil = getattr(user, 'paciente', None)
+    tiene_prenatal_activo = bool(
+        perfil
+        and getattr(perfil, 'tiene_prenatal', False)
+        and getattr(perfil, 'estado_embarazo', '') == 'ACTIVO'
+    )
+    parto_programado = None
+    if tiene_prenatal_activo:
+        from .models import ProgramacionParto
+        parto_programado = ProgramacionParto.objects.filter(
+            paciente=user,
+            estado__in=['programado', 'confirmado']
+        ).first()
 
     return render(request, 'paciente_general/dashboard.html', {
         'user': user,
+        'tiene_prenatal_activo': tiene_prenatal_activo,
         'proxima_cita': proxima_cita,
         'total_citas': total_citas,
         'citas_pendientes': citas_pendientes,

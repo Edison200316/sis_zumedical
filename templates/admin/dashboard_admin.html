@@ -824,6 +824,8 @@ var ZCOLOR = {
         right:  { style: 'thin', color: { rgb: 'E8AAD4' } },
     },
 };
+var REPORT_LOGO_URL = 'https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png';
+var reportLogoDataUrl = null;
 
 /* ── Config de columnas por tipo ── */
 var REP_CONFIG = {
@@ -1041,40 +1043,69 @@ function buildAutoTable(doc, tipo, rows, startY) {
     return doc.lastAutoTable.finalY;
 }
 
-function crearEncabezadoPDF(doc, titulo, subtitulo) {
+function cargarLogoReporte() {
+    if (reportLogoDataUrl) return Promise.resolve(reportLogoDataUrl);
+    return new Promise(function(resolve) {
+        var img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = function() {
+            try {
+                var canvas = document.createElement('canvas');
+                canvas.width = img.naturalWidth || 256;
+                canvas.height = img.naturalHeight || 256;
+                canvas.getContext('2d').drawImage(img, 0, 0);
+                reportLogoDataUrl = canvas.toDataURL('image/png');
+                resolve(reportLogoDataUrl);
+            } catch (e) {
+                resolve(null);
+            }
+        };
+        img.onerror = function() { resolve(null); };
+        img.src = REPORT_LOGO_URL;
+    });
+}
+
+function crearEncabezadoPDF(doc, titulo, subtitulo, logoData) {
     var pw = doc.internal.pageSize.width;
     doc.setFillColor(PDF_COLORS.title_bg[0], PDF_COLORS.title_bg[1], PDF_COLORS.title_bg[2]);
-    doc.rect(0, 0, pw, 22, 'F');
+    doc.rect(0, 0, pw, 26, 'F');
+    if (logoData) {
+        doc.setFillColor(255, 255, 255);
+        doc.circle(17, 13, 7.5, 'F');
+        doc.addImage(logoData, 'PNG', 10.5, 6.5, 13, 13);
+    }
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(14);
     doc.setTextColor(255, 255, 255);
-    doc.text('Zumedical  -  ' + titulo, 10, 14);
+    doc.text('Zumedical  -  ' + titulo, logoData ? 29 : 10, 16);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.setTextColor(PDF_COLORS.foot_text[0], PDF_COLORS.foot_text[1], PDF_COLORS.foot_text[2]);
-    doc.text(subtitulo, 10, 30);
+    doc.text(subtitulo, 10, 34);
     doc.setDrawColor(PDF_COLORS.border[0], PDF_COLORS.border[1], PDF_COLORS.border[2]);
     doc.setLineWidth(0.5);
-    doc.line(10, 33, pw - 10, 33);
-    return 38;
+    doc.line(10, 37, pw - 10, 37);
+    return 42;
 }
 
-function generarPDF(tipo, rows) {
+async function generarPDF(tipo, rows) {
     var d = window._D;
     var cfg = REP_CONFIG[tipo];
     var doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
     var sub = 'Centro Medico Especializado  |  Generado el ' + d.hoy + '  |  por ' + d.admin + '  |  ' + rows.length + ' registros';
-    var startY = crearEncabezadoPDF(doc, cfg.titulo, sub);
+    var logoData = await cargarLogoReporte();
+    var startY = crearEncabezadoPDF(doc, cfg.titulo, sub, logoData);
     buildAutoTable(doc, tipo, rows || [], startY);
     doc.save(cfg.nombre + '_' + d.hoy.replace(/\//g, '-') + '.pdf');
 }
 
-function generarPDFGeneral(allData) {
+async function generarPDFGeneral(allData) {
     var d = window._D;
     var doc = new window.jspdf.jsPDF({ orientation: 'landscape', unit: 'mm', format: 'a4' });
     var tipos = ['pacientes', 'medicos', 'citas', 'controles', 'usuarios'];
     var sub = 'Centro Medico Especializado  |  Generado el ' + d.hoy + '  |  por ' + d.admin;
-    var startY = crearEncabezadoPDF(doc, 'Reporte General del Sistema', sub);
+    var logoData = await cargarLogoReporte();
+    var startY = crearEncabezadoPDF(doc, 'Reporte General del Sistema', sub, logoData);
     var pw = doc.internal.pageSize.width;
 
     tipos.forEach(function(tipo, idx) {

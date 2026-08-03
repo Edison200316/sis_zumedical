@@ -158,6 +158,16 @@
             .modal-grid{grid-template-columns:1fr}
             .modal-overlay{padding:.75rem;align-items:flex-end}
             .modal{border-radius:20px 20px 0 0;max-height:92vh}
+            .table-scroll{overflow:visible}
+            #controlesTable{min-width:0;border-collapse:separate;border-spacing:0 .8rem}
+            #controlesTable thead{display:none}
+            #controlesTable tbody tr{display:block;background:var(--white);border:1px solid var(--mg-border);border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(176,53,128,.06)}
+            #controlesTable tbody tr:hover{background:var(--white)}
+            #controlesTable td{display:grid;grid-template-columns:minmax(92px,34%) 1fr;gap:.8rem;align-items:center;padding:.85rem 1rem;border-bottom:1px solid rgba(232,170,212,.35);font-size:.84rem;word-break:break-word}
+            #controlesTable td::before{content:attr(data-label);font-size:.66rem;font-weight:700;color:var(--mg-d);text-transform:uppercase;letter-spacing:.08em}
+            #controlesTable td:last-child{border-bottom:none}
+            #controlesTable td[colspan]{display:block}
+            .obs-cell{max-width:none;white-space:normal}
         }
         @media(max-width:480px){
             .stats-grid{grid-template-columns:1fr 1fr}
@@ -273,7 +283,7 @@
                         data-peso="{{ c.peso }}"
                         data-observaciones="{{ c.observaciones|default:'Sin observaciones'|escapejs }}"
                         data-delete-url="{% url 'admin_eliminar_control' c.id %}">
-                        <td>
+                        <td data-label="Paciente">
                             <div class="pac-cell">
                                 <div class="pac-avatar">{{ c.paciente.first_name|slice:":1"|upper }}{{ c.paciente.last_name|slice:":1" }}</div>
                                 <div>
@@ -282,13 +292,13 @@
                                 </div>
                             </div>
                         </td>
-                        <td>{{ c.medico.get_full_name|default:c.medico.username }}</td>
-                        <td>{{ c.fecha|date:"d/m/Y" }}</td>
-                        <td><span class="badge-semanas"><i class="fa-regular fa-clock"></i> {{ c.semanas_gestacion }} sem.</span></td>
-                        <td>{{ c.presion_arterial }}</td>
-                        <td>{{ c.peso }} kg</td>
-                        <td><div class="obs-cell" title="{{ c.observaciones }}">{{ c.observaciones|default:"-" }}</div></td>
-                        <td style="text-align:center">
+                        <td data-label="Médico">{{ c.medico.get_full_name|default:c.medico.username }}</td>
+                        <td data-label="Fecha">{{ c.fecha|date:"d/m/Y" }}</td>
+                        <td data-label="Semanas"><span class="badge-semanas"><i class="fa-regular fa-clock"></i> {{ c.semanas_gestacion }} sem.</span></td>
+                        <td data-label="Presión">{{ c.presion_arterial }}</td>
+                        <td data-label="Peso">{{ c.peso }} kg</td>
+                        <td data-label="Observaciones"><div class="obs-cell" title="{{ c.observaciones }}">{{ c.observaciones|default:"-" }}</div></td>
+                        <td data-label="Ver" style="text-align:center">
                             <span class="click-hint"><i class="fa-solid fa-eye"></i> Ver</span>
                         </td>
                     </tr>

@@ -1911,6 +1911,34 @@ def controles_admin(request):
     })
 
 
+def _validar_usuario_admin(first_name, last_name, username, email, password, rol=None, roles_validos=None):
+    import re
+    from django.core.exceptions import ValidationError
+    from django.core.validators import validate_email
+
+    errores = []
+    nombre_re = re.compile(r"^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]{2,40}$")
+    usuario_re = re.compile(r"^[A-Za-z0-9._]{3,30}$")
+
+    if not nombre_re.fullmatch(first_name or ""):
+        errores.append("El nombre debe tener de 2 a 40 caracteres y solo letras.")
+    if not nombre_re.fullmatch(last_name or ""):
+        errores.append("Los apellidos deben tener de 2 a 40 caracteres y solo letras.")
+    if not usuario_re.fullmatch(username or ""):
+        errores.append("El usuario debe tener de 3 a 30 caracteres, sin espacios ni símbolos especiales.")
+    if email:
+        try:
+            validate_email(email)
+        except ValidationError:
+            errores.append("Ingresa un correo electrónico válido.")
+    if roles_validos is not None and rol not in roles_validos:
+        errores.append("Selecciona un rol válido.")
+    if len(password or "") < 8 or not re.search(r"[A-ZÁÉÍÓÚÑ]", password or "") or not re.search(r"\d", password or "") or not re.search(r"[^A-Za-z0-9ÁÉÍÓÚÑáéíóúñ]", password or ""):
+        errores.append("La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.")
+
+    return errores
+
+
 
 
 @login_required
@@ -1925,11 +1953,37 @@ def admin_crear_usuario(request):
         email      = request.POST.get('email', '').strip()
         rol        = request.POST.get('rol', '')
         password   = request.POST.get('password', '')
+        roles = ['admin', 'medico', 'enfermera', 'paciente']
+        errores = _validar_usuario_admin(first_name, last_name, username, email, password, rol, roles)
+
+        if rol == 'medico':
+            especialidad = request.POST.get('especialidad', '').strip()
+            telefono_med = request.POST.get('telefono_med', '').strip()
+            if not especialidad:
+                errores.append("La especialidad del médico es obligatoria.")
+            if telefono_med and (not telefono_med.isdigit() or len(telefono_med) != 10):
+                errores.append("El teléfono del médico debe tener 10 dígitos.")
+
+        if errores:
+            for error in errores:
+                messages.error(request, error)
+            return render(request, 'admin/crear_usuario.html', {
+                'roles': roles,
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
 
         if User.objects.filter(username=username).exists():
             messages.error(request, f'El usuario "{username}" ya existe.')
             return render(request, 'admin/crear_usuario.html', {
-                'roles': ['admin','medico','enfermera','paciente'],
+                'roles': roles,
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
+        if email and User.objects.filter(email__iexact=email).exists():
+            messages.error(request, f'El correo "{email}" ya está registrado.')
+            return render(request, 'admin/crear_usuario.html', {
+                'roles': roles,
                 'form_data': request.POST,
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
@@ -2168,9 +2222,30 @@ def admin_crear_medico(request):
         password   = request.POST.get('password', '')
         telefono   = request.POST.get('telefono', '').strip()
         especialidad_id = request.POST.get('especialidad_id', '').strip()
+        errores = _validar_usuario_admin(first_name, last_name, username, email, password)
+        if telefono and (not telefono.isdigit() or len(telefono) != 10):
+            errores.append("El teléfono debe tener 10 dígitos.")
+        if not especialidad_id:
+            errores.append("Selecciona una especialidad médica.")
+
+        if errores:
+            for error in errores:
+                messages.error(request, error)
+            return render(request, 'admin/crear_medico.html', {
+                'form_data': request.POST,
+                'especialidades': especialidades,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
 
         if Usuario.objects.filter(username=username).exists():
             messages.error(request, f'El usuario "{username}" ya existe.')
+            return render(request, 'admin/crear_medico.html', {
+                'form_data': request.POST,
+                'especialidades': especialidades,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
+        if email and Usuario.objects.filter(email__iexact=email).exists():
+            messages.error(request, f'El correo "{email}" ya está registrado.')
             return render(request, 'admin/crear_medico.html', {
                 'form_data': request.POST,
                 'especialidades': especialidades,

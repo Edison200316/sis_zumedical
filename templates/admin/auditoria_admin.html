@@ -263,11 +263,22 @@
             .audit-kpis{grid-template-columns:repeat(2,1fr)}
             .charts-grid{grid-template-columns:1fr;gap:1rem}
             .chart-wrap,.chart-wrap.donut{height:200px}
+            .chart-card{padding:1rem}
+            .chart-card-head{align-items:flex-start}
+            .chart-wrap canvas{max-width:100%!important}
             .search-group{min-width:100%;order:-1}
             .filters-row{flex-direction:column}
             .filter-group{min-width:100%}
             th:nth-child(5),td:nth-child(5),
             th:nth-child(6),td:nth-child(6){display:none}
+            .table-scroll{overflow:visible}
+            #auditTable{min-width:0;border-collapse:separate;border-spacing:0 .8rem}
+            #auditTable thead{display:none}
+            #auditTable tbody tr{display:block;background:var(--white);border:1px solid var(--mg-border);border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(176,53,128,.06)}
+            #auditTable td{display:grid!important;grid-template-columns:minmax(92px,34%) 1fr;gap:.8rem;align-items:center;padding:.85rem 1rem;border-bottom:1px solid rgba(232,170,212,.35);font-size:.84rem;word-break:break-word}
+            #auditTable td::before{content:attr(data-label);font-size:.66rem;font-weight:700;color:var(--mg-d);text-transform:uppercase;letter-spacing:.08em}
+            #auditTable td:last-child{border-bottom:none}
+            #auditTable td[colspan]{display:block}
         }
         @media(max-width:480px){
             .audit-kpis{grid-template-columns:1fr}
@@ -583,7 +594,7 @@
         </div>
 
         <div class="table-scroll" id="tableScroll" {% if not logs %}style="display:none"{% endif %}>
-            <table>
+            <table id="auditTable">
                 <thead>
                     <tr>
                         <th>#</th>
@@ -599,12 +610,12 @@
                 <tbody id="tbodyLogs">
                     {% for log in logs %}
                     <tr>
-                        <td style="color:var(--muted);font-size:.78rem">{{ log.id }}</td>
-                        <td style="white-space:nowrap;font-size:.8rem">
+                        <td data-label="#" style="color:var(--muted);font-size:.78rem">{{ log.id }}</td>
+                        <td data-label="Fecha y hora" style="white-space:nowrap;font-size:.8rem">
                             <div style="font-weight:500">{{ log.fecha|date:"d/m/Y" }}</div>
                             <div style="color:var(--muted);font-size:.75rem">{{ log.fecha|time:"H:i:s" }}</div>
                         </td>
-                        <td>
+                        <td data-label="Usuario">
                             <div class="user-cell">
                                 <div class="user-avatar-sm">{% if log.usuario %}{{ log.usuario.first_name|slice:":1"|default:"?" }}{% else %}?{% endif %}</div>
                                 <div>
@@ -613,7 +624,7 @@
                                 </div>
                             </div>
                         </td>
-                        <td>
+                        <td data-label="Acción">
                             {% if log.accion == "LOGIN" %}
                                 <span class="badge badge-login"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</span>
                             {% elif log.accion == "LOGOUT" %}
@@ -632,9 +643,9 @@
                                 <span class="badge badge-view">{{ log.accion }}</span>
                             {% endif %}
                         </td>
-                        <td style="font-size:.82rem;color:var(--muted)">{{ log.modulo|default:"—" }}</td>
-                        <td><span class="ip-pill">{{ log.ip_address|default:"—" }}</span></td>
-                        <td>
+                        <td data-label="Módulo" style="font-size:.82rem;color:var(--muted)">{{ log.modulo|default:"—" }}</td>
+                        <td data-label="IP"><span class="ip-pill">{{ log.ip_address|default:"—" }}</span></td>
+                        <td data-label="Severidad">
                             {% if log.severidad == "CRITICAL" %}
                                 <div class="sev-cell sev-critical"><span class="sev-dot"></span><span class="sev-text">Crítico</span></div>
                             {% elif log.severidad == "WARNING" %}
@@ -643,7 +654,7 @@
                                 <div class="sev-cell sev-info"><span class="sev-dot"></span><span class="sev-text">Info</span></div>
                             {% endif %}
                         </td>
-                        <td>
+                        <td data-label="Detalle">
                             <button class="btn-detail open-modal"
                                 data-id="{{ log.id }}"
                                 data-fecha="{{ log.fecha|date:'d/m/Y H:i:s' }}"
@@ -878,12 +889,12 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDi
             const sevLabel = SEV_LABEL[r.severidad] || r.severidad_display;
             return `
             <tr>
-                <td style="color:var(--muted);font-size:.78rem">${r.id}</td>
-                <td style="white-space:nowrap;font-size:.8rem">
+                <td data-label="#" style="color:var(--muted);font-size:.78rem">${r.id}</td>
+                <td data-label="Fecha y hora" style="white-space:nowrap;font-size:.8rem">
                     <div style="font-weight:500">${escapeHtml(r.fecha)}</div>
                     <div style="color:var(--muted);font-size:.75rem">${escapeHtml(r.hora)}</div>
                 </td>
-                <td>
+                <td data-label="Usuario">
                     <div class="user-cell">
                         <div class="user-avatar-sm">${escapeHtml(r.usuario_inicial)}</div>
                         <div>
@@ -892,13 +903,13 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModalDi
                         </div>
                     </div>
                 </td>
-                <td><span class="badge ${b[0]}"><i class="fa-solid ${b[1]}"></i> ${escapeHtml(b[2])}</span></td>
-                <td style="font-size:.82rem;color:var(--muted)">${escapeHtml(r.modulo)}</td>
-                <td><span class="ip-pill">${escapeHtml(r.ip)}</span></td>
-                <td>
+                <td data-label="Acción"><span class="badge ${b[0]}"><i class="fa-solid ${b[1]}"></i> ${escapeHtml(b[2])}</span></td>
+                <td data-label="Módulo" style="font-size:.82rem;color:var(--muted)">${escapeHtml(r.modulo)}</td>
+                <td data-label="IP"><span class="ip-pill">${escapeHtml(r.ip)}</span></td>
+                <td data-label="Severidad">
                     <div class="sev-cell ${sevClass}"><span class="sev-dot"></span><span class="sev-text">${escapeHtml(sevLabel)}</span></div>
                 </td>
-                <td>
+                <td data-label="Detalle">
                     <button class="btn-detail open-modal"
                         data-id="${escapeHtml(r.id)}"
                         data-fecha="${escapeHtml(r.fecha)} ${escapeHtml(r.hora)}"

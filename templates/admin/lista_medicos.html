@@ -94,7 +94,7 @@
         .btn-danger:hover{background:#D63B3B;color:white;border-color:#D63B3B}
         .empty-state{padding:3rem;text-align:center;color:var(--muted)}
         .empty-state svg{width:40px;height:40px;stroke:var(--mg-border);fill:none;stroke-width:1.5;margin:0 auto 1rem;display:block}
-        @media(max-width:768px){body{flex-direction:column}.sidebar{position:fixed;top:64px;left:0;bottom: 0; height: auto;transform:translateX(-100%);width:var(--sw)}.sidebar.open{transform:translateX(0)}.sidebar-overlay{display:block;z-index:150}.mobile-topbar{display:flex}.main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px)}}
+        @media(max-width:768px){body{flex-direction:column}.sidebar{position:fixed;top:64px;left:0;bottom: 0; height: auto;transform:translateX(-100%);width:var(--sw)}.sidebar.open{transform:translateX(0)}.sidebar-overlay{display:block;z-index:150}.mobile-topbar{display:flex}.main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px)}.table-wrapper{overflow:visible}#medicosTable{min-width:0;border-collapse:separate;border-spacing:0 .8rem}#medicosTable thead{display:none}#medicosTable tbody tr{display:block;background:var(--white);border:1px solid var(--mg-border);border-radius:14px;overflow:hidden;box-shadow:0 4px 16px rgba(176,53,128,.06)}#medicosTable tbody tr:hover{background:var(--white)}#medicosTable td{display:grid;grid-template-columns:minmax(92px,34%) 1fr;gap:.8rem;align-items:center;padding:.85rem 1rem;border-bottom:1px solid rgba(232,170,212,.35);font-size:.84rem;word-break:break-word}#medicosTable td::before{content:attr(data-label);font-size:.66rem;font-weight:700;color:var(--mg-d);text-transform:uppercase;letter-spacing:.08em}#medicosTable td:last-child{border-bottom:none}#medicosTable td[colspan]{display:block}.td-actions{justify-content:flex-start}}
     </style>
 </head>
 <body>
@@ -177,7 +177,7 @@
                 <tbody>
                     {% for m in medicos %}
                     <tr>
-                        <td>
+                        <td data-label="Médico">
                             <div class="medico-cell">
                                 <div class="medico-avatar">{{ m.usuario.first_name|slice:":1" }}{{ m.usuario.last_name|slice:":1" }}</div>
                                 <div>
@@ -186,10 +186,10 @@
                                 </div>
                             </div>
                         </td>
-                        <td style="color:var(--muted)">{{ m.usuario.username }}</td>
-                        <td><span class="badge-esp">{{ m.especialidad|default:"—" }}</span></td>
-                        <td>{{ m.telefono|default:"—" }}</td>
-                        <td>
+                        <td data-label="Usuario" style="color:var(--muted)">{{ m.usuario.username }}</td>
+                        <td data-label="Especialidad"><span class="badge-esp">{{ m.especialidad|default:"—" }}</span></td>
+                        <td data-label="Teléfono">{{ m.telefono|default:"—" }}</td>
+                        <td data-label="Acciones">
                             <div class="td-actions">
                                 <a href="{% url 'admin_editar_medico' m.id %}" class="btn-sm btn-secondary">Editar</a>
                                 <a href="{% url 'admin_eliminar_medico' m.id %}" class="btn-sm btn-danger">Eliminar</a>

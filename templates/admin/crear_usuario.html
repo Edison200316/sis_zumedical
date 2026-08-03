@@ -210,7 +210,7 @@ tbody tr:hover{background:var(--mg-bg)}
 <div class="form-group"><label>Email</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><input type="email" name="email" id="emailInput" value="{{ form_data.email|default:'' }}" placeholder="correo@email.com" autocomplete="off"></div><div class="field-error" id="emailError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Ingresa un correo electrónico válido</span></div></div>
 <div class="form-group"><label>Rol</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
 <select name="rol" id="rolSelect" onchange="toggleExtra(this.value)">
-{% for r in roles %}<option value="{{ r }}">{{ r|capfirst }}</option>{% endfor %}
+{% for r in roles %}<option value="{{ r }}" {% if form_data.rol == r %}selected{% endif %}>{{ r|capfirst }}</option>{% endfor %}
 </select></div></div>
 </div>
 </div>
@@ -232,8 +232,8 @@ tbody tr:hover{background:var(--mg-bg)}
 <div class="form-section" id="extra-medico" style="display:none">
 <div class="form-section-title">Datos del médico</div>
 <div class="form-row">
-<div class="form-group"><label>Especialidad</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><input type="text" name="especialidad" placeholder="Ej: Ginecología"></div></div>
-<div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" name="telefono_med" placeholder="0999999999"></div></div>
+<div class="form-group"><label>Especialidad</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><input type="text" name="especialidad" id="especialidadInput" value="{{ form_data.especialidad|default:'' }}" placeholder="Ej: Ginecología"></div><div class="field-error" id="especialidadError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>La especialidad es obligatoria para médicos</span></div></div>
+<div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" name="telefono_med" id="telefonoMedInput" value="{{ form_data.telefono_med|default:'' }}" placeholder="0999999999" maxlength="10" inputmode="numeric"></div><div class="field-error" id="telefonoMedError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Debe tener 10 dígitos numéricos</span></div></div>
 </div>
 </div>
 <div class="form-actions">
@@ -262,13 +262,17 @@ function closeSidebar() {
     hb.classList.remove('open');
 }
 
-function toggleExtra(rol) { document.getElementById('extra-medico').style.display = rol === 'medico' ? 'block' : 'none'; }
+function toggleExtra(rol) {
+    document.getElementById('extra-medico').style.display = rol === 'medico' ? 'block' : 'none';
+    validarFormulario();
+}
 toggleExtra(document.getElementById('rolSelect').value);
 
 // ── Validación en tiempo real ──
 const soloLetras = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]*$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const usuarioRegex = /^[A-Za-z0-9._]*$/;
+const soloNumeros = /^[0-9]*$/;
 
 function bloquearCaracterInvalido(input, regex) {
     input.addEventListener('input', function () {
@@ -348,6 +352,28 @@ emailInput.addEventListener('input', function () {
     validarFormulario();
 });
 
+const especialidadInput = document.getElementById('especialidadInput');
+const especialidadError = document.getElementById('especialidadError');
+especialidadInput.addEventListener('input', function () {
+    const requerido = document.getElementById('rolSelect').value === 'medico';
+    const valido = this.value.trim().length >= 2;
+    this.classList.toggle('input-invalid', requerido && !valido);
+    this.classList.toggle('input-valid', requerido && valido);
+    especialidadError.classList.toggle('show', requerido && !valido);
+    validarFormulario();
+});
+
+const telefonoMedInput = document.getElementById('telefonoMedInput');
+const telefonoMedError = document.getElementById('telefonoMedError');
+bloquearCaracterInvalido(telefonoMedInput, soloNumeros);
+telefonoMedInput.addEventListener('input', function () {
+    const valido = this.value.length === 0 || this.value.length === 10;
+    this.classList.toggle('input-invalid', !valido);
+    this.classList.toggle('input-valid', this.value.length === 10);
+    telefonoMedError.classList.toggle('show', !valido);
+    validarFormulario();
+});
+
 // Contraseña: medidor de fuerza en tiempo real
 const passwordInput = document.getElementById('passwordInput');
 const pwdStrengthBar = document.getElementById('pwdStrengthBar');
@@ -404,6 +430,9 @@ function validarFormulario() {
     const email     = emailInput.value.trim();
     const username  = usernameInput.value.trim();
     const password  = passwordInput.value;
+    const rol       = document.getElementById('rolSelect').value;
+    const especialidad = especialidadInput.value.trim();
+    const telefonoMed = telefonoMedInput.value.trim();
 
     const nombreOk   = firstName.length > 0 && soloLetras.test(firstName);
     const apellidoOk = lastName.length > 0 && soloLetras.test(lastName);
@@ -411,9 +440,11 @@ function validarFormulario() {
     const usuarioOk  = username.length >= 3 && usuarioRegex.test(username);
     const pwdChecks  = passwordChecks(password);
     const pwdOk      = pwdChecks.length && pwdChecks.upper && pwdChecks.number && pwdChecks.symbol;
+    const medicoOk   = rol !== 'medico' || (especialidad.length >= 2 && (telefonoMed.length === 0 || telefonoMed.length === 10));
 
     const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = !(nombreOk && apellidoOk && emailOk && usuarioOk && pwdOk);
+    submitBtn.disabled = !(nombreOk && apellidoOk && emailOk && usuarioOk && pwdOk && medicoOk);
 }
+validarFormulario();
 </script>
 </body></html>

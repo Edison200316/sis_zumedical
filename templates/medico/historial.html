@@ -2369,21 +2369,15 @@
                   data-temp="{{ c.temperatura|default:'—' }}"
                   data-altura="{{ c.altura|default:'—' }}"
                   data-imc="{{ c.imc|default:'—' }}"
-                  {%
-                  if
-                  c.prediccion_ia
-                  %}
+                  {% if c.prediccion_ia %}
                   data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
                   data-ia-pct="{{ c.prediccion_ia.puntuacion_riesgo }}"
                   data-ia-icono="{{ c.prediccion_ia.icono }}"
                   data-ia-url="{% url 'ver_predicciones_paciente' c.paciente.id %}"
-                  {%
-                  endif
-                  %}
+                  {% endif %}
                 >
                   <div class="pac-av">
-                    {{ c.paciente.first_name|slice:":1" }}{{
-                    c.paciente.last_name|slice:":1" }}
+                    {{ c.paciente.first_name|slice:":1" }}{{ c.paciente.last_name|slice:":1" }}
                   </div>
                   <div>
                     <div class="pac-name">
@@ -2438,8 +2432,7 @@
                                     {% else %}background:#edfaf3;color:#2e7d52;border:1px solid #a8dfc0;{% endif %}
                                 "
                   >
-                    {{ c.prediccion_ia.icono }} {{ c.prediccion_ia.nivel_riesgo
-                    }}
+                    {{ c.prediccion_ia.icono }} {{ c.prediccion_ia.nivel_riesgo }}
                     <span style="font-weight: 400; opacity: 0.7"
                       >({{ c.prediccion_ia.puntuacion_riesgo }}%)</span
                     >
@@ -2569,16 +2562,11 @@
                     data-temp="{{ c.temperatura|default:'—' }}"
                     data-altura="{{ c.altura|default:'—' }}"
                     data-imc="{{ c.imc|default:'—' }}"
-                    {%
-                    if
-                    c.prediccion_ia
-                    %}
+                    {% if c.prediccion_ia %}
                     data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
                     data-ia-pct="{{ c.prediccion_ia.puntuacion_riesgo }}"
                     data-ia-icono="{{ c.prediccion_ia.icono }}"
-                    {%
-                    endif
-                    %}
+                    {% endif %}
                   >
                     <svg viewBox="0 0 24 24">
                       <path
@@ -2626,21 +2614,15 @@
               data-temp="{{ c.temperatura|default:'—' }}"
               data-altura="{{ c.altura|default:'—' }}"
               data-imc="{{ c.imc|default:'—' }}"
-              {%
-              if
-              c.prediccion_ia
-              %}
+              {% if c.prediccion_ia %}
               data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
               data-ia-pct="{{ c.prediccion_ia.puntuacion_riesgo }}"
               data-ia-icono="{{ c.prediccion_ia.icono }}"
               data-ia-url="{% url 'ver_predicciones_paciente' c.paciente.id %}"
-              {%
-              endif
-              %}
+              {% endif %}
             >
               <div class="cc-av">
-                {{ c.paciente.first_name|slice:":1" }}{{
-                c.paciente.last_name|slice:":1" }}
+                {{ c.paciente.first_name|slice:":1" }}{{ c.paciente.last_name|slice:":1" }}
               </div>
               <div class="cc-info">
                 <div class="cc-name">
@@ -2714,9 +2696,7 @@
                             {% elif c.prediccion_ia.nivel_riesgo == 'Medio' %}background:#fffbeb;color:#b45309;border:1px solid #fcd34d;
                             {% else %}background:#edfaf3;color:#2e7d52;border:1px solid #a8dfc0;{% endif %}"
                 >
-                  {{ c.prediccion_ia.icono }} Riesgo {{
-                  c.prediccion_ia.nivel_riesgo }} — {{
-                  c.prediccion_ia.puntuacion_riesgo }}%
+                  {{ c.prediccion_ia.icono }} Riesgo {{ c.prediccion_ia.nivel_riesgo }} — {{ c.prediccion_ia.puntuacion_riesgo }}%
                 </span>
               </a>
             </div>
@@ -2832,16 +2812,11 @@
                 data-temp="{{ c.temperatura|default:'—' }}"
                 data-altura="{{ c.altura|default:'—' }}"
                 data-imc="{{ c.imc|default:'—' }}"
-                {%
-                if
-                c.prediccion_ia
-                %}
+                {% if c.prediccion_ia %}
                 data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
                 data-ia-pct="{{ c.prediccion_ia.puntuacion_riesgo }}"
                 data-ia-icono="{{ c.prediccion_ia.icono }}"
-                {%
-                endif
-                %}
+                {% endif %}
               >
                 <svg viewBox="0 0 24 24">
                   <path

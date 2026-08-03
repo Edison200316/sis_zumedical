@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zumedical — Crear Paciente General</title>
+<title>Zumedical ï¿½ Crear Paciente General</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -125,14 +125,14 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
     </div>
     <div class="sb-user">
         <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}</div>
-        <div class="sb-user-info"><p>Sesión activa</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
+        <div class="sb-user-info"><p>Sesiï¿½n activa</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
     </div>
     <nav class="sb-nav">
         <div class="nav-lbl">Panel</div>
         <a href="{% url 'admin_dashboard' %}" class="nav-item"><i class="fa-solid fa-grid-2"></i> Inicio</a>
-        <div class="nav-lbl">Gestión</div>
+        <div class="nav-lbl">Gestiï¿½n</div>
         <a href="{% url 'lista_usuarios' %}" class="nav-item"><i class="fa-solid fa-users"></i> Usuarios</a>
-        <a href="{% url 'lista_medicos' %}" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Médicos</a>
+        <a href="{% url 'lista_medicos' %}" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Mï¿½dicos</a>
         <a href="{% url 'lista_pacientes' %}" class="nav-item active"><i class="fa-solid fa-hospital-user"></i> Pacientes</a>
         <a href="{% url 'todas_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Citas
@@ -140,10 +140,10 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
         </a>
         <a href="{% url 'controles_admin' %}" class="nav-item"><i class="fa-solid fa-heart-pulse"></i> Controles Prenatales</a>
         <div class="nav-lbl">Sistema</div>
-        <a href="{% url 'auditoria_admin' %}" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Auditoría</a>
+        <a href="{% url 'auditoria_admin' %}" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Auditorï¿½a</a>
     </nav>
     <div class="sb-footer">
-        <a href="{% url 'logout' %}" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión</a>
+        <a href="{% url 'logout' %}" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesiï¿½n</a>
     </div>
 </aside>
 
@@ -151,7 +151,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
     <div class="page-header">
         <div>
             <h1>Registrar Paciente General</h1>
-            <p>Añadir un nuevo paciente de consulta general al sistema</p>
+            <p>Aï¿½adir un nuevo paciente de consulta general al sistema</p>
             <span class="tipo-badge"><i class="fa-solid fa-user-group"></i> Paciente General</span>
         </div>
         <a href="{% url 'lista_pacientes' %}" class="back-btn">
@@ -176,7 +176,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 
     <div class="info-box">
         <i class="fa-solid fa-circle-info"></i>
-        <span>Este formulario crea un paciente de <strong>consulta general</strong> (Odontología, Ecografía, Medicina General, etc.). No incluye datos obstétricos. Para pacientes prenatales usa el formulario correspondiente.</span>
+        <span>Este formulario crea un paciente de <strong>consulta general</strong> (Odontologï¿½a, Ecografï¿½a, Medicina General, etc.). No incluye datos obstï¿½tricos. Para pacientes prenatales usa el formulario correspondiente.</span>
     </div>
 
     <div class="form-card">
@@ -186,9 +186,9 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
         <form method="POST">
             {% csrf_token %}
 
-            <!-- INFORMACIÓN PERSONAL -->
+            <!-- INFORMACIï¿½N PERSONAL -->
             <div class="form-section">
-                <div class="form-section-title">Información personal</div>
+                <div class="form-section-title">Informaciï¿½n personal</div>
                 <div class="form-row">
                     <div class="form-group">
                         <label>Nombre</label>
@@ -217,7 +217,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                         <div class="field-msg" id="msg_email"></div>
                     </div>
                     <div class="form-group">
-                        <label>Cédula</label>
+                        <label>Cï¿½dula</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-id-card"></i>
                             <input type="text" id="id_cedula" name="cedula" placeholder="1234567890" maxlength="10" inputmode="numeric">
@@ -227,7 +227,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Teléfono</label>
+                        <label>Telï¿½fono</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-phone"></i>
                             <input type="text" id="id_telefono" name="telefono" placeholder="0999999999" maxlength="10" inputmode="numeric">
@@ -243,15 +243,15 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Dirección</label>
+                    <label>Direcciï¿½n</label>
                     <div class="input-wrap">
                         <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" name="direccion" placeholder="Dirección completa" maxlength="60">
+                        <input type="text" name="direccion" placeholder="Direcciï¿½n completa" maxlength="60">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>Género</label>
+                        <label>Gï¿½nero</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-venus-mars"></i>
                             <select name="genero">
@@ -278,17 +278,17 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                         <div class="field-msg" id="msg_username"></div>
                     </div>
                     <div class="form-group">
-                        <label>Contraseña</label>
+                        <label>Contraseï¿½a</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-lock"></i>
-                            <input type="password" id="id_password" name="password" placeholder="Mínimo 8 caracteres" required>
+                            <input type="password" id="id_password" name="password" placeholder="Mï¿½nimo 8 caracteres" required>
                         </div>
                         <div class="pwd-meter" id="pwd_meter"><div class="pwd-meter-bar" id="pwd_meter_bar"></div></div>
                         <ul class="pwd-checklist" id="pwd_checklist">
-                            <li id="chk_len"><i class="fa-solid fa-circle-xmark"></i> Mínimo 8 caracteres</li>
-                            <li id="chk_upper"><i class="fa-solid fa-circle-xmark"></i> Una mayúscula</li>
-                            <li id="chk_num"><i class="fa-solid fa-circle-xmark"></i> Un número</li>
-                            <li id="chk_sym"><i class="fa-solid fa-circle-xmark"></i> Un símbolo</li>
+                            <li id="chk_len"><i class="fa-solid fa-circle-xmark"></i> Mï¿½nimo 8 caracteres</li>
+                            <li id="chk_upper"><i class="fa-solid fa-circle-xmark"></i> Una mayï¿½scula</li>
+                            <li id="chk_num"><i class="fa-solid fa-circle-xmark"></i> Un nï¿½mero</li>
+                            <li id="chk_sym"><i class="fa-solid fa-circle-xmark"></i> Un sï¿½mbolo</li>
                         </ul>
                     </div>
                 </div>
@@ -319,9 +319,9 @@ function closeSidebar() {
     document.getElementById('hamburger').classList.remove('open');
 }
 
-// -- Validación en tiempo real --
+// -- Validaciï¿½n en tiempo real --
 (function() {
-    const NAME_RE = /^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]*$/;
+    const NAME_RE = /^[A-Za-zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\s]*$/;
     const fields = {};
 
     function setMsg(id, text, cls) {
@@ -342,7 +342,7 @@ function closeSidebar() {
             if (!NAME_RE.test(e.key)) e.preventDefault();
         });
         input.addEventListener('input', function() {
-            input.value = input.value.replace(/[^A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]/g, '');
+            input.value = input.value.replace(/[^A-Za-zï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½\s]/g, '');
             const valid = input.value.trim().length > 0;
             fields[id] = valid;
             setInputState(input, input.value === '' ? null : (valid ? 'valid' : 'invalid'));
@@ -360,7 +360,7 @@ function closeSidebar() {
             const valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
             fields.email = valid;
             setInputState(input, valid ? 'valid' : 'invalid');
-            setMsg('email', valid ? '' : 'Formato de correo inválido', 'error');
+            setMsg('email', valid ? '' : 'Formato de correo invï¿½lido', 'error');
             updateSubmit();
         });
     })();
@@ -378,7 +378,7 @@ function closeSidebar() {
             const valid = v.length === 10;
             fields.cedula = valid;
             setInputState(input, valid ? 'valid' : 'invalid');
-            setMsg('cedula', valid ? '' : 'Debe tener 10 dígitos', 'error');
+            setMsg('cedula', valid ? '' : 'Debe tener 10 dï¿½gitos', 'error');
             updateSubmit();
         });
     })();
@@ -396,7 +396,7 @@ function closeSidebar() {
             const valid = v.length === 10;
             fields.telefono = valid;
             setInputState(input, valid ? 'valid' : 'invalid');
-            setMsg('telefono', valid ? '' : 'Debe tener 10 dígitos', 'error');
+            setMsg('telefono', valid ? '' : 'Debe tener 10 dï¿½gitos', 'error');
             updateSubmit();
         });
     })();
@@ -410,7 +410,7 @@ function closeSidebar() {
             const valid = v.length >= 3;
             fields.username = valid;
             setInputState(input, v === '' ? null : (valid ? 'valid' : 'invalid'));
-            setMsg('username', v === '' || valid ? '' : 'Mínimo 3 caracteres', 'error');
+            setMsg('username', v === '' || valid ? '' : 'Mï¿½nimo 3 caracteres', 'error');
             updateSubmit();
         });
     })();

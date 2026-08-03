@@ -146,7 +146,12 @@
         .modal-btn-cerrar{padding:0.65rem 1.75rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;border-radius:9px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:0.88rem;font-weight:500;cursor:pointer;transition:opacity 0.2s;box-shadow:0 4px 12px rgba(176,53,128,0.25)}
         .modal-btn-cerrar:hover{opacity:0.9}
 
-        @media(max-width:768px){body{flex-direction:column}.sidebar{position:fixed;top:64px;left:0;bottom: 0; height: auto;transform:translateX(-100%);width:var(--sw)}.sidebar.open{transform:translateX(0)}.sidebar-overlay{display:block;z-index:150}.mobile-topbar{display:flex}.main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px)}.modal-fila{grid-template-columns:1fr}.modal-overlay{padding:0.75rem}.modal{max-height:95vh}}
+        @media(max-width:768px){
+            body{flex-direction:column}.sidebar{position:fixed;top:64px;left:0;bottom: 0; height: auto;transform:translateX(-100%);width:var(--sw)}.sidebar.open{transform:translateX(0)}.sidebar-overlay{display:block;z-index:150}.mobile-topbar{display:flex}.main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px)}.modal-fila{grid-template-columns:1fr}.modal-overlay{padding:0.75rem}.modal{max-height:95vh}
+            .page-header{gap:1rem}.page-header-actions{width:100%}.btn-new,.btn-back{width:100%;justify-content:center}
+            .table-search{flex-direction:column;align-items:stretch}.table-count{align-self:flex-start}
+            .table-wrapper{overflow:visible}table{min-width:0}thead{display:none}tbody{display:block;padding:.75rem}tbody tr.fila-pac{display:block;background:#fff;border:1px solid var(--mg-border);border-radius:12px;margin-bottom:.85rem;box-shadow:0 8px 18px rgba(138,37,99,.06);overflow:hidden}tbody tr.fila-pac:hover{background:#fff}tbody td{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding:.75rem 1rem;border-bottom:1px solid #F3E0EE;text-align:right}tbody td:first-child{padding-left:1rem;text-align:left}tbody td::before{content:attr(data-label);font-size:.68rem;font-weight:700;color:var(--mg-d);text-transform:uppercase;letter-spacing:.07em;flex:0 0 42%;text-align:left}.td-paciente{width:100%}.td-actions{justify-content:flex-end}.btn-sm{justify-content:center}.empty-state{padding:2rem 1rem}
+        }
     </style>
 </head>
 <body>
@@ -256,7 +261,7 @@
                     data-menstruacion="{{ p.fecha_ultima_menstruacion|date:'d/m/Y'|default:'' }}"
                     data-editar="{% url 'admin_editar_paciente' p.id %}"
                     data-eliminar="{% url 'admin_eliminar_paciente' p.id %}">
-                    <td>
+                    <td data-label="Paciente">
                         <div class="pac-cell">
                             <div class="pac-avatar">{{ p.usuario.first_name|slice:":1" }}{{ p.usuario.last_name|slice:":1" }}</div>
                             <div>
@@ -265,11 +270,11 @@
                             </div>
                         </div>
                     </td>
-                    <td>{% if p.cedula %}<strong>{{ p.cedula }}</strong>{% else %}<span class="no-data">Sin datos</span>{% endif %}</td>
-                    <td>{{ p.telefono|default:"—" }}</td>
-                    <td>{% if p.fecha_probable_parto %}<span class="badge-parto">{{ p.fecha_probable_parto|date:"M. j, Y" }}</span>{% else %}<span class="no-data">Sin datos</span>{% endif %}</td>
-                    <td>{% if p.fecha_ultima_menstruacion %}{{ p.fecha_ultima_menstruacion|date:"M. j, Y" }}{% else %}<span class="no-data">Sin datos</span>{% endif %}</td>
-                    <td>
+                    <td data-label="Cédula">{% if p.cedula %}<strong>{{ p.cedula }}</strong>{% else %}<span class="no-data">Sin datos</span>{% endif %}</td>
+                    <td data-label="Teléfono">{{ p.telefono|default:"—" }}</td>
+                    <td data-label="F. probable parto">{% if p.fecha_probable_parto %}<span class="badge-parto">{{ p.fecha_probable_parto|date:"M. j, Y" }}</span>{% else %}<span class="no-data">Sin datos</span>{% endif %}</td>
+                    <td data-label="F. última mens.">{% if p.fecha_ultima_menstruacion %}{{ p.fecha_ultima_menstruacion|date:"M. j, Y" }}{% else %}<span class="no-data">Sin datos</span>{% endif %}</td>
+                    <td data-label="Acciones">
                         <div class="td-actions">
                             <a href="{% url 'admin_editar_paciente' p.id %}" class="btn-sm btn-secondary" onclick="event.stopPropagation()">Editar</a>
                             <a href="{% url 'admin_eliminar_paciente' p.id %}" class="btn-sm btn-danger" onclick="event.stopPropagation()">Eliminar</a>
@@ -304,7 +309,7 @@
                 {% for p in pacientes_generales %}
                 <tr class="fila-pac"
                     data-search="{{ p.usuario.get_full_name|lower }} {{ p.cedula|default:'' }}">
-                    <td>
+                    <td data-label="Paciente">
                         <div class="pac-cell">
                             <div class="pac-avatar" style="background:linear-gradient(135deg,#5b3a8a22,#7c6fc422);color:#5b3a8a;border-color:#c4b5fd;">{{ p.usuario.first_name|slice:":1" }}{{ p.usuario.last_name|slice:":1" }}</div>
                             <div>
@@ -313,10 +318,10 @@
                             </div>
                         </div>
                     </td>
-                    <td>{% if p.cedula %}<strong>{{ p.cedula }}</strong>{% else %}<span class="no-data">Sin datos</span>{% endif %}</td>
-                    <td>{{ p.telefono|default:"—" }}</td>
-                    <td>{{ p.usuario.email|default:"—" }}</td>
-                    <td>
+                    <td data-label="Cédula">{% if p.cedula %}<strong>{{ p.cedula }}</strong>{% else %}<span class="no-data">Sin datos</span>{% endif %}</td>
+                    <td data-label="Teléfono">{{ p.telefono|default:"—" }}</td>
+                    <td data-label="Correo">{{ p.usuario.email|default:"—" }}</td>
+                    <td data-label="Acciones">
                         <div class="td-actions">
                             <a href="{% url 'admin_editar_paciente' p.id %}" class="btn-sm btn-secondary">Editar</a>
                             <a href="{% url 'admin_eliminar_paciente' p.id %}" class="btn-sm btn-danger">Eliminar</a>

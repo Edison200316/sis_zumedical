@@ -1278,7 +1278,8 @@ def toggle_modulo_prenatal(request, paciente_id):
     """
     from pacientes.models import Paciente
 
-    if request.user.rol not in ('enfermera', 'admin'):
+    rol_lower = request.user.rol.lower() if request.user.rol else ''
+    if rol_lower not in ('enfermera', 'secretaria', 'admin'):
         return redireccionar_por_rol(request.user)
 
     paciente_usuario = get_object_or_404(Usuario, id=paciente_id, rol='paciente')
@@ -2331,10 +2332,13 @@ def admin_crear_paciente_general(request):
             email=email, rol='paciente'
         )
         from pacientes.models import Paciente
-        Paciente.objects.create(
-            usuario=user, cedula=cedula, telefono=telefono,
-            edad=edad, direccion=direccion
-        )
+        paciente, _ = Paciente.objects.get_or_create(usuario=user)
+        paciente.cedula = cedula
+        paciente.telefono = telefono
+        paciente.edad = edad
+        paciente.direccion = direccion
+        paciente.estado_embarazo = 'NINGUNO'
+        paciente.save()
         registrar_log(request, 'CREATE', 'Pacientes',
             f'Paciente general "{first_name} {last_name}" registrado', 'INFO')
         messages.success(request, f'Paciente general "{first_name} {last_name}" creado correctamente.')
@@ -3315,7 +3319,8 @@ def cambiar_estado_cita(request, cita_id):
         cita = get_object_or_404(Cita, id=cita_id)
         
         # Validar permisos
-        if request.user.rol not in ['medico', 'administrador', 'enfermera'] or (request.user.rol == 'medico' and cita.medico != request.user):
+        rol_lower = request.user.rol.lower() if request.user.rol else ''
+        if rol_lower not in ['medico', 'admin', 'administrador', 'enfermera', 'secretaria'] or (rol_lower == 'medico' and cita.medico != request.user):
             messages.error(request, 'No tienes permiso para modificar esta cita.')
             return redirect(request.META.get('HTTP_REFERER', '/'))
             

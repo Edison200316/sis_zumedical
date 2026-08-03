@@ -242,14 +242,12 @@ class RegistroPacienteForm(forms.ModelForm):
         user.genero = self.cleaned_data.get('genero', '')
         if commit:
             user.save()
-            # Crear perfil de paciente
             from pacientes.models import Paciente
-            Paciente.objects.create(
-                usuario=user,
-                cedula=self.cleaned_data.get('cedula', ''),
-                telefono=self.cleaned_data.get('telefono', ''),
-                estado_embarazo='NINGUNO'
-            )
+            paciente, _ = Paciente.objects.get_or_create(usuario=user)
+            paciente.cedula = self.cleaned_data.get('cedula', '')
+            paciente.telefono = self.cleaned_data.get('telefono', '')
+            paciente.estado_embarazo = 'NINGUNO'
+            paciente.save()
         return user
 
 

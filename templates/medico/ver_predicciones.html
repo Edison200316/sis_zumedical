@@ -291,7 +291,13 @@
     <div class="prob-ring">
       <div class="num">{{ ultima.puntuacion_riesgo }}%</div>
       <div class="lbl">Probabilidad estimada</div>
-      <div class="lbl-note">(clase {{ ultima.nivel_riesgo }} según Random Forest)</div>
+      <div class="lbl-note">
+        {% if d.motor_usado == 'respaldo_clinico_reglas' %}
+          (clase {{ ultima.nivel_riesgo }} según respaldo clínico)
+        {% else %}
+          (clase {{ ultima.nivel_riesgo }} según Random Forest)
+        {% endif %}
+      </div>
     </div>
   </div>
 
@@ -420,7 +426,11 @@
           {% endfor %}
         </div>
         <p style="font-size:.72rem;color:var(--muted);margin-top:.6rem;line-height:1.4;">
-          Estos valores son las probabilidades de pertenencia a cada clase que devuelve el Random Forest, no la precisión global del modelo (96.45% según el reporte de entrenamiento).
+          {% if d.motor_usado == 'respaldo_clinico_reglas' %}
+            Estos valores son una estimación clínica por reglas cuando el modelo entrenado no está disponible.
+          {% else %}
+            Estos valores son las probabilidades de pertenencia a cada clase que devuelve el Random Forest, no la precisión global del modelo (96.45% según el reporte de entrenamiento).
+          {% endif %}
         </p>
       </div>
       {% endif %}

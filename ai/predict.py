@@ -14,7 +14,6 @@ Uso desde Django:
 """
 
 import pickle
-import numpy as np
 from pathlib import Path
 from dataclasses import dataclass
 from typing import List, Dict, Optional
@@ -343,37 +342,13 @@ class PrenatalMLEngine:
 
         return factores
 
-    def predict(self, datos_clinicos: dict) -> ResultadoPrediccion:
-        """
-        Realiza la predicción de riesgo prenatal.
+    def _resultado_clinico(self, datos_clinicos: dict, nivel: str, probs: Dict[str, float], prob_nivel: float) -> ResultadoPrediccion:
+        """Construye la respuesta completa a partir de un nivel ya calculado."""
+        factores_dict = self._detectar_factores(datos_clinicos)
+        factores_texto = [t for textos in factores_dict.values() for t in textos]
 
-        IMPORTANTE: glucose debe estar en mmol/L.
-        Conversión: glucose_mgdl / 18.0 = mmol/L
-        """
-        if not self._loaded:
-            raise RuntimeError(
-                "El modelo no está disponible. "
-                "Ejecuta: python ai/training/train_model.py"
-            )
-
-        # ── Construir vector y predecir ────────────────────────────────────
-        X_df = self._build_feature_vector(datos_clinicos)
-        X_sc = self._scaler.transform(X_df)
-
-        clase_pred         = int(self._model.predict(X_sc)[0])
-        probabilidades_arr = self._model.predict_proba(X_sc)[0]
-
-        probs = {
-            LABEL_DECODE[i]: round(float(p) * 100, 1)
-            for i, p in enumerate(probabilidades_arr)
-        }
-        nivel      = LABEL_DECODE[clase_pred]
-        prob_nivel = probs[nivel]
-        puntuacion = int(prob_nivel)
-
-        # ── Alerta de crisis hipertensiva ──────────────────────────────────
         alerta_critica = None
-        sistolica  = datos_clinicos.get("systolic_bp", 0)
+        sistolica = datos_clinicos.get("systolic_bp", 0)
         diastolica = datos_clinicos.get("diastolic_bp", 0)
         if sistolica >= 160 or diastolica >= 110:
             alerta_critica = (
@@ -382,15 +357,10 @@ class PrenatalMLEngine:
                 f"Se recomienda valoración médica INMEDIATA y descartar eclampsia."
             )
 
-        # ── Factores clínicos ──────────────────────────────────────────────
-        factores_dict  = self._detectar_factores(datos_clinicos)
-        factores_texto = [t for textos in factores_dict.values() for t in textos]
-
-        # ── Nota aclaratoria sobre diabetes por antecedente ────────────────
         nota_antecedente = None
-        diab_pre  = datos_clinicos.get("diabetes_preexisting", 0)
+        diab_pre = datos_clinicos.get("diabetes_preexisting", 0)
         diab_gest = datos_clinicos.get("diabetes_gestacional", 0)
-        glucosa   = datos_clinicos.get("glucose", 0)
+        glucosa = datos_clinicos.get("glucose", 0)
         if (diab_pre or diab_gest) and glucosa < 7.8:
             tipo = "preexistente" if diab_pre else "gestacional"
             nota_antecedente = (
@@ -399,7 +369,6 @@ class PrenatalMLEngine:
                 f"La IA no realiza diagnósticos — incorpora datos ya confirmados por el médico."
             )
 
-        # ── Complicaciones (sin duplicados) ────────────────────────────────
         complicaciones = []
         seen_comp = set()
         for key in factores_dict:
@@ -414,26 +383,24 @@ class PrenatalMLEngine:
                 if base not in seen_comp:
                     complicaciones.append(comp)
 
-        # ── Recomendaciones agrupadas ──────────────────────────────────────
         factor_rec_map = {
-            "hipertension_critica":   "hipertension",
-            "hipertension":           "hipertension",
-            "diabetes_critica":       "diabetes",
-            "diabetes":               "diabetes",
-            "obesidad":               "obesidad",
-            "edad_muy_avanzada":      "edad_avanzada",
-            "edad_avanzada":          "edad_avanzada",
+            "hipertension_critica": "hipertension",
+            "hipertension": "hipertension",
+            "diabetes_critica": "diabetes",
+            "diabetes": "diabetes",
+            "obesidad": "obesidad",
+            "edad_muy_avanzada": "edad_avanzada",
+            "edad_avanzada": "edad_avanzada",
             "complicaciones_previas": "complicaciones_previas",
         }
 
         base_grupos = RECOMENDACIONES_BASE.get(nivel, {"urgencia": [], "nutricion": [], "habitos": []})
         grupos: Dict[str, List[str]] = {
-            "urgencia":  list(base_grupos.get("urgencia", [])),
+            "urgencia": list(base_grupos.get("urgencia", [])),
             "nutricion": list(base_grupos.get("nutricion", [])),
-            "habitos":   list(base_grupos.get("habitos", [])),
+            "habitos": list(base_grupos.get("habitos", [])),
         }
-
-        added_recs: set = set()
+        added_recs = set()
         for key in factores_dict:
             rec_key = factor_rec_map.get(key)
             if rec_key and rec_key not in added_recs:
@@ -448,50 +415,137 @@ class PrenatalMLEngine:
             "⚕️ Este resultado es una herramienta de apoyo basada en inteligencia artificial "
             "y no reemplaza la valoración clínica de tu médico tratante."
         )
-        recomendaciones_plana = (
-            grupos["urgencia"] + grupos["nutricion"] + grupos["habitos"] + [disclaimer]
-        )
+        recomendaciones_plana = grupos["urgencia"] + grupos["nutricion"] + grupos["habitos"] + [disclaimer]
         grupos["disclaimer"] = [disclaimer]
 
-        # ── Explicación (XAI) ──────────────────────────────────────────────
-        factores_cortos = []
-        for textos in factores_dict.values():
-            for t in textos:
-                factores_cortos.append(t.split(" — ")[0].strip().lstrip("⚠️ ").strip())
-
+        factores_cortos = [
+            t.split(" — ")[0].strip().lstrip("⚠️ ").strip()
+            for textos in factores_dict.values()
+            for t in textos
+        ]
         if factores_cortos:
             causas_str = "; ".join(factores_cortos[:3])
             explicacion = (
                 f"La clasificación '{nivel}' fue determinada principalmente por: {causas_str}. "
-                f"El modelo analizó {len(self._features)} variables clínicas. "
-                f"La probabilidad estimada para esta clase es {prob_nivel:.1f}% "
-                f"(clase Alta según Random Forest)."
+                f"Probabilidad estimada para esta clase: {prob_nivel:.1f}%."
             )
-            if len(factores_dict) > 3:
-                explicacion += f" Se detectaron {len(factores_dict)} factores de riesgo en total."
+            if not self._loaded:
+                explicacion += " Se usó el respaldo clínico por reglas porque el modelo ML no está disponible."
         else:
             explicacion = (
                 f"Los parámetros clínicos analizados corresponden a un perfil de riesgo '{nivel}'. "
                 f"No se detectaron factores de riesgo individuales destacados. "
                 f"Probabilidad estimada: {prob_nivel:.1f}%."
             )
+            if not self._loaded:
+                explicacion += " Se usó el respaldo clínico por reglas porque el modelo ML no está disponible."
 
         return ResultadoPrediccion(
-            nivel_riesgo           = nivel,
-            probabilidades         = probs,
-            probabilidad_nivel     = prob_nivel,
-            puntuacion             = puntuacion,
-            color                  = LABEL_COLORS[nivel],
-            icono                  = LABEL_ICONS[nivel],
-            factores_detectados    = factores_texto,
-            complicaciones         = complicaciones,
-            recomendaciones        = recomendaciones_plana,
-            recomendaciones_grupos = grupos,
-            explicacion            = explicacion,
-            datos_clinicos         = datos_clinicos,
-            alerta_critica         = alerta_critica,
-            nota_antecedente       = nota_antecedente,
+            nivel_riesgo=nivel,
+            probabilidades=probs,
+            probabilidad_nivel=prob_nivel,
+            puntuacion=int(prob_nivel),
+            color=LABEL_COLORS[nivel],
+            icono=LABEL_ICONS[nivel],
+            factores_detectados=factores_texto,
+            complicaciones=complicaciones,
+            recomendaciones=recomendaciones_plana,
+            recomendaciones_grupos=grupos,
+            explicacion=explicacion,
+            datos_clinicos=datos_clinicos,
+            alerta_critica=alerta_critica,
+            nota_antecedente=nota_antecedente,
         )
+
+    def _predict_rule_based(self, datos_clinicos: dict) -> ResultadoPrediccion:
+        """Respaldo determinístico si el modelo entrenado no está disponible."""
+        sistolica = datos_clinicos.get("systolic_bp", 110)
+        diastolica = datos_clinicos.get("diastolic_bp", 70)
+        glucosa = datos_clinicos.get("glucose", 5.0)
+        bmi = datos_clinicos.get("bmi", 23.0)
+        edad = datos_clinicos.get("age", 25)
+        prev_comp = int(datos_clinicos.get("prev_complications", 0))
+        diab_pre = int(datos_clinicos.get("diabetes_preexisting", 0))
+        diab_gest = int(datos_clinicos.get("diabetes_gestacional", 0))
+
+        puntos = 0
+        if sistolica >= 160 or diastolica >= 110:
+            puntos += 5
+        elif sistolica >= 140 or diastolica >= 90:
+            puntos += 3
+        elif sistolica >= 130 or diastolica >= 85:
+            puntos += 1
+        if glucosa > 11.1:
+            puntos += 4
+        elif glucosa > 7.8:
+            puntos += 3
+        elif glucosa > 5.6 and (diab_pre or diab_gest):
+            puntos += 2
+        if bmi >= 35:
+            puntos += 3
+        elif bmi >= 30:
+            puntos += 2
+        elif bmi >= 25:
+            puntos += 1
+        if edad >= 40:
+            puntos += 2
+        elif edad >= 35:
+            puntos += 1
+        puntos += 2 if prev_comp else 0
+        puntos += 2 if diab_pre else 0
+        puntos += 2 if diab_gest else 0
+
+        if puntos >= 6:
+            nivel = "Alto"
+            prob_nivel = min(95, 68 + puntos * 4)
+            probs = {"Bajo": 5.0, "Medio": max(0.0, 95.0 - prob_nivel), "Alto": float(prob_nivel)}
+        elif puntos >= 3:
+            nivel = "Medio"
+            prob_nivel = min(85, 55 + puntos * 5)
+            probs = {"Bajo": max(5.0, 100.0 - prob_nivel - 15.0), "Medio": float(prob_nivel), "Alto": 15.0}
+        else:
+            nivel = "Bajo"
+            prob_nivel = max(60, 82 - puntos * 7)
+            probs = {"Bajo": float(prob_nivel), "Medio": max(5.0, 100.0 - prob_nivel - 5.0), "Alto": 5.0}
+
+        return self._resultado_clinico(datos_clinicos, nivel, probs, float(prob_nivel))
+
+    def predict(self, datos_clinicos: dict) -> ResultadoPrediccion:
+        """
+        Realiza la predicción de riesgo prenatal.
+
+        IMPORTANTE: glucose debe estar en mmol/L.
+        Conversión: glucose_mgdl / 18.0 = mmol/L
+        """
+        if not self._loaded:
+            return self._predict_rule_based(datos_clinicos)
+
+        # ── Construir vector y predecir ────────────────────────────────────
+        try:
+            X_df = self._build_feature_vector(datos_clinicos)
+            X_sc = self._scaler.transform(X_df)
+
+            clase_pred         = int(self._model.predict(X_sc)[0])
+            probabilidades_arr = self._model.predict_proba(X_sc)[0]
+        except Exception as exc:
+            print(f"[Zumedical AI] Error al predecir con ML. Usando respaldo clinico: {exc}")
+            return self._predict_rule_based(datos_clinicos)
+
+        probs = {
+            LABEL_DECODE[i]: round(float(p) * 100, 1)
+            for i, p in enumerate(probabilidades_arr)
+        }
+        nivel      = LABEL_DECODE[clase_pred]
+        prob_nivel = probs[nivel]
+        puntuacion = int(prob_nivel)
+
+        resultado = self._resultado_clinico(datos_clinicos, nivel, probs, prob_nivel)
+        if resultado.factores_detectados:
+            resultado.explicacion += (
+                f" El modelo analizó {len(self._features)} variables clínicas "
+                f"(clase {nivel} según Random Forest)."
+            )
+        return resultado
 
 
 # Instancia global — se carga al importar el módulo

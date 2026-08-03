@@ -10,6 +10,7 @@ Flujo correcto:
 """
 
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
 
 from .models import PrediccionIA
 from pacientes.models import Paciente
@@ -22,13 +23,14 @@ def _medico_prenatal_check(request):
         return (request.user.medico.especialidad and
                 request.user.medico.especialidad.tipo == 'prenatal')
     except Exception:
-        return True
+        return False
 
 
 # ─────────────────────────────────────────────────────────────────────────────
 # VISTA PACIENTE — Solo visualización del resultado IA
 # ─────────────────────────────────────────────────────────────────────────────
 
+@login_required
 def evaluar_riesgo(request):
     """
     Vista para la paciente prenatal — solo visualización.
@@ -66,6 +68,7 @@ def evaluar_riesgo(request):
 # VISTA MÉDICO — Panel clínico completo
 # ─────────────────────────────────────────────────────────────────────────────
 
+@login_required
 def ver_predicciones_paciente(request, paciente_id):
     """
     Vista para el médico: panel clínico completo.
@@ -81,7 +84,7 @@ def ver_predicciones_paciente(request, paciente_id):
     try:
         es_prenatal = user.medico.especialidad and user.medico.especialidad.tipo == 'prenatal'
     except Exception:
-        es_prenatal = True
+        es_prenatal = False
 
     if not es_prenatal:
         from django.contrib import messages as msg

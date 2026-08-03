@@ -24,6 +24,14 @@ class PrediccionIA(models.Model):
         related_name="predicciones",
         verbose_name="Paciente",
     )
+    control = models.ForeignKey(
+        "control_prenatal.ControlPrenatal",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="predicciones_ia",
+        verbose_name="Control prenatal asociado",
+    )
 
     # ── Datos clínicos de entrada ──────────────────────────────────────────
     edad                  = models.IntegerField(verbose_name="Edad (años)")
@@ -34,7 +42,7 @@ class PrediccionIA(models.Model):
     peso                  = models.FloatField(verbose_name="Peso (kg)")
     altura                = models.FloatField(default=1.60, verbose_name="Altura (m)")
     imc                   = models.FloatField(default=0.0, verbose_name="IMC")
-    glucosa               = models.FloatField(verbose_name="Glucosa (mmol/L)")
+    glucosa               = models.FloatField(verbose_name="Glucosa (mg/dL)")
     frecuencia_cardiaca   = models.IntegerField(default=75, verbose_name="Frecuencia cardíaca")
     temperatura           = models.FloatField(default=98.0, verbose_name="Temperatura (°F)")
     embarazos_previos     = models.IntegerField(default=0, verbose_name="Embarazos previos")

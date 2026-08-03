@@ -234,10 +234,17 @@ def editar_control_prenatal(request, control_id):
         
         if form.is_valid():
             # Guardar el control actualizado
-            form.save()
+            control = form.save()
+            prediccion = None
+            try:
+                from usuarios.views import _ejecutar_ia_en_control
+                prediccion = _ejecutar_ia_en_control(control, request)
+            except Exception:
+                prediccion = None
             return JsonResponse({
                 'success': True,
-                'message': 'Control prenatal actualizado correctamente.'
+                'message': 'Control prenatal actualizado correctamente.',
+                'ia_actualizada': bool(prediccion),
             })
         else:
             # Retornar errores de validación

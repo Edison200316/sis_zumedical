@@ -3,7 +3,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zumedical — Controles Prenatales</title>
+    <title>Zumedical - Controles Prenatales</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
@@ -38,7 +38,7 @@
         .btn-logout{display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;border-radius:10px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;transition:all .2s}
         .btn-logout:hover{background:rgba(255,255,255,.15);color:white}
 
-        /* -- TOPBAR MÓVIL -- */
+        /* -- TOPBAR MÃ“VIL -- */
         .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300}
         .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
         .mobile-topbar-brand img{width:32px;height:32px;background:white;border-radius:50%;padding:2px;object-fit:contain}
@@ -184,14 +184,14 @@
     </div>
     <div class="sb-user">
         <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}</div>
-        <div class="sb-user-info"><p>Sesión activa</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
+        <div class="sb-user-info"><p>SesiÃ³n activa</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
     </div>
     <nav class="sb-nav">
         <div class="nav-lbl">Panel</div>
         <a href="{% url 'admin_dashboard' %}" class="nav-item"><i class="fa-solid fa-grid-2"></i> Inicio</a>
-        <div class="nav-lbl">Gestión</div>
+        <div class="nav-lbl">GestiÃ³n</div>
         <a href="{% url 'lista_usuarios' %}" class="nav-item"><i class="fa-solid fa-users"></i> Usuarios</a>
-        <a href="{% url 'lista_medicos' %}" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Médicos</a>
+        <a href="{% url 'lista_medicos' %}" class="nav-item"><i class="fa-solid fa-user-doctor"></i> MÃ©dicos</a>
         <a href="{% url 'lista_pacientes' %}" class="nav-item"><i class="fa-solid fa-hospital-user"></i> Pacientes</a>
         <a href="{% url 'todas_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Citas
@@ -199,10 +199,10 @@
         </a>
         <a href="{% url 'controles_admin' %}" class="nav-item active"><i class="fa-solid fa-heart-pulse"></i> Controles Prenatales</a>
         <div class="nav-lbl">Sistema</div>
-        <a href="{% url 'auditoria_admin' %}" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Auditoría</a>
+        <a href="{% url 'auditoria_admin' %}" class="nav-item"><i class="fa-solid fa-shield-halved"></i> AuditorÃ­a</a>
     </nav>
     <div class="sb-footer">
-        <a href="{% url 'logout' %}" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión</a>
+        <a href="{% url 'logout' %}" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesiÃ³n</a>
     </div>
 </aside>
 
@@ -210,7 +210,7 @@
     <div class="page-header">
         <div>
             <h1>Controles Prenatales</h1>
-            <p>Registro de controles de embarazo — haz clic en una paciente para ver el detalle</p>
+            <p>Registro de controles de embarazo - haz clic en una paciente para ver el detalle</p>
         </div>
         <a href="{% url 'admin_dashboard' %}" class="back-btn">
             <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Volver
@@ -229,11 +229,11 @@
         </div>
         <div class="stat-card">
             <div class="stat-icon si-green"><i class="fa-solid fa-user-doctor"></i></div>
-            <div class="stat-info"><p>Médico activo</p><strong id="stat-medico">—</strong></div>
+            <div class="stat-info"><p>MÃ©dico activo</p><strong id="stat-medico">-</strong></div>
         </div>
         <div class="stat-card">
             <div class="stat-icon si-amber"><i class="fa-regular fa-calendar"></i></div>
-            <div class="stat-info"><p>Prom. semanas</p><strong id="stat-semanas">—</strong><span>de gestación</span></div>
+            <div class="stat-info"><p>Prom. semanas</p><strong id="stat-semanas">-</strong><span>de gestaciÃ³n</span></div>
         </div>
     </div>
 
@@ -242,7 +242,7 @@
         <div class="table-toolbar">
             <div class="search-wrap">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" id="searchInput" placeholder="Buscar por paciente, médico...">
+                <input type="text" id="searchInput" placeholder="Buscar por paciente, mÃ©dico...">
             </div>
             <span class="count-pill" id="countPill">{{ controles|length }} control{{ controles|length|pluralize:"es" }}</span>
         </div>
@@ -251,10 +251,10 @@
                 <thead>
                     <tr>
                         <th>Paciente</th>
-                        <th>Médico</th>
+                        <th>MÃ©dico</th>
                         <th>Fecha</th>
                         <th>Semanas</th>
-                        <th>Presión</th>
+                        <th>PresiÃ³n</th>
                         <th>Peso</th>
                         <th>Observaciones</th>
                         <th style="text-align:center">Ver</th>
@@ -278,7 +278,7 @@
                                 <div class="pac-avatar">{{ c.paciente.first_name|slice:":1"|upper }}{{ c.paciente.last_name|slice:":1" }}</div>
                                 <div>
                                     <div class="pac-name">{{ c.paciente.get_full_name|default:c.paciente.username }}</div>
-                                    <div class="pac-email">{{ c.paciente.email|default:"—" }}</div>
+                                    <div class="pac-email">{{ c.paciente.email|default:"-" }}</div>
                                 </div>
                             </div>
                         </td>
@@ -287,7 +287,7 @@
                         <td><span class="badge-semanas"><i class="fa-regular fa-clock"></i> {{ c.semanas_gestacion }} sem.</span></td>
                         <td>{{ c.presion_arterial }}</td>
                         <td>{{ c.peso }} kg</td>
-                        <td><div class="obs-cell" title="{{ c.observaciones }}">{{ c.observaciones|default:"—" }}</div></td>
+                        <td><div class="obs-cell" title="{{ c.observaciones }}">{{ c.observaciones|default:"-" }}</div></td>
                         <td style="text-align:center">
                             <span class="click-hint"><i class="fa-solid fa-eye"></i> Ver</span>
                         </td>
@@ -308,54 +308,54 @@
         <div class="modal-header">
             <div class="modal-avatar" id="modal-avatar">VM</div>
             <div class="modal-header-info">
-                <h2 id="modal-paciente">—</h2>
+                <h2 id="modal-paciente">-</h2>
                 <p id="modal-subtitulo">Control prenatal</p>
             </div>
             <button class="modal-close" id="modal-close-btn"><i class="fa-solid fa-xmark"></i></button>
         </div>
 
-        <!-- SECCIÓN: Datos del control -->
+        <!-- SECCIÃ“N: Datos del control -->
         <div class="modal-section">
             <div class="modal-section-title"><i class="fa-solid fa-stethoscope"></i> Datos del control</div>
             <div class="modal-grid">
                 <div class="modal-item">
                     <div class="modal-item-label"><i class="fa-regular fa-calendar"></i> Fecha</div>
-                    <div class="modal-item-valor" id="modal-fecha">—</div>
+                    <div class="modal-item-valor" id="modal-fecha">-</div>
                 </div>
                 <div class="modal-item">
-                    <div class="modal-item-label"><i class="fa-solid fa-user-doctor"></i> Médico</div>
-                    <div class="modal-item-valor" id="modal-medico">—</div>
+                    <div class="modal-item-label"><i class="fa-solid fa-user-doctor"></i> MÃ©dico</div>
+                    <div class="modal-item-valor" id="modal-medico">-</div>
                 </div>
                 <div class="modal-item">
-                    <div class="modal-item-label"><i class="fa-regular fa-clock"></i> Semanas de gestación</div>
-                    <div class="modal-item-valor highlight" id="modal-semanas">—</div>
+                    <div class="modal-item-label"><i class="fa-regular fa-clock"></i> Semanas de gestaciÃ³n</div>
+                    <div class="modal-item-valor highlight" id="modal-semanas">-</div>
                     <div class="semanas-bar"><div class="semanas-fill" id="modal-semanas-bar" style="width:0%"></div></div>
                 </div>
                 <div class="modal-item">
                     <div class="modal-item-label"><i class="fa-solid fa-weight-scale"></i> Peso</div>
-                    <div class="modal-item-valor" id="modal-peso">—</div>
+                    <div class="modal-item-valor" id="modal-peso">-</div>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN: Signos vitales -->
+        <!-- SECCIÃ“N: Signos vitales -->
         <div class="modal-section">
             <div class="modal-section-title"><i class="fa-solid fa-heart-pulse"></i> Signos vitales</div>
             <div class="modal-grid">
                 <div class="modal-item">
-                    <div class="modal-item-label"><i class="fa-solid fa-droplet"></i> Presión arterial</div>
-                    <div class="modal-item-valor highlight" id="modal-presion">—</div>
+                    <div class="modal-item-label"><i class="fa-solid fa-droplet"></i> PresiÃ³n arterial</div>
+                    <div class="modal-item-valor highlight" id="modal-presion">-</div>
                 </div>
             </div>
         </div>
 
-        <!-- SECCIÓN: Observaciones -->
+        <!-- SECCIÃ“N: Observaciones -->
         <div class="modal-section">
             <div class="modal-section-title"><i class="fa-regular fa-comment-dots"></i> Observaciones</div>
             <div class="modal-grid">
                 <div class="modal-item full">
-                    <div class="modal-item-label"><i class="fa-regular fa-file-lines"></i> Notas clínicas</div>
-                    <div class="modal-item-valor" id="modal-obs" style="white-space:pre-wrap;line-height:1.6">—</div>
+                    <div class="modal-item-label"><i class="fa-regular fa-file-lines"></i> Notas clÃ­nicas</div>
+                    <div class="modal-item-valor" id="modal-obs" style="white-space:pre-wrap;line-height:1.6">-</div>
                 </div>
             </div>
         </div>
@@ -390,7 +390,7 @@ function closeSidebar() {
 document.addEventListener('DOMContentLoaded', function() {
     var rows = document.querySelectorAll('.control-row');
 
-    // -- Stats dinámicos --
+    // -- Stats dinÃ¡micos --
     var totalSemanas = 0;
     var medicosSet = new Set();
     rows.forEach(function(r) {
@@ -407,10 +407,10 @@ document.addEventListener('DOMContentLoaded', function() {
     } else if (medicosSet.size > 1) {
         document.getElementById('stat-medico').textContent = medicosSet.size;
         document.querySelector('.stat-card:nth-child(3) .stat-info span') && 
-            (document.querySelector('.stat-card:nth-child(3) .stat-info').innerHTML += '<span>médicos</span>');
+            (document.querySelector('.stat-card:nth-child(3) .stat-info').innerHTML += '<span>mÃ©dicos</span>');
     }
 
-    // -- Búsqueda --
+    // -- BÃºsqueda --
     var countPill = document.getElementById('countPill');
     document.getElementById('searchInput').addEventListener('input', function() {
         var q = this.value.toLowerCase();
@@ -433,7 +433,7 @@ document.addEventListener('DOMContentLoaded', function() {
             var d = row.dataset;
             document.getElementById('modal-avatar').textContent   = d.pacienteIni;
             document.getElementById('modal-paciente').textContent = d.paciente;
-            document.getElementById('modal-subtitulo').textContent = 'Control #' + d.id + ' — ' + d.fecha;
+            document.getElementById('modal-subtitulo').textContent = 'Control #' + d.id + ' - ' + d.fecha;
             document.getElementById('modal-fecha').textContent    = d.fecha;
             document.getElementById('modal-medico').textContent   = d.medico;
             document.getElementById('modal-semanas').textContent  = d.semanas + ' semanas';
@@ -442,7 +442,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('modal-obs').textContent      = d.observaciones;
             document.getElementById('modal-delete-link').href     = d.deleteUrl;
 
-            // Barra de progreso semanas (máx 42)
+            // Barra de progreso semanas (mÃ¡x 42)
             var pct = Math.min(100, Math.round((parseInt(d.semanas) / 42) * 100));
             document.getElementById('modal-semanas-bar').style.width = pct + '%';
 

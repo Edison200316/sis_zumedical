@@ -1019,8 +1019,7 @@ def _ejecutar_ia_en_control(control, request=None):
         logger = logging.getLogger(__name__)
 
         if not ml_engine.modelo_disponible:
-            logger.warning('[IA] Modelo no disponible — saltando prediccion')
-            return None
+            logger.warning('[IA] Modelo ML no disponible — usando respaldo clinico por reglas')
 
         # Obtener perfil del paciente
         try:
@@ -1108,6 +1107,7 @@ def _ejecutar_ia_en_control(control, request=None):
             'explicacion':     resultado.explicacion,
             'alerta_critica':  resultado.alerta_critica,
             'nota_antecedente': resultado.nota_antecedente,
+            'motor_usado':     'ml_random_forest' if ml_engine.modelo_disponible else 'respaldo_clinico_reglas',
             'datos_procesados': {
                 'glucosa_mmol':  glucosa_mmol,
                 'glucosa_mgdl':  round(float(control.glucosa), 1),
@@ -1119,6 +1119,7 @@ def _ejecutar_ia_en_control(control, request=None):
 
         prediccion = PrediccionIA.objects.create(
             paciente               = perfil,
+            control                = control,
             edad                   = edad,
             semanas_gestacion      = int(control.semanas_gestacion),
             presion_arterial       = str(control.presion_arterial),
@@ -1175,19 +1176,29 @@ def historial_prenatal(request):
         for p in Paciente.objects.filter(usuario_id__in=paciente_ids)
     }
 
-    # Obtener la última predicción de cada paciente en un solo query
-    predicciones_map = {}
+    # Preferir la predicción asociada al control; para datos antiguos sin vínculo,
+    # usar la última predicción de la paciente como fallback.
+    predicciones_por_control = {}
     for pred in PrediccionIA.objects.filter(
-        paciente__usuario_id__in=paciente_ids
+        control_id__in=[c.id for c in controles],
+        control_id__isnull=False,
+    ).select_related('control').order_by('control_id', '-fecha'):
+        if pred.control_id not in predicciones_por_control:
+            predicciones_por_control[pred.control_id] = pred
+
+    predicciones_fallback_paciente = {}
+    for pred in PrediccionIA.objects.filter(
+        paciente__usuario_id__in=paciente_ids,
+        control__isnull=True,
     ).select_related('paciente').order_by('paciente', '-fecha'):
         pid = pred.paciente.usuario_id
-        if pid not in predicciones_map:
-            predicciones_map[pid] = pred
+        if pid not in predicciones_fallback_paciente:
+            predicciones_fallback_paciente[pid] = pred
 
-    # Adjuntar al control su predicción más reciente
+    # Adjuntar al control su predicción clínica correspondiente
     controles_enriquecidos = []
     for c in controles:
-        c.prediccion_ia = predicciones_map.get(c.paciente_id)
+        c.prediccion_ia = predicciones_por_control.get(c.id) or predicciones_fallback_paciente.get(c.paciente_id)
         c.imc_calculado = c.imc
         controles_enriquecidos.append(c)
 

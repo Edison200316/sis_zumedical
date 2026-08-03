@@ -2121,9 +2121,9 @@
       </div>
     </div>
 
-    {% include 'medico/partials/modal-editar-control.html' %}
-    {% include 'medico/partials/modal-confirmar-eliminar.html' %}
-    {% include 'medico/sidebar_medico.html' %}
+    {% include 'medico/partials/modal-editar-control.html' %} {% include
+    'medico/partials/modal-confirmar-eliminar.html' %} {% include
+    'medico/sidebar_medico.html' %}
 
     <main class="main">
       <!-- TOASTS Django messages -->
@@ -2382,8 +2382,8 @@
                   %}
                 >
                   <div class="pac-av">
-                    {{ c.paciente.first_name|slice:":1"}}{{
-                    c.paciente.last_name|slice:":1"}}
+                    {{ c.paciente.first_name|slice:":1" }}{{
+                    c.paciente.last_name|slice:":1" }}
                   </div>
                   <div>
                     <div class="pac-name">
@@ -2639,8 +2639,8 @@
               %}
             >
               <div class="cc-av">
-                {{ c.paciente.first_name|slice:":1"}}{{
-                c.paciente.last_name|slice:":1"}}
+                {{ c.paciente.first_name|slice:":1" }}{{
+                c.paciente.last_name|slice:":1" }}
               </div>
               <div class="cc-info">
                 <div class="cc-name">
@@ -3677,83 +3677,346 @@
         }
       }
     </script>
-    <script src="{% static 'js/historial-controles.js' %}?v=7"></script>
 
-    <!-- Script de verificación e inicialización -->
+    <!-- ═══════════════════════════════════════════════════════════════
+         FUNCIONES NUEVAS PARA EDITAR Y ELIMINAR (INLINE - SIN CACHE)
+         ═══════════════════════════════════════════════════════════════ -->
     <script>
-      // Verificar que todos los componentes estén cargados
-      document.addEventListener("DOMContentLoaded", function () {
-        console.log("🔍 Verificando componentes del historial prenatal...");
+      console.log("🟢 Cargando funciones NUEVAS de editar/eliminar...");
 
-        // Verificar jsPDF
-        if (window.jspdf && window.jspdf.jsPDF) {
-          console.log("✅ jsPDF cargado correctamente");
-        } else {
-          console.error("❌ jsPDF NO está disponible");
-          mostrarToast(
-            "Error: Librería PDF no cargada. Recarga la página.",
-            "error",
-          );
+      var _controlIdActual = null;
+
+      function _obtenerCSRF() {
+        var nombre = "csrftoken";
+        var valor = null;
+        if (document.cookie && document.cookie !== "") {
+          var cookies = document.cookie.split(";");
+          for (var i = 0; i < cookies.length; i++) {
+            var cookie = cookies[i].trim();
+            if (cookie.substring(0, nombre.length + 1) === nombre + "=") {
+              valor = decodeURIComponent(cookie.substring(nombre.length + 1));
+              break;
+            }
+          }
         }
+        return valor;
+      }
 
-        // Verificar funciones
-        const funciones = {
-          abrirEditarControl: typeof abrirEditarControl === "function",
-          abrirConfirmarEliminar: typeof abrirConfirmarEliminar === "function",
-          generarPDF: typeof generarPDF === "function",
-          guardarControl: typeof guardarControl === "function",
-          confirmarEliminar: typeof confirmarEliminar === "function",
+      function _obtenerDatosControl(btnElement) {
+        var card = btnElement.closest(".control-card");
+        var row = btnElement.closest("tr");
+        var datos = {
+          nombre: "—",
+          iniciales: "?",
+          fecha: "—",
+          semanas: "—",
+          presion: "—",
         };
 
-        console.log("📋 Funciones disponibles:", funciones);
+        if (card) {
+          var n = card.querySelector(".cc-name");
+          var av = card.querySelector(".cc-av");
+          var dt = card.querySelector(".cc-date");
+          var sm = card.querySelector(".semanas-badge");
+          var pr = card.querySelector(".presion-val");
+          if (n) datos.nombre = n.textContent.trim();
+          if (av) datos.iniciales = av.textContent.trim();
+          if (dt) datos.fecha = dt.textContent.trim();
+          if (sm) datos.semanas = sm.textContent.trim();
+          if (pr) datos.presion = pr.textContent.trim();
+        } else if (row) {
+          var pn = row.querySelector(".pac-name");
+          var pa = row.querySelector(".pac-av");
+          var celdas = row.querySelectorAll("td");
+          var ps = row.querySelector(".semanas-badge");
+          var pp = row.querySelector(".presion-val");
+          if (pn) datos.nombre = pn.textContent.trim();
+          if (pa) datos.iniciales = pa.textContent.trim();
+          if (celdas && celdas[1]) datos.fecha = celdas[1].textContent.trim();
+          if (ps) datos.semanas = ps.textContent.trim();
+          if (pp) datos.presion = pp.textContent.trim();
+        }
+        return datos;
+      }
 
-        const todasDisponibles = Object.values(funciones).every(
-          (v) => v === true,
+      // ─── FUNCIONES DE EDITAR ────────────────────────────────────────
+
+      function abrirEditarControl(controlId) {
+        console.log("📝 EDITAR control ID:", controlId);
+        _controlIdActual = controlId;
+
+        var btn = document.querySelector(
+          '[data-control-id="' + controlId + '"]',
         );
-        if (todasDisponibles) {
-          console.log("✅ Todas las funciones cargadas correctamente");
-        } else {
-          console.error(
-            "❌ Algunas funciones NO están disponibles:",
-            Object.keys(funciones).filter((k) => !funciones[k]),
-          );
+        if (btn) {
+          var d = _obtenerDatosControl(btn);
+          var elAv = document.getElementById("me-av");
+          var elNom = document.getElementById("me-nombre");
+          if (elAv) elAv.textContent = d.iniciales;
+          if (elNom) elNom.textContent = d.nombre;
         }
 
-        // Verificar modales
-        const modales = {
-          "modal-editar-overlay": !!document.getElementById(
-            "modal-editar-overlay",
-          ),
-          "modal-eliminar-overlay": !!document.getElementById(
-            "modal-eliminar-overlay",
-          ),
+        fetch("/control-prenatal/api/control/" + controlId + "/editar/", {
+          method: "GET",
+          headers: {
+            Accept: "application/json",
+            "X-Requested-With": "XMLHttpRequest",
+          },
+        })
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (resp) {
+            if (resp.success) {
+              var d = resp.data;
+              var setVal = function (id, val) {
+                var el = document.getElementById(id);
+                if (el && val !== null && val !== undefined) el.value = val;
+              };
+              setVal("me-control-id", d.id);
+              setVal("me-fecha", d.fecha);
+              setVal("me-semanas", d.semanas_gestacion);
+              setVal("me-presion", d.presion_arterial);
+              setVal("me-peso", d.peso);
+              setVal("me-altura", d.altura);
+              setVal("me-glucosa", d.glucosa);
+              setVal("me-fc", d.frecuencia_cardiaca);
+              setVal("me-temp", d.temperatura);
+              setVal("me-proteinuria", d.proteinuria || "Negativa");
+              setVal("me-obs", d.observaciones);
+
+              var errs = document.getElementById("me-errors");
+              if (errs) errs.style.display = "none";
+              var errsList = document.getElementById("me-errors-list");
+              if (errsList) errsList.innerHTML = "";
+
+              var overlay = document.getElementById("modal-editar-overlay");
+              if (overlay) {
+                overlay.classList.add("open");
+                document.body.style.overflow = "hidden";
+              }
+            } else {
+              mostrarToast(resp.error || "Error al cargar datos", "error");
+            }
+          })
+          .catch(function (err) {
+            console.error(err);
+            mostrarToast("Error de conexión al cargar control", "error");
+          });
+      }
+
+      function cerrarEditarModal(event) {
+        if (event && event.type === "click") {
+          var mc = document.querySelector("#modal-editar-overlay .modal");
+          if (mc && mc.contains(event.target)) return;
+        }
+        var overlay = document.getElementById("modal-editar-overlay");
+        if (overlay) {
+          overlay.classList.remove("open");
+          document.body.style.overflow = "";
+        }
+        _controlIdActual = null;
+      }
+
+      function guardarControl(event) {
+        event.preventDefault();
+        if (!_controlIdActual) {
+          mostrarToast("Error: ID de control no disponible", "error");
+          return;
+        }
+
+        var form = document.getElementById("form-editar-control");
+        var fd = new FormData(form);
+        var datos = {
+          fecha: fd.get("fecha"),
+          semanas_gestacion: parseInt(fd.get("semanas_gestacion")),
+          presion_arterial: fd.get("presion_arterial"),
+          peso: parseFloat(fd.get("peso")),
+          altura: parseFloat(fd.get("altura")) || null,
+          glucosa: parseFloat(fd.get("glucosa")) || null,
+          frecuencia_cardiaca: parseInt(fd.get("frecuencia_cardiaca")) || null,
+          temperatura: parseFloat(fd.get("temperatura")) || null,
+          proteinuria: fd.get("proteinuria"),
+          observaciones: fd.get("observaciones"),
         };
 
-        console.log("🎭 Modales en DOM:", modales);
+        var errores = [];
+        if (!/^\d+\s*\/\s*\d+$/.test(datos.presion_arterial))
+          errores.push("Presión arterial debe ser formato 120/80");
+        if (isNaN(datos.peso) || datos.peso <= 0)
+          errores.push("Peso debe ser un número positivo");
+        if (
+          isNaN(datos.semanas_gestacion) ||
+          datos.semanas_gestacion < 1 ||
+          datos.semanas_gestacion > 42
+        )
+          errores.push("Semanas deben estar entre 1 y 42");
 
-        if (Object.values(modales).every((v) => v === true)) {
-          console.log("✅ Todos los modales están en el DOM");
-        } else {
-          console.error("❌ Algunos modales NO están en el DOM");
+        if (errores.length > 0) {
+          var ed = document.getElementById("me-errors");
+          var el = document.getElementById("me-errors-list");
+          if (ed) ed.style.display = "block";
+          if (el) {
+            el.innerHTML = "";
+            errores.forEach(function (m) {
+              var li = document.createElement("li");
+              li.textContent = m;
+              el.appendChild(li);
+            });
+          }
+          return;
         }
 
-        // Verificar botones
-        const botonesEditar = document.querySelectorAll(
-          ".btn-edit, .btn-action.btn-edit",
-        );
-        const botonesEliminar = document.querySelectorAll(
-          ".btn-delete, .btn-action.btn-delete",
-        );
-        const botonesPDF = document.querySelectorAll(".btn-pdf, .cc-pdf");
+        var btnGuardar = form.querySelector('button[type="submit"]');
+        var txtOriginal = btnGuardar.textContent;
+        btnGuardar.disabled = true;
+        btnGuardar.textContent = "Guardando...";
 
-        console.log("🔘 Botones encontrados:", {
-          editar: botonesEditar.length,
-          eliminar: botonesEliminar.length,
-          pdf: botonesPDF.length,
-        });
+        fetch(
+          "/control-prenatal/api/control/" + _controlIdActual + "/editar/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "XMLHttpRequest",
+              "X-CSRFToken": _obtenerCSRF(),
+            },
+            body: JSON.stringify(datos),
+          },
+        )
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (resp) {
+            btnGuardar.disabled = false;
+            btnGuardar.textContent = txtOriginal;
+            if (resp.success) {
+              mostrarToast("✓ Control actualizado correctamente", "success");
+              cerrarEditarModal();
+              setTimeout(function () {
+                location.reload();
+              }, 600);
+            } else {
+              if (resp.errors) {
+                var ed2 = document.getElementById("me-errors");
+                var el2 = document.getElementById("me-errors-list");
+                if (ed2) ed2.style.display = "block";
+                if (el2) {
+                  el2.innerHTML = "";
+                  Object.keys(resp.errors).forEach(function (campo) {
+                    var msgs = resp.errors[campo];
+                    if (Array.isArray(msgs)) {
+                      msgs.forEach(function (m) {
+                        var li = document.createElement("li");
+                        li.textContent = campo + ": " + m;
+                        el2.appendChild(li);
+                      });
+                    }
+                  });
+                }
+              } else {
+                mostrarToast(resp.error || "Error al guardar", "error");
+              }
+            }
+          })
+          .catch(function (err) {
+            btnGuardar.disabled = false;
+            btnGuardar.textContent = txtOriginal;
+            console.error(err);
+            mostrarToast("Error de conexión al guardar", "error");
+          });
+      }
 
-        console.log("✅ Historial prenatal inicializado correctamente");
+      // ─── FUNCIONES DE ELIMINAR ──────────────────────────────────────
+
+      function abrirConfirmarEliminar(controlId) {
+        console.log("🗑️ ELIMINAR control ID:", controlId);
+        _controlIdActual = controlId;
+
+        var btn = document.querySelector(
+          '[data-control-id="' + controlId + '"]',
+        );
+        if (btn) {
+          var d = _obtenerDatosControl(btn);
+          var elNom = document.getElementById("me-del-nombre");
+          var elFec = document.getElementById("me-del-fecha");
+          var elSem = document.getElementById("me-del-semanas");
+          var elPre = document.getElementById("me-del-presion");
+          if (elNom) elNom.textContent = d.nombre;
+          if (elFec) elFec.textContent = d.fecha;
+          if (elSem) elSem.textContent = d.semanas;
+          if (elPre) elPre.textContent = d.presion;
+        }
+
+        var overlay = document.getElementById("modal-eliminar-overlay");
+        if (overlay) {
+          overlay.classList.add("open");
+          document.body.style.overflow = "hidden";
+        }
+      }
+
+      function cerrarEliminarModal(event) {
+        if (event && event.type === "click") {
+          var mc = document.querySelector("#modal-eliminar-overlay .modal");
+          if (mc && mc.contains(event.target)) return;
+        }
+        var overlay = document.getElementById("modal-eliminar-overlay");
+        if (overlay) {
+          overlay.classList.remove("open");
+          document.body.style.overflow = "";
+        }
+        _controlIdActual = null;
+      }
+
+      function confirmarEliminar() {
+        if (!_controlIdActual) {
+          mostrarToast("Error: ID de control no disponible", "error");
+          return;
+        }
+
+        fetch(
+          "/control-prenatal/api/control/" + _controlIdActual + "/eliminar/",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "X-Requested-With": "XMLHttpRequest",
+              "X-CSRFToken": _obtenerCSRF(),
+            },
+            body: JSON.stringify({}),
+          },
+        )
+          .then(function (r) {
+            return r.json();
+          })
+          .then(function (resp) {
+            if (resp.success) {
+              mostrarToast("✓ Control eliminado correctamente", "success");
+              cerrarEliminarModal();
+              setTimeout(function () {
+                location.reload();
+              }, 500);
+            } else {
+              mostrarToast(resp.error || "Error al eliminar", "error");
+            }
+          })
+          .catch(function (err) {
+            console.error(err);
+            mostrarToast("Error de conexión al eliminar", "error");
+          });
+      }
+
+      // ─── CERRAR MODALES CON ESCAPE ──────────────────────────────────
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          var me = document.getElementById("modal-editar-overlay");
+          var md = document.getElementById("modal-eliminar-overlay");
+          if (me && me.classList.contains("open")) cerrarEditarModal();
+          if (md && md.classList.contains("open")) cerrarEliminarModal();
+        }
       });
+
+      console.log("✅ Funciones NUEVAS de editar/eliminar cargadas");
     </script>
   </body>
 </html>

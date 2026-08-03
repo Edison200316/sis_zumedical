@@ -348,6 +348,62 @@
             .btn-nueva-cita{width:100%;justify-content:center;}
             .tabs-container{flex-wrap:wrap;gap:.5rem;}
             .tab-btn{flex:1;text-align:center;}
+            .table-card{overflow:visible;}
+            .table-card::before{border-radius:16px 0 0 16px;}
+            .table-wrapper,
+            #panel-citas-general .table-card > div[style*="overflow-x"]{overflow:visible!important;}
+            table{min-width:0!important;width:100%!important;}
+            thead{display:none;}
+            tbody{display:block;padding:.8rem;}
+            tbody tr.fila-cita,
+            tbody tr.fila-cita-gen{
+                display:block;
+                background:#fff;
+                border:1px solid var(--magenta-border);
+                border-radius:12px;
+                margin-bottom:.85rem;
+                overflow:hidden;
+                box-shadow:0 8px 18px rgba(138,37,99,.06);
+            }
+            tbody tr.fila-cita:hover,
+            tbody tr.fila-cita-gen:hover{background:#fff;}
+            tbody tr.fila-cita td,
+            tbody tr.fila-cita-gen td{
+                display:flex;
+                align-items:flex-start;
+                justify-content:space-between;
+                gap:1rem;
+                padding:.75rem 1rem!important;
+                border-bottom:1px solid #F3E0EE;
+                text-align:right;
+                background:#fff!important;
+            }
+            tbody tr.fila-cita td:last-child,
+            tbody tr.fila-cita-gen td:last-child{border-bottom:none;}
+            tbody tr.fila-cita td::before,
+            tbody tr.fila-cita-gen td::before{
+                content:attr(data-label);
+                flex:0 0 38%;
+                text-align:left;
+                font-size:.68rem;
+                font-weight:700;
+                color:var(--magenta-dark);
+                text-transform:uppercase;
+                letter-spacing:.07em;
+            }
+            tbody tr.fila-cita td:first-child,
+            tbody tr.fila-cita-gen td:first-child{
+                justify-content:flex-start;
+                text-align:left;
+            }
+            tbody tr.fila-cita td:first-child::before,
+            tbody tr.fila-cita-gen td:first-child::before{display:none;}
+            .td-paciente{width:100%;}
+            .td-motivo{max-width:none;white-space:normal;text-align:right;}
+            .acciones-cita{justify-content:flex-end;width:100%;}
+            .acciones-cita form,
+            .btn-accion,
+            .btn-confirmar-cita{width:100%;justify-content:center;}
         }
         .badge-gen-estado{display:inline-flex;align-items:center;gap:.3rem;font-size:.75rem;font-weight:600;padding:.25rem .7rem;border-radius:999px;}
         .badge-gen-pendiente{background:#fff8ed;color:#92600a;}
@@ -520,8 +576,7 @@
                                 data-motivo="{{ cita.motivo }}"
                                 data-id="{{ cita.id }}"
                                 data-reprogramar="{% url 'reprogramar_cita' cita.id %}">
-                                <td>
-                                    <div class="td-paciente">
+                                <td data-label="Paciente"><div class="td-paciente">
                                         <div class="avatar">{{ cita.paciente.first_name|slice:":1" }}{{ cita.paciente.last_name|slice:":1" }}</div>
                                         <div class="td-paciente-info">
                                             <span class="td-paciente-nombre">{{ cita.paciente.get_full_name|default:cita.paciente.username }}</span>
@@ -529,11 +584,10 @@
                                         </div>
                                     </div>
                                 </td>
-                                <td class="td-fecha">{{ cita.fecha|date:"d/m/Y" }}</td>
-                                <td class="td-hora">{{ cita.hora|time:"H:i" }}</td>
-                                <td class="td-motivo" title="{{ cita.motivo }}">{{ cita.motivo }}</td>
-                                <td>
-                                    {% if cita.estado == "pendiente" %}
+                                <td data-label="Fecha" class="td-fecha">{{ cita.fecha|date:"d/m/Y" }}</td>
+                                <td data-label="Hora" class="td-hora">{{ cita.hora|time:"H:i" }}</td>
+                                <td data-label="Motivo" class="td-motivo" title="{{ cita.motivo }}">{{ cita.motivo }}</td>
+                                <td data-label="Estado">{% if cita.estado == "pendiente" %}
                                         <span class="badge badge-pendiente">Pendiente</span>
                                     {% elif cita.estado == "confirmada" %}
                                         <span class="badge badge-confirmada">Confirmada</span>
@@ -547,8 +601,7 @@
                                         <span class="badge badge-pendiente">{{ cita.estado }}</span>
                                     {% endif %}
                                 </td>
-                                <td>
-                                    <div class="acciones-cita" onclick="event.stopPropagation()">
+                                <td data-label="Acciones"><div class="acciones-cita" onclick="event.stopPropagation()">
                                         {% if cita.estado == 'pendiente' %}
                                         <form method="POST" action="{% url 'cambiar_estado_cita' cita.id %}">
                                             {% csrf_token %}
@@ -667,23 +720,21 @@
                         data-especialidad="{{ cita.especialidad|default:"—" }}"
                         data-reprogramar="{{ cita.id }}"
                         style="border-top:1px solid rgba(232,170,212,.3);cursor:pointer;transition:background .15s;">
-                        <td style="padding:.9rem 1.25rem;font-size:.88rem;">
-                            <strong>{{ cita.paciente.get_full_name|default:cita.paciente.username }}</strong>
+                        <td data-label="Paciente" style="padding:.9rem 1.25rem;font-size:.88rem;"><strong>{{ cita.paciente.get_full_name|default:cita.paciente.username }}</strong>
                         </td>
-                        <td style="padding:.9rem 1.25rem;font-size:.88rem;color:var(--text-muted);">
+                        <td data-label="Médico" style="padding:.9rem 1.25rem;font-size:.88rem;color:var(--text-muted);">
                             {{ cita.medico.get_full_name|default:cita.medico.username }}
                         </td>
-                        <td style="padding:.9rem 1.25rem;font-size:.88rem;color:var(--text-muted);">
+                        <td data-label="Especialidad" style="padding:.9rem 1.25rem;font-size:.88rem;color:var(--text-muted);">
                             {{ cita.especialidad|default:"—" }}
                         </td>
-                        <td style="padding:.9rem 1.25rem;font-size:.88rem;">{{ cita.fecha|date:"d/m/Y" }}</td>
-                        <td style="padding:.9rem 1.25rem;font-size:.88rem;">{{ cita.hora|time:"H:i" }}</td>
-                        <td style="padding:.9rem 1.25rem;">
-                            <span class="badge-gen-estado badge-gen-{{ cita.estado }}">
+                        <td data-label="Fecha" style="padding:.9rem 1.25rem;font-size:.88rem;">{{ cita.fecha|date:"d/m/Y" }}</td>
+                        <td data-label="Hora" style="padding:.9rem 1.25rem;font-size:.88rem;">{{ cita.hora|time:"H:i" }}</td>
+                        <td data-label="Estado" style="padding:.9rem 1.25rem;"><span class="badge-gen-estado badge-gen-{{ cita.estado }}">
                                 {{ cita.get_estado_display|default:cita.estado }}
                             </span>
                         </td>
-                        <td style="padding:.9rem 1.25rem;" onclick="event.stopPropagation()">
+                        <td data-label="Acciones" style="padding:.9rem 1.25rem;" onclick="event.stopPropagation()">
                             <div class="acciones-cita">
                                 {% if cita.estado == 'pendiente' %}
                                 <form method="POST" action="{% url 'cambiar_estado_cita' cita.id %}">

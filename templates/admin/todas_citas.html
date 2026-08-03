@@ -1015,6 +1015,97 @@
         }
         .stats-row {
           grid-template-columns: repeat(2, 1fr);
+          gap: .75rem;
+        }
+        .page-header,
+        .table-filters {
+          align-items: stretch;
+          flex-direction: column;
+        }
+        .btn-back,
+        .search-wrap,
+        .filter-btn,
+        .count-pill {
+          width: 100%;
+          justify-content: center;
+        }
+        .tipo-tabs {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: .65rem;
+        }
+        .tipo-tab {
+          justify-content: center;
+          min-width: 0;
+        }
+        .mes-group {
+          overflow: visible;
+        }
+        .table-wrapper {
+          overflow: visible;
+        }
+        table {
+          min-width: 0;
+        }
+        thead {
+          display: none;
+        }
+        tbody {
+          display: block;
+          padding: .8rem;
+        }
+        tbody tr.appointment-row {
+          display: block;
+          border: 1px solid var(--mg-border);
+          border-radius: 12px;
+          margin-bottom: .85rem;
+          overflow: hidden;
+          background: #fff;
+          box-shadow: 0 8px 18px rgba(138, 37, 99, .06);
+        }
+        tbody tr.appointment-row:hover {
+          background: #fff;
+        }
+        tbody tr.appointment-row td {
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+          gap: 1rem;
+          padding: .75rem 1rem;
+          border-bottom: 1px solid rgba(232, 170, 212, .35);
+          text-align: right;
+        }
+        tbody tr.appointment-row td:last-child {
+          border-bottom: none;
+        }
+        tbody tr.appointment-row td::before {
+          content: attr(data-label);
+          flex: 0 0 38%;
+          text-align: left;
+          font-size: .68rem;
+          font-weight: 700;
+          color: var(--mg-d);
+          text-transform: uppercase;
+          letter-spacing: .07em;
+        }
+        tbody tr.appointment-row td:first-child {
+          justify-content: flex-start;
+          text-align: left;
+        }
+        tbody tr.appointment-row td:first-child::before {
+          display: none;
+        }
+        .pac-cell,
+        .btn-sm {
+          width: 100%;
+        }
+        .btn-sm {
+          justify-content: center;
+        }
+        .mes-header {
+          align-items: center;
+          gap: .55rem;
+          padding: .85rem 1rem;
         }
         .modal-body {
           grid-template-columns: 1fr;
@@ -1581,9 +1672,9 @@
                   : c.estado === "atendido"
                     ? "Atendido"
                     : "Cancelado";
-            html += "<tr>";
+            html += '<tr class="appointment-row">';
             html +=
-              '<td><div class="pac-cell" data-id="' +
+              '<td data-label="Paciente"><div class="pac-cell" data-id="' +
               c.id +
               '" data-paciente="' +
               c.paciente +
@@ -1607,18 +1698,18 @@
               c.paciente +
               "</strong><span>Paciente</span></div></div></td>";
             html +=
-              '<td><span style="font-weight:500;font-size:.86rem">' +
+              '<td data-label="Médico"><span style="font-weight:500;font-size:.86rem">' +
               c.medico +
               "</span></td>";
-            html += "<td><strong>" + c.fecha_display + "</strong></td>";
-            html += '<td style="color:var(--muted)">' + c.hora + "</td>";
+            html += '<td data-label="Fecha"><strong>' + c.fecha_display + "</strong></td>";
+            html += '<td data-label="Hora" style="color:var(--muted)">' + c.hora + "</td>";
             html +=
-              '<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.82rem">' +
+              '<td data-label="Motivo" style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--muted);font-size:.82rem">' +
               (c.motivo || "&mdash;") +
               "</td>";
-            html += '<td><span class="badge ' + bc + '">' + bl + "</span></td>";
+            html += '<td data-label="Estado"><span class="badge ' + bc + '">' + bl + "</span></td>";
             html +=
-              '<td><a href="' +
+              '<td data-label="Acción"><a href="' +
               c.delete_url +
               '" class="btn-sm btn-danger"><svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>Eliminar</a></td>';
             html += "</tr>";

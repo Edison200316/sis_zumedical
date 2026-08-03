@@ -205,6 +205,30 @@ def editar_control_prenatal(request, control_id):
                 'error': 'Datos JSON inválidos.'
             }, status=400)
         
+        # Rellenar campos obligatorios que no vienen en el JSON desde la instancia
+        campos_modelo = [f.name for f in ControlPrenatal._meta.get_fields() 
+                        if f.name not in ['id', 'medico'] and not f.auto_created]
+        for campo in campos_modelo:
+            if campo not in data or (data[campo] is None and campo != 'proxima_cita'):
+                valor = getattr(control, campo)
+                # Para campos booleanos False es un valor válido, no lo sobreescribas
+                if isinstance(valor, bool):
+                    if campo not in data:
+                        data[campo] = valor
+                elif campo == 'paciente':
+                    data[campo] = valor.id if hasattr(valor, 'id') else valor
+                elif campo == 'proxima_cita':
+                    # proxima_cita puede ser null
+                    data[campo] = valor.isoformat() if valor else None
+                elif hasattr(valor, 'isoformat'):
+                    # Fechas
+                    data[campo] = valor.isoformat()
+                else:
+                    data[campo] = valor
+        
+        # Sobreescribir paciente siempre (no debe cambiar al editar)
+        data['paciente'] = control.paciente_id
+        
         # Crear formulario con datos y la instancia del control
         form = ControlPrenatalForm(data, instance=control, medico=request.user)
         

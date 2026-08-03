@@ -149,24 +149,27 @@ function abrirConfirmarEliminar(controlId) {
 
   if (row) {
     const celdaPaciente = row.querySelector(".pac-name");
-    const celdaFecha = row.querySelector('td[data-label="Fecha"]');
+    const celdas = row.querySelectorAll("td");
+    const celdaFecha = celdas[1] || row.querySelector('td[data-label="Fecha"]');
     const celdaSemanas = row.querySelector(".semanas-badge");
-    const celdaPresion = row.querySelector(
-      '.presion-val, td[data-label="Presión arterial"] span',
-    );
+    const celdaPresion = row.querySelector(".presion-val");
 
-    if (celdaPaciente)
+    if (celdaPaciente) {
       document.getElementById("me-del-nombre").textContent =
         celdaPaciente.textContent.trim();
-    if (celdaFecha)
+    }
+    if (celdaFecha) {
       document.getElementById("me-del-fecha").textContent =
         celdaFecha.textContent.trim();
-    if (celdaSemanas)
+    }
+    if (celdaSemanas) {
       document.getElementById("me-del-semanas").textContent =
         celdaSemanas.textContent.trim();
-    if (celdaPresion)
+    }
+    if (celdaPresion) {
       document.getElementById("me-del-presion").textContent =
         celdaPresion.textContent.trim();
+    }
   } else if (card) {
     const nombreEl = card.querySelector(".cc-name");
     const dateEl = card.querySelector(".cc-date");

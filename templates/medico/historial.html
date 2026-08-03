@@ -2117,9 +2117,9 @@
       </div>
     </div>
 
-    {% include 'medico/partials/modal-editar-control.html' %}
-    {% include 'medico/partials/modal-confirmar-eliminar.html' %}
-    {% include 'medico/sidebar_medico.html' %}
+    {% include 'medico/partials/modal-editar-control.html' %} {% include
+    'medico/partials/modal-confirmar-eliminar.html' %} {% include
+    'medico/sidebar_medico.html' %}
 
     <main class="main">
       <!-- TOASTS Django messages -->
@@ -2365,13 +2365,22 @@
                   data-temp="{{ c.temperatura|default:'—' }}"
                   data-altura="{{ c.altura|default:'—' }}"
                   data-imc="{{ c.imc|default:'—' }}"
-                  {% if c.prediccion_ia %}                  data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
+                  {%
+                  if
+                  c.prediccion_ia
+                  %}
+                  data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
                   data-ia-pct="{{ c.prediccion_ia.puntuacion_riesgo }}"
                   data-ia-icono="{{ c.prediccion_ia.icono }}"
                   data-ia-url="{% url 'ver_predicciones_paciente' c.paciente.id %}"
-                  {% endif %}                >
+                  {%
+                  endif
+                  %}
+                >
                   <div class="pac-av">
-                    {{ c.paciente.first_name|slice:":1"}}{{ c.paciente.last_name|slice:":1"}}                  </div>
+                    {{ c.paciente.first_name|slice:":1"}}{{
+                    c.paciente.last_name|slice:":1"}}
+                  </div>
                   <div>
                     <div class="pac-name">
                       {{ c.paciente.get_full_name|default:c.paciente.username }}
@@ -2425,7 +2434,9 @@
                                     {% else %}background:#edfaf3;color:#2e7d52;border:1px solid #a8dfc0;{% endif %}
                                 "
                   >
-                    {{ c.prediccion_ia.icono }} {{ c.prediccion_ia.nivel_riesgo }}                    <span style="font-weight: 400; opacity: 0.7"
+                    {{ c.prediccion_ia.icono }} {{ c.prediccion_ia.nivel_riesgo
+                    }}
+                    <span style="font-weight: 400; opacity: 0.7"
                       >({{ c.prediccion_ia.puntuacion_riesgo }}%)</span
                     >
                   </span>
@@ -2459,7 +2470,7 @@
                     flex-wrap: wrap;
                   "
                 >
-                  {% if user.rol in "medico,admin" %}
+                  {% if user.rol == 'medico' or user.rol == 'admin' %}
                   <button
                     class="btn-action btn-edit"
                     onclick="abrirEditarControl({{ c.id }})"
@@ -2554,10 +2565,17 @@
                     data-temp="{{ c.temperatura|default:'—' }}"
                     data-altura="{{ c.altura|default:'—' }}"
                     data-imc="{{ c.imc|default:'—' }}"
-                    {% if c.prediccion_ia %}                    data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
+                    {%
+                    if
+                    c.prediccion_ia
+                    %}
+                    data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
                     data-ia-pct="{{ c.prediccion_ia.puntuacion_riesgo }}"
                     data-ia-icono="{{ c.prediccion_ia.icono }}"
-                    {% endif %}                  >
+                    {%
+                    endif
+                    %}
+                  >
                     <svg viewBox="0 0 24 24">
                       <path
                         d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
@@ -2604,13 +2622,22 @@
               data-temp="{{ c.temperatura|default:'—' }}"
               data-altura="{{ c.altura|default:'—' }}"
               data-imc="{{ c.imc|default:'—' }}"
-              {% if c.prediccion_ia %}              data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
+              {%
+              if
+              c.prediccion_ia
+              %}
+              data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
               data-ia-pct="{{ c.prediccion_ia.puntuacion_riesgo }}"
               data-ia-icono="{{ c.prediccion_ia.icono }}"
               data-ia-url="{% url 'ver_predicciones_paciente' c.paciente.id %}"
-              {% endif %}            >
+              {%
+              endif
+              %}
+            >
               <div class="cc-av">
-                {{ c.paciente.first_name|slice:":1"}}{{ c.paciente.last_name|slice:":1"}}              </div>
+                {{ c.paciente.first_name|slice:":1"}}{{
+                c.paciente.last_name|slice:":1"}}
+              </div>
               <div class="cc-info">
                 <div class="cc-name">
                   {{ c.paciente.get_full_name|default:c.paciente.username }}
@@ -2683,7 +2710,10 @@
                             {% elif c.prediccion_ia.nivel_riesgo == 'Medio' %}background:#fffbeb;color:#b45309;border:1px solid #fcd34d;
                             {% else %}background:#edfaf3;color:#2e7d52;border:1px solid #a8dfc0;{% endif %}"
                 >
-                  {{ c.prediccion_ia.icono }} Riesgo {{ c.prediccion_ia.nivel_riesgo }} — {{ c.prediccion_ia.puntuacion_riesgo }}%                </span>
+                  {{ c.prediccion_ia.icono }} Riesgo {{
+                  c.prediccion_ia.nivel_riesgo }} — {{
+                  c.prediccion_ia.puntuacion_riesgo }}%
+                </span>
               </a>
             </div>
             {% endif %}
@@ -2698,7 +2728,7 @@
                 border-top: 1px solid var(--mg-border);
               "
             >
-              {% if user.rol in "medico,admin" %}
+              {% if user.rol == 'medico' or user.rol == 'admin' %}
               <button
                 class="btn-action btn-edit"
                 onclick="abrirEditarControl({{ c.id }})"
@@ -2798,10 +2828,17 @@
                 data-temp="{{ c.temperatura|default:'—' }}"
                 data-altura="{{ c.altura|default:'—' }}"
                 data-imc="{{ c.imc|default:'—' }}"
-                {% if c.prediccion_ia %}                data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
+                {%
+                if
+                c.prediccion_ia
+                %}
+                data-ia-nivel="{{ c.prediccion_ia.nivel_riesgo }}"
                 data-ia-pct="{{ c.prediccion_ia.puntuacion_riesgo }}"
                 data-ia-icono="{{ c.prediccion_ia.icono }}"
-                {% endif %}              >
+                {%
+                endif
+                %}
+              >
                 <svg viewBox="0 0 24 24">
                   <path
                     d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"
@@ -3205,19 +3242,13 @@
 
       // ── GENERAR PDF ──
       function generarPDF(btn, data) {
-        console.log("🔵 generarPDF llamada con:", btn, data);
-
-        // Verificar que jsPDF esté disponible
         if (!window.jspdf || !window.jspdf.jsPDF) {
-          console.error("❌ jsPDF no está cargado");
           mostrarToast(
-            "Error: Librería PDF no disponible. Recarga la página.",
+            "Error: Libreria PDF no disponible. Recarga la pagina.",
             "error",
           );
           return;
         }
-
-        console.log("✅ jsPDF está disponible");
 
         var d = data || {
           paciente: btn.getAttribute("data-paciente"),
@@ -3234,12 +3265,9 @@
           imc: btn.getAttribute("data-imc"),
           iaNivel: btn.getAttribute("data-ia-nivel"),
           iaPct: btn.getAttribute("data-ia-pct"),
-          iaIcono: btn.getAttribute("data-ia-icono"),
         };
 
-        // Validar datos mínimos
         if (!d.paciente || !d.fecha) {
-          console.error("❌ Datos insuficientes para generar PDF");
           mostrarToast(
             "Error: Faltan datos del control para generar el PDF",
             "error",
@@ -3260,8 +3288,7 @@
         var altura = d.altura || "—",
           imc = d.imc || "—";
         var iaNivel = d.iaNivel || "",
-          iaPct = d.iaPct || "",
-          iaIcono = d.iaIcono || "";
+          iaPct = d.iaPct || "";
 
         try {
           const { jsPDF } = window.jspdf;
@@ -3270,7 +3297,6 @@
             mg = 20;
           let y = 0;
 
-          // Logo de Zumedical (cargar desde Cloudinary)
           const logoUrl =
             "https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png";
           const logoImg = new Image();
@@ -3278,25 +3304,18 @@
 
           logoImg.onload = function () {
             try {
-              // ── HEADER CON DEGRADADO MEJORADO ──
-              // Fondo principal más oscuro
               doc.setFillColor(118, 25, 79);
               doc.rect(0, 0, W, 45, "F");
-
-              // Degradado con múltiples tonos
               doc.setFillColor(138, 37, 99);
               doc.rect(0, 28, W, 8, "F");
               doc.setFillColor(165, 45, 115);
               doc.rect(0, 36, W, 9, "F");
 
-              // Logo circular con borde blanco
               try {
-                // Círculo blanco de fondo para el logo
                 doc.setFillColor(255, 255, 255);
                 doc.circle(mg + 8, 16, 9.5, "F");
                 doc.addImage(logoImg, "PNG", mg - 1, 8, 18, 18);
               } catch (e) {
-                // Fallback si no carga el logo
                 doc.setFillColor(255, 255, 255);
                 doc.circle(mg + 8, 16, 9, "F");
                 doc.setTextColor(138, 37, 99);
@@ -3305,7 +3324,6 @@
                 doc.text("Z", mg + 4.5, 19.5);
               }
 
-              // Texto del header con mejor jerarquía
               doc.setTextColor(255, 255, 255);
               doc.setFontSize(24);
               doc.setFont("helvetica", "bold");
@@ -3315,23 +3333,20 @@
               doc.setFont("helvetica", "normal");
               doc.setTextColor(255, 255, 255);
               doc.text(
-                "Centro de Atención Prenatal Especializada",
+                "Centro de Atencion Prenatal Especializada",
                 mg + 23,
                 23,
               );
               doc.setFontSize(6.5);
               doc.setTextColor(240, 200, 230);
               doc.text(
-                "🌐 www.zumedical.com  |  📞 (593) 2-XXX-XXXX  |  ✉️ info@zumedical.com",
+                "www.zumedical.com   |   (593) 2-XXX-XXXX   |   info@zumedical.com",
                 mg + 23,
                 29,
               );
 
-              // Badge del documento con mejor diseño
               doc.setFillColor(255, 255, 255, 0.95);
               doc.roundedRect(W - mg - 52, 7, 52, 25, 4, 4, "F");
-
-              // Borde sutil
               doc.setDrawColor(220, 180, 210);
               doc.setLineWidth(0.5);
               doc.roundedRect(W - mg - 52, 7, 52, 25, 4, 4, "S");
@@ -3346,7 +3361,7 @@
               doc.setFontSize(7);
               doc.setFont("helvetica", "normal");
               doc.setTextColor(176, 53, 128);
-              doc.text("Informe Médico", W - mg - 26, 19.5, {
+              doc.text("Informe Medico", W - mg - 26, 19.5, {
                 align: "center",
               });
               doc.setFontSize(6.5);
@@ -3370,7 +3385,6 @@
 
               y = 55;
 
-              // ── TÍTULO DEL DOCUMENTO CON MEJOR DISEÑO ──
               doc.setTextColor(138, 37, 99);
               doc.setFontSize(15);
               doc.setFont("helvetica", "bold");
@@ -3379,10 +3393,9 @@
               doc.setFontSize(8);
               doc.setFont("helvetica", "normal");
               doc.setTextColor(138, 96, 112);
-              doc.text("Documento médico oficial", mg, y + 6);
+              doc.text("Documento medico oficial", mg, y + 6);
               y += 10;
 
-              // Línea decorativa con degradado simulado
               doc.setDrawColor(138, 37, 99);
               doc.setLineWidth(1);
               doc.line(mg, y, W - mg, y);
@@ -3391,22 +3404,14 @@
               doc.line(mg, y + 0.5, W - mg, y + 0.5);
               y += 8;
 
-              // Funciones auxiliares para secciones mejoradas
               function sectionTitle(title, yp) {
-                // Barra lateral de color
                 doc.setFillColor(138, 37, 99);
                 doc.roundedRect(mg, yp, 4, 10, 2, 2, "F");
-
-                // Fondo de la sección
                 doc.setFillColor(251, 240, 247);
                 doc.roundedRect(mg + 6, yp, W - mg * 2 - 6, 10, 2, 2, "F");
-
-                // Borde sutil
                 doc.setDrawColor(232, 170, 212);
                 doc.setLineWidth(0.4);
                 doc.roundedRect(mg + 6, yp, W - mg * 2 - 6, 10, 2, 2, "S");
-
-                // Título
                 doc.setTextColor(138, 37, 99);
                 doc.setFontSize(10);
                 doc.setFont("helvetica", "bold");
@@ -3415,22 +3420,18 @@
               }
 
               function dataRow(label, value, yp, isLast) {
-                // Fondo alternado sutil
                 doc.setFillColor(253, 249, 252);
                 doc.rect(mg + 2, yp - 3.5, W - mg * 2 - 4, 7, "F");
-
                 doc.setTextColor(138, 96, 112);
                 doc.setFontSize(8.5);
                 doc.setFont("helvetica", "normal");
                 doc.text(label + ":", mg + 4, yp);
-
                 doc.setTextColor(42, 16, 32);
                 doc.setFont("helvetica", "bold");
                 doc.setFontSize(9);
                 var valueText = String(value || "—");
                 var lines = doc.splitTextToSize(valueText, W - mg * 2 - 68);
                 doc.text(lines, mg + 62, yp);
-
                 if (!isLast) {
                   doc.setDrawColor(240, 225, 235);
                   doc.setLineWidth(0.3);
@@ -3439,17 +3440,15 @@
                 return yp + 7;
               }
 
-              // ── INFORMACIÓN DEL PACIENTE ──
-              y = sectionTitle("📋 Información del Paciente", y);
+              y = sectionTitle("Informacion del Paciente", y);
               y = dataRow("Paciente", paciente, y);
               y = dataRow("Fecha del control", fecha, y);
-              y = dataRow("Médico responsable", medico, y, true);
+              y = dataRow("Medico responsable", medico, y, true);
               y += 8;
 
-              // ── DATOS OBSTÉTRICOS ──
-              y = sectionTitle("🤰 Datos Obstétricos", y);
-              y = dataRow("Semanas de gestación", semanas + " semanas", y);
-              y = dataRow("Presión arterial", presion, y);
+              y = sectionTitle("Datos Obstetricos", y);
+              y = dataRow("Semanas de gestacion", semanas + " semanas", y);
+              y = dataRow("Presion arterial", presion, y);
               y = dataRow(
                 "Peso corporal",
                 peso !== "—" ? peso + " kg" : "—",
@@ -3458,27 +3457,25 @@
               );
               y += 8;
 
-              // ── DATOS CLÍNICOS ──
-              y = sectionTitle("[#] Datos Clínicos para Evaluación IA", y);
+              y = sectionTitle("Datos Clinicos para Evaluacion IA", y);
               y = dataRow(
                 "Glucosa",
                 glucosa !== "—" ? glucosa + " mg/dL" : "—",
                 y,
               );
               y = dataRow(
-                "Frecuencia cardíaca",
+                "Frecuencia cardiaca",
                 fc !== "—" ? fc + " lpm" : "—",
                 y,
               );
-              y = dataRow("Temperatura", temp !== "—" ? temp + " °F" : "—", y);
+              y = dataRow("Temperatura", temp !== "—" ? temp + " F" : "—", y);
               y = dataRow("Altura", altura !== "—" ? altura + " m" : "—", y);
               y = dataRow("IMC calculado", imc !== "—" ? imc : "—", y, true);
               y += 8;
 
-              // ── EVALUACIÓN DE RIESGO IA (si existe) ──
               if (iaNivel) {
                 y = sectionTitle(
-                  "[AI] Evaluacion de Riesgo con Inteligencia Artificial",
+                  "Evaluacion de Riesgo con Inteligencia Artificial",
                   y,
                 );
 
@@ -3489,13 +3486,11 @@
                 };
                 var rgb = iaColors[iaNivel] || iaColors.Bajo;
 
-                // Contenedor principal con borde
                 doc.setFillColor(253, 249, 252);
                 doc.setDrawColor(232, 170, 212);
                 doc.setLineWidth(0.4);
-                doc.roundedRect(mg + 2, y - 2, W - mg * 2 - 4, 26, 3, 3, "FD");
+                doc.roundedRect(mg + 2, y - 2, W - mg * 2 - 4, 24, 3, 3, "FD");
 
-                // Badge de riesgo con sombra
                 doc.setFillColor(rgb[0], rgb[1], rgb[2]);
                 doc.roundedRect(mg + 6, y + 2, 45, 10, 3, 3, "F");
                 doc.setTextColor(255, 255, 255);
@@ -3505,7 +3500,6 @@
                   align: "center",
                 });
 
-                // Porcentaje de confianza
                 doc.setTextColor(rgb[0], rgb[1], rgb[2]);
                 doc.setFontSize(13);
                 doc.setFont("helvetica", "bold");
@@ -3516,15 +3510,19 @@
                 doc.setTextColor(138, 96, 112);
                 doc.text("de confianza", mg + 75, y + 8);
 
-                // Icono visual del nivel
-                var emojiRisk =
-                  iaNivel === "Alto" ? "⚠️" : iaNivel === "Medio" ? "⚡" : "✓";
-                doc.setFontSize(16);
-                doc.text(emojiRisk, W - mg - 12, y + 9);
+                doc.setFontSize(10);
+                doc.setFont("helvetica", "bold");
+                doc.setTextColor(rgb[0], rgb[1], rgb[2]);
+                var textLabel =
+                  iaNivel === "Alto"
+                    ? "(!)"
+                    : iaNivel === "Medio"
+                      ? "(*)"
+                      : "(+)";
+                doc.text(textLabel, W - mg - 10, y + 9);
 
-                y += 16;
+                y += 14;
 
-                // Nota aclaratoria mejorada
                 doc.setFillColor(255, 249, 235);
                 doc.setDrawColor(245, 224, 160);
                 doc.setLineWidth(0.4);
@@ -3534,7 +3532,7 @@
                 doc.setFontSize(7.5);
                 doc.setTextColor(138, 37, 99);
                 doc.text(
-                  "ℹ️ NOTA IMPORTANTE SOBRE LA EVALUACIÓN IA",
+                  "NOTA IMPORTANTE SOBRE LA EVALUACION IA",
                   mg + 5,
                   y + 5,
                 );
@@ -3543,12 +3541,12 @@
                 doc.setFontSize(7);
                 doc.setTextColor(92, 75, 10);
                 doc.text(
-                  "• Esta evaluación es generada automáticamente por el modelo de IA de Zumedical.",
+                  "- Esta evaluacion es generada automaticamente por el modelo de IA de Zumedical.",
                   mg + 5,
                   y + 9.5,
                 );
                 doc.text(
-                  "• Es una herramienta de apoyo clínico que no reemplaza el criterio médico profesional.",
+                  "- Es una herramienta de apoyo clinico que no reemplaza el criterio medico profesional.",
                   mg + 5,
                   y + 13,
                 );
@@ -3556,8 +3554,7 @@
                 y += 20;
               }
 
-              // ── OBSERVACIONES CLÍNICAS ──
-              y = sectionTitle("📝 Observaciones Clínicas del Médico", y);
+              y = sectionTitle("Observaciones Clinicas del Medico", y);
 
               doc.setTextColor(42, 16, 32);
               doc.setFontSize(9);
@@ -3566,10 +3563,8 @@
                 obs ||
                 "Sin observaciones registradas para este control prenatal.";
               var lines = doc.splitTextToSize(obsText, W - mg * 2 - 12);
-              doc.text(lines, mg + 6, y + 3);
-              var obsHeight = lines.length * 5 + 6;
+              var obsHeight = Math.max(lines.length * 5 + 6, 16);
 
-              // Dibujar el contenedor completo ahora que sabemos la altura
               doc.setFillColor(253, 249, 252);
               doc.setDrawColor(232, 170, 212);
               doc.setLineWidth(0.4);
@@ -3587,10 +3582,8 @@
 
               y += obsHeight + 6;
 
-              // ── FIRMA DEL MÉDICO CON DISEÑO MEJORADO ──
               y = Math.max(y, 245);
 
-              // Caja para firma
               doc.setDrawColor(138, 37, 99);
               doc.setLineWidth(0.6);
               doc.line(mg + 5, y, mg + 75, y);
@@ -3598,31 +3591,28 @@
               doc.setTextColor(138, 96, 112);
               doc.setFontSize(7.5);
               doc.setFont("helvetica", "normal");
-              doc.text("Firma y sello del médico tratante", mg + 5, y + 5);
+              doc.text("Firma y sello del medico tratante", mg + 5, y + 5);
 
               doc.setFont("helvetica", "bold");
               doc.setFontSize(9);
               doc.setTextColor(42, 16, 32);
               doc.text(medico, mg + 5, y + 11);
 
-              // Fecha de emisión
               doc.setTextColor(138, 96, 112);
               doc.setFont("helvetica", "normal");
               doc.setFontSize(7);
               doc.text(
-                "Fecha de emisión: " + new Date().toLocaleDateString("es-EC"),
+                "Fecha de emision: " + new Date().toLocaleDateString("es-EC"),
                 mg + 5,
                 y + 16,
               );
 
-              // ── FOOTER MEJORADO ──
               doc.setFillColor(248, 238, 245);
               doc.rect(0, 280, W, 17, "F");
               doc.setDrawColor(200, 150, 185);
               doc.setLineWidth(0.6);
               doc.line(0, 280, W, 280);
 
-              // Logo pequeño en footer
               doc.setFillColor(138, 37, 99);
               doc.circle(mg - 2, 288.5, 3, "F");
 
@@ -3635,7 +3625,7 @@
               doc.setFontSize(7);
               doc.setTextColor(138, 96, 112);
               doc.text(
-                "Centro de Atención Prenatal Especializada",
+                "Centro de Atencion Prenatal Especializada",
                 mg + 4,
                 291,
               );
@@ -3652,13 +3642,12 @@
               doc.setTextColor(176, 53, 128);
               doc.setFont("helvetica", "italic");
               doc.text(
-                "[CONFIDENCIAL] Documento de uso exclusivo medico-paciente - Zumedical © 2024",
+                "Documento confidencial de uso exclusivo medico-paciente — Zumedical 2024",
                 W / 2,
                 293,
                 { align: "center" },
               );
 
-              // Guardar PDF
               doc.save(
                 "control-prenatal-" +
                   paciente.replace(/\s+/g, "-").toLowerCase() +
@@ -3666,29 +3655,25 @@
                   fecha.replace(/\//g, "-") +
                   ".pdf",
               );
-              mostrarToast("✓ PDF generado correctamente", "success");
+              mostrarToast("PDF generado correctamente", "success");
             } catch (pdfError) {
-              console.error("❌ Error al generar contenido del PDF:", pdfError);
+              console.error("Error PDF:", pdfError);
               mostrarToast("Error al generar el contenido del PDF", "error");
             }
           };
 
           logoImg.onerror = function () {
-            // Si falla la carga, generar sin logo
-            console.warn(
-              "⚠️ No se pudo cargar el logo, generando PDF sin imagen",
-            );
             logoImg.onload();
           };
 
           logoImg.src = logoUrl;
         } catch (error) {
-          console.error("❌ Error general al generar PDF:", error);
+          console.error("Error general PDF:", error);
           mostrarToast("Error al generar el PDF: " + error.message, "error");
         }
       }
     </script>
-    <script src="{% static 'js/historial-controles.js' %}?v=6"></script>
+    <script src="{% static 'js/historial-controles.js' %}?v=7"></script>
 
     <!-- Script de verificación e inicialización -->
     <script>

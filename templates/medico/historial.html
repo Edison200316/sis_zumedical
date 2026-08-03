@@ -1699,19 +1699,19 @@ function generarPDF(btn, data){
         // Guardar PDF
         doc.save('control-prenatal-'+paciente.replace(/\s+/g,'-').toLowerCase()+'-'+fecha.replace(/\//g,'-')+'.pdf');
         mostrarToast('✓ PDF generado correctamente', 'success');
-        } catch (pdfError) {
-            console.error('❌ Error al generar contenido del PDF:', pdfError);
-            mostrarToast('Error al generar el contenido del PDF', 'error');
-        }
-    };
-    
-    logoImg.onerror = function() {
-        // Si falla la carga, generar sin logo
-        console.warn('⚠️ No se pudo cargar el logo, generando PDF sin imagen');
-        logoImg.onload();
-    };
-    
-    logoImg.src = logoUrl;
+            } catch (pdfError) {
+                console.error('❌ Error al generar contenido del PDF:', pdfError);
+                mostrarToast('Error al generar el contenido del PDF', 'error');
+            }
+        };
+        
+        logoImg.onerror = function() {
+            // Si falla la carga, generar sin logo
+            console.warn('⚠️ No se pudo cargar el logo, generando PDF sin imagen');
+            logoImg.onload();
+        };
+        
+        logoImg.src = logoUrl;
     } catch (error) {
         console.error('❌ Error general al generar PDF:', error);
         mostrarToast('Error al generar el PDF: ' + error.message, 'error');

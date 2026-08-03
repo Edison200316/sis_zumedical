@@ -84,6 +84,9 @@
     /* Mensajes */
     .alert{padding:1rem 1.5rem;border-radius:10px;margin-bottom:1.5rem;font-size:.9rem}
     .alert-error{background:var(--red-bg);border:1px solid var(--red-border);color:var(--red)}
+    .alert-success{background:var(--green-bg);border:1px solid var(--green-border);color:var(--green)}
+    .error-list{margin:.45rem 0 0 1rem}
+    .error-list li{margin:.18rem 0}
     
     /* Errors */
     .field-error{font-size:.75rem;color:var(--red);margin-top:.25rem}
@@ -121,6 +124,22 @@
   {% for msg in messages %}
   <div class="alert alert-{% if msg.tags == 'error' %}error{% else %}success{% endif %}">{{ msg }}</div>
   {% endfor %}
+  {% endif %}
+
+  {% if form.errors %}
+  <div class="alert alert-error">
+    <strong>No se pudo guardar la historia clínica.</strong>
+    <ul class="error-list">
+      {% for field in form %}
+        {% for error in field.errors %}
+          <li>{{ field.label }}: {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
   {% endif %}
 
   <!-- Encabezado paciente -->
@@ -166,22 +185,27 @@
         <div class="field-group">
           <label>{{ form.gestas.label }}</label>
           {{ form.gestas }}
+          {% for e in form.gestas.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
         </div>
         <div class="field-group">
           <label>{{ form.partos.label }}</label>
           {{ form.partos }}
+          {% for e in form.partos.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
         </div>
         <div class="field-group">
           <label>{{ form.cesareas.label }}</label>
           {{ form.cesareas }}
+          {% for e in form.cesareas.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
         </div>
         <div class="field-group">
           <label>{{ form.abortos.label }}</label>
           {{ form.abortos }}
+          {% for e in form.abortos.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
         </div>
         <div class="field-group">
           <label>{{ form.hijos_vivos.label }}</label>
           {{ form.hijos_vivos }}
+          {% for e in form.hijos_vivos.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
         </div>
       </div>
       <div style="margin-top:1rem">
@@ -195,6 +219,7 @@
       <div class="field-group">
         <label>{{ form.motivo_consulta.label }}</label>
         {{ form.motivo_consulta }}
+        {% for e in form.motivo_consulta.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
       </div>
     </div>
 
@@ -205,11 +230,13 @@
         <div class="field-group">
           <label>{{ form.presion_arterial_inicial.label }}</label>
           {{ form.presion_arterial_inicial }}
+          {% for e in form.presion_arterial_inicial.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
         </div>
         <div class="field-group">
           <label>{{ form.temperatura_inicial.label }}</label>
           {{ form.temperatura_inicial }}
           <span class="help">En °F (Normal: 97.8–99.1°F)</span>
+          {% for e in form.temperatura_inicial.errors %}<span class="field-error">{{ e }}</span>{% endfor %}
         </div>
         <div class="field-group">
           <label>{{ form.frecuencia_cardiaca_inicial.label }}</label>

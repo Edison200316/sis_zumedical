@@ -127,7 +127,34 @@
         .btn-secondary svg{width:16px;height:16px;stroke:var(--mg);fill:none;stroke-width:2}
         .form-actions{display:flex;gap:0.75rem;align-items:center;margin-top:1.5rem}
 
-        @media(max-width:768px){body{flex-direction:column}.sidebar{width:100%;min-height:auto;position:relative;height:auto}.main{padding:1.5rem}.form-row{grid-template-columns:1fr}}
+        .mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300;height:64px}
+        .mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
+        .mobile-topbar-logo{width:32px;height:32px;background:white;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center}
+        .mobile-topbar-logo img{width:28px;height:28px;object-fit:contain}
+        .mobile-topbar-brand span{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.2rem;font-weight:600;color:white}
+        .hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+        .hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px;transition:all .3s}
+        .hamburger.open span:nth-child(1){transform:translateY(6px) rotate(45deg)}
+        .hamburger.open span:nth-child(2){opacity:0}
+        .hamburger.open span:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+        .sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s}
+        .sidebar-overlay.active{opacity:1;pointer-events:auto}
+        @media(max-width:768px){
+            body{flex-direction:column;overflow-x:hidden}
+            body.sidebar-open{overflow:hidden}
+            .mobile-topbar{display:flex}
+            .sidebar{position:fixed!important;top:64px!important;left:0!important;width:min(82vw,var(--sw))!important;height:calc(100vh - 64px)!important;min-height:0!important;transform:translateX(-100%);z-index:250!important;overflow-y:auto;box-shadow:8px 0 28px rgba(42,16,32,.22)}
+            .sidebar.open{transform:translateX(0)}
+            .sidebar-overlay{display:block;top:64px;z-index:200}
+            .main{margin-left:0!important;padding:1rem;padding-top:calc(1rem + 64px);min-height:100vh;width:100%;overflow-x:hidden}
+            .profile-hero{flex-direction:column;text-align:center;align-items:center}
+            .tabs{overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch}
+            .tab-btn{white-space:nowrap;flex-shrink:0}
+            .form-row{grid-template-columns:1fr}
+            .form-card{padding:1.25rem}
+            .form-actions{flex-direction:column;align-items:stretch}
+            .form-actions .btn-primary,.form-actions .btn-secondary{width:100%;justify-content:center}
+        }
 
         /* ── DYNAMISM ── */
         /* Tab slide animation */
@@ -226,6 +253,19 @@
     <link rel="stylesheet" href="{% static 'css/sidebar_medico.css' %}?v=2">
   </head>
 <body>
+
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="mobile-topbar">
+    <div class="mobile-topbar-brand">
+        <div class="mobile-topbar-logo">
+            <img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical">
+        </div>
+        <span>Zumedical</span>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()">
+        <span></span><span></span><span></span>
+    </button>
+</div>
 
 {% include 'medico/sidebar_medico.html' %}
 
@@ -747,6 +787,26 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+</script>
+<script>
+function toggleSidebar() {
+    var s = document.getElementById('sidebar');
+    var o = document.getElementById('overlay');
+    var h = document.getElementById('hamburger');
+    if(s) s.classList.toggle('open');
+    if(o) o.classList.toggle('active');
+    if(h) h.classList.toggle('open');
+    document.body.classList.toggle('sidebar-open', !!(s && s.classList.contains('open')));
+}
+function closeSidebar() {
+    var s = document.getElementById('sidebar');
+    var o = document.getElementById('overlay');
+    var h = document.getElementById('hamburger');
+    if(s) s.classList.remove('open');
+    if(o) o.classList.remove('active');
+    if(h) h.classList.remove('open');
+    document.body.classList.remove('sidebar-open');
+}
 </script>
 </body>
 </html>

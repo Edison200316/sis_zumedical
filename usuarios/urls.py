@@ -54,6 +54,7 @@ urlpatterns = [
     # Programación de Partos (médico prenatal → paciente prenatal)
     path('programar-parto/', views.programar_parto, name='programar_parto'),
     path('programar-parto/<int:parto_id>/editar/', views.editar_parto, name='editar_parto'),
+    path('programar-parto/<int:parto_id>/eliminar/', views.eliminar_parto, name='eliminar_parto'),
     path('programaciones-parto/', views.lista_programaciones_parto, name='lista_programaciones_parto'),
     
     #ENFERMERIA

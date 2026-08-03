@@ -438,15 +438,15 @@ let filtroBusq = '';
 function aplicarFiltros() {
     let total=0, pend=0, atend=0, cancel=0, visible=0;
     document.querySelectorAll('.fila-cita').forEach(f => {
-        const e = f.dataset.estado;
+        const e = normalizarEstado(f.dataset.estado);
         total++;
         if(e==='pendiente') pend++;
         else if(e==='atendido') atend++;
-        else if(e==='cancelado'||e==='cancelada') cancel++;
+        else if(e==='cancelado') cancel++;
 
-        const okE = filtroEstado==='todos' || e===filtroEstado || (filtroEstado==='cancelado' && (e==='cancelado'||e==='cancelada'));
+        const okE = filtroEstado==='todos' || e===filtroEstado;
         const okF = !filtroFecha || f.dataset.fecha===filtroFecha;
-        const okB = !filtroBusq || f.dataset.nombre.includes(filtroBusq) || f.dataset.cedula.includes(filtroBusq);
+        const okB = !filtroBusq || (f.dataset.nombre || '').includes(filtroBusq) || (f.dataset.cedula || '').includes(filtroBusq);
         const show = okE && okF && okB;
         f.classList.toggle('oculta', !show);
         if(show) visible++;
@@ -459,10 +459,15 @@ function aplicarFiltros() {
 }
 
 function filtrarPorEstado(estado, card) {
-    filtroEstado = estado;
+    filtroEstado = normalizarEstado(estado);
     document.querySelectorAll('.stat-card').forEach(c => c.classList.remove('filtro-activo'));
     card.classList.add('filtro-activo');
     aplicarFiltros();
+}
+
+function normalizarEstado(estado) {
+    estado = (estado || '').trim().toLowerCase();
+    return estado === 'cancelada' ? 'cancelado' : estado;
 }
 
 document.getElementById('buscador').addEventListener('input', function() {
@@ -521,12 +526,13 @@ document.querySelectorAll('.fila-cita').forEach(function(row) {
         document.getElementById('m-esp2').textContent   = d.esp;
         document.getElementById('m-motivo').textContent = d.motivo;
         var estadoEl = document.getElementById('m-estado');
-        var labels = {pendiente:'Pendiente', atendido:'Atendido', cancelado:'Cancelado', cancelada:'Cancelada', confirmada:'Confirmada'};
-        estadoEl.textContent = labels[d.estado] || d.estado;
+        var estadoNormal = normalizarEstado(d.estado);
+        var labels = {pendiente:'Pendiente', atendido:'Atendido', cancelado:'Cancelado', confirmada:'Confirmada'};
+        estadoEl.textContent = labels[estadoNormal] || d.estado;
         estadoEl.style.color =
-            d.estado==='atendido'  ? 'var(--green)' :
-            d.estado==='pendiente' ? 'var(--amber)' :
-            (d.estado==='cancelado'||d.estado==='cancelada') ? 'var(--red)' : 'var(--text)';
+            estadoNormal==='atendido'  ? 'var(--green)' :
+            estadoNormal==='pendiente' ? 'var(--amber)' :
+            estadoNormal==='cancelado' ? 'var(--red)' : 'var(--text)';
         document.getElementById('modalOv').classList.add('open');
     });
 });

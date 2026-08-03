@@ -329,10 +329,11 @@
         .seg-badge.info::before { background: var(--magenta); }
  
         @media (max-width: 768px) {
-            body { flex-direction: column; }
-            .sidebar { width: var(--sidebar-w); position: fixed; top: 64px; left: 0; bottom: 0; height: auto; transform: translateX(-100%); z-index: 250; overflow: hidden; }
+            body { flex-direction: column; overflow-x: hidden; }
+            body.sidebar-open { overflow: hidden; }
+            .sidebar { width: min(82vw,var(--sidebar-w)); position: fixed; top: 64px; left: 0; bottom: 0; height: calc(100vh - 64px); transform: translateX(-100%); z-index: 250; overflow-y: auto; box-shadow: 8px 0 28px rgba(42,16,32,.22); }
             .sidebar.open { transform: translateX(0); }
-            .sidebar-overlay { display: block; z-index: 200; }
+            .sidebar-overlay { display: block; top:64px; z-index: 200; }
             .mobile-topbar { display: flex; }
             .main { margin-left: 0; padding: 1.1rem; padding-top: calc(1.1rem + 64px); height: auto; overflow-y: visible; max-width: 100%; }
             .form-row { grid-template-columns: 1fr; }
@@ -773,11 +774,13 @@
         document.getElementById('sidebar').classList.toggle('open');
         document.getElementById('overlay').classList.toggle('active');
         document.getElementById('hamburger').classList.toggle('open');
+        document.body.classList.toggle('sidebar-open', document.getElementById('sidebar').classList.contains('open'));
     }
     function closeSidebar() {
         document.getElementById('sidebar').classList.remove('open');
         document.getElementById('overlay').classList.remove('active');
         document.getElementById('hamburger').classList.remove('open');
+        document.body.classList.remove('sidebar-open');
     }
     document.addEventListener('DOMContentLoaded', function() {
         var tabBtns   = document.querySelectorAll('.tab-btn');

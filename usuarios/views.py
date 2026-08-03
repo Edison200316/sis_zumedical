@@ -437,10 +437,17 @@ def paciente_dashboard(request):
         print(f"DEBUG: Últimas citas: {ultimas_citas.count()}")
 
         # ── Programación de parto próxima ─────────────────────────────────────
-        parto_programado = ProgramacionParto.objects.filter(
-            paciente=request.user,
-            estado__in=['programado', 'confirmado'],
-        ).first()
+        tiene_prenatal_activo = bool(
+            perfil
+            and getattr(perfil, 'tiene_prenatal', False)
+            and getattr(perfil, 'estado_embarazo', '') == 'ACTIVO'
+        )
+        parto_programado = None
+        if tiene_prenatal_activo:
+            parto_programado = ProgramacionParto.objects.filter(
+                paciente=request.user,
+                estado__in=['programado', 'confirmado'],
+            ).order_by('fecha_programada', 'hora_programada').first()
         print(f"DEBUG: Parto programado: {parto_programado}")
 
         print("DEBUG: Renderizando template...")
@@ -1328,7 +1335,7 @@ def toggle_modulo_prenatal(request, paciente_id):
 def crear_historia_clinica(request, paciente_id):
     """Crea o edita la Historia Clínica Obstétrica de una paciente."""
     from control_prenatal.models import HistoriaClinica
-    from usuarios.forms import HistoriaClinicaForm
+    from control_prenatal.forms import HistoriaClinicaForm
 
     if request.user.rol != 'medico':
         return redireccionar_por_rol(request.user)
@@ -1365,7 +1372,7 @@ def crear_historia_clinica(request, paciente_id):
 def editar_historia_clinica(request, historia_id):
     """Edita una Historia Clínica Obstétrica existente."""
     from control_prenatal.models import HistoriaClinica
-    from usuarios.forms import HistoriaClinicaForm
+    from control_prenatal.forms import HistoriaClinicaForm
 
     if request.user.rol != 'medico':
         return redireccionar_por_rol(request.user)
@@ -1488,11 +1495,11 @@ HORAS_DISPONIBLES_FINDE = [
     time(13,0), time(13,30), time(14,0), time(14,30), time(15,0)
 ]
  
-# AGENDAR CITA (Enfermera)
+# AGENDAR CITA (Admin / Enfermera / Secretaria)
 @login_required
 def agendar_cita_enfermera(request):
     rol_lower = request.user.rol.lower() if request.user.rol else ''
-    if rol_lower not in ['enfermera', 'secretaria']:
+    if rol_lower not in ['admin', 'enfermera', 'secretaria']:
         return redireccionar_por_rol(request.user)
 
     form = CitaEnfermeraForm(request.POST or None)
@@ -1520,7 +1527,7 @@ def agendar_cita_enfermera(request):
                 messages.success(request, 'Cita agendada correctamente.')
                 registrar_log(request, 'CREATE', 'Citas',
                     f'Cita agendada para {cita.paciente.get_full_name()} el {cita.fecha} a las {cita.hora}', 'INFO')
-                return redirect('citas_enfermera')
+                return redirect('todas_citas' if rol_lower == 'admin' else 'citas_enfermera')
 
     # Pasar médicos con sus especialidades para el JS del template
     from medicos.models import Medico
@@ -1537,6 +1544,7 @@ def agendar_cita_enfermera(request):
     return render(request, 'enfermera/agendar_cita_enfermera.html', {
         'form': form,
         'medicos_especialidades': json.dumps(medicos_data),
+        'es_admin': rol_lower == 'admin',
     })
  
  
@@ -2627,9 +2635,10 @@ def programar_parto(request):
         if request.user.rol != 'medico':
             return redireccionar_por_rol(request.user)
         
-        # Solo pacientes con EMBARAZO ACTIVO
+        # Solo pacientes con embarazo y panel prenatal activos
         ids_embarazo_activo = Paciente.objects.filter(
-            estado_embarazo='ACTIVO'
+            estado_embarazo='ACTIVO',
+            tiene_prenatal=True,
         ).values_list('usuario_id', flat=True)
         
         ids_asignadas = Paciente.objects.filter(
@@ -2678,10 +2687,10 @@ def programar_parto(request):
                     id=paciente_id, rol='paciente', id__in=todos_ids
                 ).distinct().get()
                 
-                # Verificar que tenga embarazo activo
+                # Verificar que tenga embarazo y panel prenatal activos
                 paciente_perfil = Paciente.objects.get(usuario=paciente_obj)
-                if paciente_perfil.estado_embarazo != 'ACTIVO':
-                    messages.error(request, 'La paciente debe tener un embarazo activo para programar el parto.')
+                if paciente_perfil.estado_embarazo != 'ACTIVO' or not paciente_perfil.tiene_prenatal:
+                    messages.error(request, 'La paciente debe tener embarazo y panel prenatal activos para programar el parto.')
                     return render(request, 'medico/programar_parto.html',
                                   {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
                     
@@ -2775,7 +2784,7 @@ def editar_parto(request, parto_id):
                 messages.error(request, f'Error al actualizar la programación: {str(e)}')
 
         pacientes_prenatales = Usuario.objects.filter(
-            rol='paciente', is_active=True, paciente__estado_embarazo='ACTIVO'
+            rol='paciente', is_active=True, paciente__estado_embarazo='ACTIVO', paciente__tiene_prenatal=True
         ).distinct().order_by('first_name')
         
         # Preparar JSON de pacientes para búsqueda en tiempo real
@@ -2799,9 +2808,41 @@ def editar_parto(request, parto_id):
 
 @login_required
 @no_cache_view
+def eliminar_parto(request, parto_id):
+    """Elimina una programación de parto desde la lista del médico."""
+    import logging
+    logger = logging.getLogger(__name__)
+    try:
+        from paciente_general.models import ProgramacionParto
+
+        if request.user.rol != 'medico':
+            return redireccionar_por_rol(request.user)
+
+        parto = get_object_or_404(ProgramacionParto, id=parto_id)
+        paciente_nombre = parto.paciente.get_full_name() or parto.paciente.username
+
+        if request.method == 'POST':
+            parto.delete()
+            registrar_log(request, 'DELETE', 'Programación de Partos',
+                f'Programación de parto #{parto_id} eliminada para {paciente_nombre}', 'WARNING')
+            messages.success(request, f'Programación de parto de {paciente_nombre} eliminada correctamente.')
+            return redirect('lista_programaciones_parto')
+
+        messages.error(request, 'Acción no permitida para eliminar la programación.')
+        return redirect('lista_programaciones_parto')
+    except Exception as e:
+        logger.error(f"Error en eliminar_parto: {str(e)}", exc_info=True)
+        messages.error(request, f'Error al eliminar la programación: {str(e)}')
+        return redirect('lista_programaciones_parto')
+
+
+@login_required
+@no_cache_view
 def lista_programaciones_parto(request):
     """Lista todas las programaciones de parto del médico."""
     import logging
+    from django.utils import timezone
+    from datetime import datetime
     
     logger = logging.getLogger(__name__)
     
@@ -2811,12 +2852,32 @@ def lista_programaciones_parto(request):
         if request.user.rol != 'medico':
             return redireccionar_por_rol(request.user)
 
-        programaciones = ProgramacionParto.objects.select_related(
+        ahora = timezone.localtime()
+        programaciones = list(ProgramacionParto.objects.select_related(
             'paciente', 'medico'
-        ).order_by('fecha_programada')
+        ).order_by('fecha_programada', 'hora_programada'))
+
+        activas, historial = [], []
+        for p in programaciones:
+            fecha_hora = timezone.make_aware(
+                datetime.combine(p.fecha_programada, p.hora_programada),
+                timezone.get_current_timezone()
+            )
+            p.ya_paso = fecha_hora < ahora
+            p.pendiente_cierre = p.ya_paso and p.estado in ('programado', 'confirmado', 'reprogramado')
+            perfil = getattr(p.paciente, 'paciente', None)
+            p.prenatal_activo = bool(
+                perfil
+                and getattr(perfil, 'tiene_prenatal', False)
+                and getattr(perfil, 'estado_embarazo', '') == 'ACTIVO'
+            )
+            if p.estado in ('realizado', 'cancelado') or p.ya_paso or not p.prenatal_activo:
+                historial.append(p)
+            else:
+                activas.append(p)
 
         return render(request, 'medico/lista_programaciones_parto.html',
-                      {'programaciones': programaciones})
+                      {'programaciones': programaciones, 'activas': activas, 'historial': historial})
     except Exception as e:
         logger.error(f"Error en lista_programaciones_parto: {str(e)}", exc_info=True)
         messages.error(request, f'Error al cargar las programaciones: {str(e)}')

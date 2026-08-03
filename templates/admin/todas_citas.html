@@ -343,6 +343,37 @@
         fill: none;
         stroke-width: 2;
       }
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+      }
+      .btn-new {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.62rem 1.15rem;
+        background: linear-gradient(135deg, var(--mg-d), var(--mg-l));
+        color: white;
+        border: 1.5px solid transparent;
+        border-radius: 9px;
+        text-decoration: none;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: transform 0.18s, box-shadow 0.18s;
+      }
+      .btn-new:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 18px rgba(176, 53, 128, 0.22);
+      }
+      .btn-new svg {
+        width: 14px;
+        height: 14px;
+        stroke: currentColor;
+        fill: none;
+        stroke-width: 2.2;
+      }
 
       /* STATS */
       .stats-row {
@@ -1022,6 +1053,15 @@
           align-items: stretch;
           flex-direction: column;
         }
+        .header-actions {
+          align-items: stretch;
+          flex-direction: column;
+        }
+        .header-actions .btn-new,
+        .header-actions .btn-back {
+          width: 100%;
+          justify-content: center;
+        }
         .btn-back,
         .search-wrap,
         .filter-btn,
@@ -1290,12 +1330,18 @@
           <h1>Todas las Citas</h1>
           <p>Supervisión de citas médicas programadas</p>
         </div>
-        <a href="{% url 'admin_dashboard' %}" class="btn-back">
-          <svg viewBox="0 0 24 24">
-            <line x1="19" y1="12" x2="5" y2="12" />
-            <polyline points="12 19 5 12 12 5" /></svg
-          >Volver
-        </a>
+        <div class="header-actions">
+          <a href="{% url 'agendar_cita_enfermera' %}" class="btn-new">
+            <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Nueva cita
+          </a>
+          <a href="{% url 'admin_dashboard' %}" class="btn-back">
+            <svg viewBox="0 0 24 24">
+              <line x1="19" y1="12" x2="5" y2="12" />
+              <polyline points="12 19 5 12 12 5" /></svg
+            >Volver
+          </a>
+        </div>
       </div>
 
       <!-- STATS -->

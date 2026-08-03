@@ -64,6 +64,7 @@
     /* Cards grid */
     .partos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem;}
     .parto-card{background:white;border-radius:16px;border:1px solid var(--mg-border);overflow:hidden;transition:transform .2s,box-shadow .2s;}
+    .parto-card.historial{opacity:.88;}
     .parto-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(176,53,128,.1);}
     .parto-card-top{padding:1.25rem 1.5rem;border-bottom:1px solid var(--mg-border);}
     .parto-paciente{display:flex;align-items:center;gap:.75rem;margin-bottom:.75rem;}
@@ -75,15 +76,27 @@
     .parto-fecha{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.5rem;font-weight:700;color:var(--text);margin-bottom:.25rem;}
     .parto-hora{font-size:.85rem;color:var(--muted);margin-bottom:.75rem;}
     .parto-lugar{font-size:.82rem;color:var(--text);display:flex;align-items:center;gap:.4rem;}
-    .parto-card-footer{padding:.85rem 1.5rem;background:var(--bg);border-top:1px solid var(--mg-border);display:flex;align-items:center;justify-content:space-between;}
+    .parto-card-footer{padding:.85rem 1.5rem;background:var(--bg);border-top:1px solid var(--mg-border);display:flex;align-items:center;justify-content:space-between;gap:.75rem;flex-wrap:wrap;}
     .estado-badge{display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .75rem;border-radius:20px;font-size:.78rem;font-weight:600;border:1px solid;}
     .estado-programado{background:var(--yellow-bg);color:var(--yellow);border-color:var(--yellow-border);}
     .estado-confirmado{background:var(--green-bg);color:var(--green);border-color:var(--green-border);}
     .estado-realizado{background:#e8f4fd;color:#1d6fa4;border-color:#90cdf4;}
     .estado-cancelado{background:var(--red-bg);color:var(--red);border-color:var(--red-border);}
     .estado-reprogramado{background:var(--yellow-bg);color:#92600a;border-color:var(--yellow-border);}
+    .alert-msg{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.1rem;border-radius:12px;margin-bottom:1rem;font-size:.86rem;font-weight:500;border:1px solid}
+    .alert-success{background:var(--green-bg);border-color:var(--green-border);color:var(--green)}
+    .alert-error{background:var(--red-bg);border-color:var(--red-border);color:var(--red)}
+    .section-title{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.25rem;font-weight:700;color:var(--text);margin:1.25rem 0 .9rem;display:flex;align-items:center;gap:.6rem}
+    .section-title .pill{font-family:"DM Sans",sans-serif;font-size:.72rem;font-weight:600;color:var(--mg);background:var(--mg-bg);border:1px solid var(--mg-border);border-radius:999px;padding:.12rem .65rem}
+    .parto-actions{display:flex;align-items:center;gap:.45rem;flex-wrap:wrap}
     .btn-edit{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .85rem;background:var(--mg-bg);color:var(--mg);border:1px solid var(--mg-border);border-radius:8px;text-decoration:none;font-size:.8rem;font-weight:500;transition:all .2s;}
     .btn-edit:hover{background:var(--mg);color:white;}
+    .btn-done,.btn-delete{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .75rem;border-radius:8px;font-family:"DM Sans",sans-serif;font-size:.8rem;font-weight:500;cursor:pointer;transition:all .2s}
+    .btn-done{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border)}
+    .btn-done:hover{background:var(--green);color:white}
+    .btn-delete{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border)}
+    .btn-delete:hover{background:var(--red);color:white}
+    .status-note{margin-top:.7rem;font-size:.78rem;color:var(--yellow);background:var(--yellow-bg);border:1px solid var(--yellow-border);border-radius:8px;padding:.5rem .7rem}
     .empty{text-align:center;padding:4rem 2rem;color:var(--muted);}
     .empty-icon{font-size:3rem;margin-bottom:.75rem;}
     .empty h3{font-family:"Cormorant Garamond", Georgia, "Times New Roman", serif;font-size:1.3rem;color:var(--text);margin-bottom:.5rem;}
@@ -97,6 +110,7 @@
       .partos-grid{grid-template-columns:1fr}
       .top-row{flex-direction:column;align-items:stretch}
       .btn-primary{width:100%;justify-content:center}
+      .parto-actions,.parto-actions form,.parto-actions a,.parto-actions button{width:100%;justify-content:center}
       .page-title{font-size:1.6rem}
     }
   </style>
@@ -128,9 +142,19 @@
     <a href="{% url 'programar_parto' %}" class="btn-primary">🤰 + Nueva Programación</a>
   </div>
 
+  {% if messages %}
+    {% for message in messages %}
+    <div class="alert-msg {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+      {{ message }}
+    </div>
+    {% endfor %}
+  {% endif %}
+
   {% if programaciones %}
+  {% if activas %}
+  <div class="section-title">Próximas programaciones <span class="pill">{{ activas|length }}</span></div>
   <div class="partos-grid">
-    {% for p in programaciones %}
+    {% for p in activas %}
     <div class="parto-card">
       <div class="parto-card-top">
         <div class="parto-paciente">
@@ -155,11 +179,73 @@
           {% if p.estado == 'programado' %}🕒{% elif p.estado == 'confirmado' %}✅{% elif p.estado == 'realizado' %}🎉{% elif p.estado == 'cancelado' %}❌{% else %}🔄{% endif %}
           {{ p.get_estado_display }}
         </span>
-        <a href="{% url 'editar_parto' p.id %}" class="btn-edit">✏️ Editar</a>
+        <div class="parto-actions">
+          <a href="{% url 'editar_parto' p.id %}" class="btn-edit">✏️ Editar</a>
+          <form method="post" action="{% url 'editar_parto' p.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="estado" value="realizado">
+            <button type="submit" class="btn-done">✅ Atendida</button>
+          </form>
+          <form method="post" action="{% url 'eliminar_parto' p.id %}" onsubmit="return confirm('¿Eliminar esta programación de parto?');">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete">🗑 Eliminar</button>
+          </form>
+        </div>
       </div>
     </div>
     {% endfor %}
   </div>
+  {% endif %}
+
+  {% if historial %}
+  <div class="section-title">Historial de partos <span class="pill">{{ historial|length }}</span></div>
+  <div class="partos-grid">
+    {% for p in historial %}
+    <div class="parto-card historial">
+      <div class="parto-card-top">
+        <div class="parto-paciente">
+          <div class="parto-av">{% if p.paciente.first_name %}{{ p.paciente.first_name|slice:":1" }}{{ p.paciente.last_name|slice:":1" }}{% else %}{{ p.paciente.username|slice:":1"|upper }}{% endif %}</div>
+          <div><div class="parto-nombre">{{ p.paciente.get_full_name|default:p.paciente.username }}</div><div class="parto-sub">@{{ p.paciente.username }}</div></div>
+        </div>
+        <span class="parto-tipo">
+          {% if p.tipo == 'parto_natural' %}🤱{% elif p.tipo == 'cesarea' %}🏨{% else %}💉{% endif %}
+          {{ p.get_tipo_display }}
+        </span>
+      </div>
+      <div class="parto-card-body">
+        <div class="parto-fecha">{{ p.fecha_programada|date:"d \d\e F \d\e Y" }}</div>
+        <div class="parto-hora">🕐 {{ p.hora_programada|time:"H:i" }} hrs{% if p.semanas_gestacion %} · Semana {{ p.semanas_gestacion }}{% endif %}</div>
+        <div class="parto-lugar">📍 {{ p.lugar }}</div>
+        {% if not p.prenatal_activo %}
+        <div class="status-note">La paciente ya no tiene prenatal activo; esta programación queda solo como historial.</div>
+        {% elif p.pendiente_cierre %}
+        <div class="status-note">La fecha y hora ya pasaron. Marca como atendida o edita el estado.</div>
+        {% endif %}
+      </div>
+      <div class="parto-card-footer">
+        <span class="estado-badge estado-{{ p.estado }}">
+          {% if p.estado == 'programado' %}🕒{% elif p.estado == 'confirmado' %}✅{% elif p.estado == 'realizado' %}🎉{% elif p.estado == 'cancelado' %}❌{% else %}🔄{% endif %}
+          {{ p.get_estado_display }}
+        </span>
+        <div class="parto-actions">
+          <a href="{% url 'editar_parto' p.id %}" class="btn-edit">✏️ Editar</a>
+          {% if p.pendiente_cierre %}
+          <form method="post" action="{% url 'editar_parto' p.id %}">
+            {% csrf_token %}
+            <input type="hidden" name="estado" value="realizado">
+            <button type="submit" class="btn-done">✅ Atendida</button>
+          </form>
+          {% endif %}
+          <form method="post" action="{% url 'eliminar_parto' p.id %}" onsubmit="return confirm('¿Eliminar esta programación de parto?');">
+            {% csrf_token %}
+            <button type="submit" class="btn-delete">🗑 Eliminar</button>
+          </form>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
   {% else %}
   <div style="background:white;border-radius:16px;border:1px solid var(--mg-border)">
     <div class="empty">

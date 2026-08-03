@@ -828,6 +828,7 @@ function formatearFechaLarga(iso) {
 }
 
 function normalizarEstado(e) {
+    e = (e || '').trim().toLowerCase();
     return e === 'cancelada' ? 'cancelado' : e;
 }
 
@@ -891,10 +892,11 @@ var noResults    = document.getElementById('no-results');
 var estadoActivo = 'todos';
 
 document.querySelectorAll('.fbtn').forEach(function(btn) {
+    btn.type = 'button';
     btn.addEventListener('click', function() {
         document.querySelectorAll('.fbtn').forEach(function(b) { b.classList.remove('active'); });
         btn.classList.add('active');
-        estadoActivo = btn.dataset.estado;
+        estadoActivo = normalizarEstado(btn.dataset.estado);
         filtrar();
     });
 });
@@ -926,8 +928,9 @@ function filtrar() {
     var visibles = 0;
 
     todasFilas.forEach(function(tr) {
-        var matchEstado = estadoActivo === 'todos' || normalizarEstado(tr.dataset.estado) === normalizarEstado(estadoActivo);
-        var matchTexto  = !texto || tr.dataset.nombre.includes(texto) || (tr.dataset.cedula || '').includes(texto);
+        var estadoFila = normalizarEstado(tr.dataset.estado);
+        var matchEstado = estadoActivo === 'todos' || estadoFila === estadoActivo;
+        var matchTexto  = !texto || (tr.dataset.nombre || '').includes(texto) || (tr.dataset.cedula || '').includes(texto);
         var matchFecha  = !fecha  || tr.dataset.fecha === fecha;
         var mostrar     = matchEstado && matchTexto && matchFecha;
         if (mostrar) { tr.classList.remove('hidden-row'); visibles++; }

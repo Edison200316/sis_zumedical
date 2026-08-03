@@ -1350,12 +1350,16 @@ document.getElementById('m-btn-pdf').addEventListener('click', function(){
 
 // ── GENERAR PDF ──
 function generarPDF(btn, data){
+    console.log('🔵 generarPDF llamada con:', btn, data);
+    
     // Verificar que jsPDF esté disponible
     if (!window.jspdf || !window.jspdf.jsPDF) {
         console.error('❌ jsPDF no está cargado');
         mostrarToast('Error: Librería PDF no disponible. Recarga la página.', 'error');
         return;
     }
+    
+    console.log('✅ jsPDF está disponible');
 
     var d = data || {
         paciente: btn.getAttribute('data-paciente'),
@@ -1718,7 +1722,7 @@ function generarPDF(btn, data){
     }
 }
 </script>
-<script src="{% static 'js/historial-controles.js' %}?v=4"></script>
+<script src="{% static 'js/historial-controles.js' %}?v=5"></script>
 
 <!-- Script de verificación e inicialización -->
 <script>

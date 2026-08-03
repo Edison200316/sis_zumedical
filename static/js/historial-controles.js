@@ -3,8 +3,12 @@
  * Manejo de eventos para editar/eliminar controles con AJAX
  */
 
+console.log('🟢 historial-controles.js cargando...');
+
 let currentControlId = null;
 let currentControlData = null;
+
+console.log('🟢 Variables globales inicializadas');
 
 // ══════════════════════════════════════════════════════════════════════════════
 // FUNCIONES PARA ABRIR/CERRAR MODALS
@@ -14,6 +18,7 @@ let currentControlData = null;
  * Abre el modal de edición y carga los datos del control
  */
 function abrirEditarControl(controlId) {
+    console.log('🔵 abrirEditarControl llamada con ID:', controlId);
     currentControlId = controlId;
     
     // Fetch datos del control desde la API
@@ -117,6 +122,7 @@ function cerrarEditarModal(event) {
  * Abre el modal de confirmación de eliminación
  */
 function abrirConfirmarEliminar(controlId) {
+    console.log('🔵 abrirConfirmarEliminar llamada con ID:', controlId);
     currentControlId = controlId;
     const btns = document.querySelectorAll(`[data-control-id="${currentControlId}"]`);
     let card = null, row = null;

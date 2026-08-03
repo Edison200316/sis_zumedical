@@ -64,6 +64,10 @@ htmlcov/
 staticfiles/
 static_root/
 
+# Configuración/proyectos auxiliares generados por intentos de despliegue
+backend/
+.vercel/
+
 # Archivos de media subidos por usuarios
 media/
 

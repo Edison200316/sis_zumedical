@@ -22,6 +22,16 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
+# Vercel inyecta el host público en estas variables durante despliegues.
+VERCEL_URL = os.environ.get('VERCEL_URL', '')
+VERCEL_BRANCH_URL = os.environ.get('VERCEL_BRANCH_URL', '')
+for vercel_domain in [VERCEL_URL, VERCEL_BRANCH_URL]:
+    vercel_domain = vercel_domain.replace('https://', '').replace('http://', '').split('/')[0]
+    if vercel_domain and vercel_domain not in ALLOWED_HOSTS:
+        ALLOWED_HOSTS.append(vercel_domain)
+if not DEBUG and '.vercel.app' not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append('.vercel.app')
+
 # Railway inyecta la URL pública del servicio en esta variable
 RAILWAY_PUBLIC_DOMAIN = os.environ.get('RAILWAY_PUBLIC_DOMAIN', '')
 if RAILWAY_PUBLIC_DOMAIN and RAILWAY_PUBLIC_DOMAIN not in ALLOWED_HOSTS:
@@ -62,6 +72,15 @@ if RAILWAY_STATIC_URL:
         full_url = f'https://{RAILWAY_STATIC_URL}'
         if full_url not in CSRF_TRUSTED_ORIGINS:
             CSRF_TRUSTED_ORIGINS.append(full_url)
+
+for vercel_domain in [VERCEL_URL, VERCEL_BRANCH_URL]:
+    vercel_domain = vercel_domain.replace('https://', '').replace('http://', '').split('/')[0]
+    if vercel_domain:
+        vercel_origin = f'https://{vercel_domain}'
+        if vercel_origin not in CSRF_TRUSTED_ORIGINS:
+            CSRF_TRUSTED_ORIGINS.append(vercel_origin)
+if 'https://*.vercel.app' not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append('https://*.vercel.app')
 
 
 # ============================================================
@@ -171,7 +190,13 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'          # donde collectstatic deposita los archivos
-STATICFILES_DIRS = [os.path.join(BASE_DIR, 'sistema_prenatal', 'static')]
+STATICFILES_DIRS = [
+    path for path in [
+        BASE_DIR / 'static',
+        BASE_DIR / 'sistema_prenatal' / 'static',
+    ]
+    if path.exists()
+]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'

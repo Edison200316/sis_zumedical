@@ -598,6 +598,21 @@
     <!-- MAIN -->
     <main class="main">
  
+        <!-- MENSAJES DE ÉXITO/ERROR -->
+        {% if messages %}
+        <div style="margin-bottom: 1.5rem;">
+            {% for message in messages %}
+            <div style="padding: 0.85rem 1.1rem; border-radius: 9px; font-size: 0.875rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.6rem; animation: fadeUp 0.25s ease;
+                {% if message.tags == 'success' %}background: #edfaf3; color: #1a7a4a; border: 1px solid #a8e6c8;{% else %}background: #fdf0f0; color: #b03030; border: 1px solid #f5aaaa;{% endif %}">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                    {% if message.tags == 'success' %}<polyline points="20 6 9 17 4 12"/>{% else %}<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>{% endif %}
+                </svg>
+                <span>{{ message }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         <div class="page-header">
             <h1>Agendar cita</h1>
             <p>Programa una nueva cita médica para una paciente</p>

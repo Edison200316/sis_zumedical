@@ -1,4 +1,13 @@
 /* ── SIDEBAR ── */
+:root {
+  --sw: 260px;
+}
+
+body {
+  display: flex;
+  min-height: 100vh;
+}
+
 .sidebar{
   width:var(--sw);height:100vh;
   background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);
@@ -8,6 +17,11 @@
   transition:transform .3s ease;
   z-index:200;
   overflow: hidden;
+}
+
+.sidebar + .main,
+.sidebar ~ .main {
+  margin-left: var(--sw);
 }
 .sb-brand{padding:2rem 1.5rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem;flex-shrink:0}
 .sb-logo{width:42px;height:42px;background:white;border-radius:50%;overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center}
@@ -68,6 +82,10 @@
 }
 
 @media (max-width: 768px) {
+  body {
+    display: block;
+  }
+
   .sidebar {
     position: fixed;
     top: 64px;
@@ -80,6 +98,10 @@
   }
   .sidebar.open {
     transform: translateX(0);
+  }
+  .sidebar + .main,
+  .sidebar ~ .main {
+    margin-left: 0;
   }
   .sidebar-overlay {
     display: block;

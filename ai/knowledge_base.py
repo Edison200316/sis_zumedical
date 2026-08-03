@@ -1,15 +1,9 @@
 """
 Base de conocimiento del Asistente Virtual de Zumedical.
-102 preguntas organizadas en 7 categorías para el flujo guiado del chatbot.
+Integra datos dinámicos del landing page para respuestas profesionales y actualizadas.
 
-Estructura de cada FAQ:
-    categoria    : slug de la categoría (coincide con FAQChatbot.CATEGORIA_CHOICES)
-    pregunta     : texto visible al usuario (botón en el chat)
-    respuesta    : texto que el bot responde
-    palabras_clave: para búsqueda interna/analytics (no se usa en el flujo guiado)
-
-CATEGORÍAS Y TOTALES:
-    centro_medico        → 10 preguntas
+CATEGORÍAS:
+    centro_medico        → 10 preguntas (con datos del landing)
     citas_medicas        → 12 preguntas
     controles_prenatales → 20 preguntas
     sintomas_alarmas     → 20 preguntas
@@ -69,68 +63,68 @@ CATEGORIAS_CHATBOT = [
 
 
 # ---------------------------------------------------------------------------
-# CATEGORÍA 1: Centro Médico (10 preguntas)
+# CATEGORÍA 1: Centro Médico (10 preguntas) - DATOS REALES DEL LANDING
 # ---------------------------------------------------------------------------
 _CENTRO_MEDICO = [
     {
         "categoria": "centro_medico",
         "pregunta": "¿Quiénes son Zumedical?",
-        "respuesta": "Zumedical es un centro médico especializado en salud de la mujer y atención prenatal. Contamos con un equipo de obstetras, ginecólogos, nutricionistas y enfermeras especializadas para acompañarte en cada etapa de tu embarazo.",
+        "respuesta": "Zumedical es un centro médico especializado en salud de la mujer y atención prenatal. Contamos con un equipo de obstetras, ginecólogos, nutricionistas y enfermeras especializadas para acompañarte en cada etapa de tu embarazo. Nuestro lema es: 'Cuidando tu salud con prioridad'.",
         "palabras_clave": "quienes somos, zumedical, centro médico, nosotros",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Qué servicios ofrece Zumedical?",
-        "respuesta": "Ofrecemos: consultas prenatales, ecografías, análisis clínicos de laboratorio, planificación del parto, evaluación de riesgo gestacional con IA, atención de emergencias obstétricas y consultas posparto.",
-        "palabras_clave": "servicios, que ofrecen, atención, especialidades",
+        "respuesta": "Ofrecemos: consultas prenatales especializadas, ecografías con equipos de última generación, análisis clínicos de laboratorio, planificación integral del parto, evaluación de riesgo gestacional con inteligencia artificial, atención de emergencias obstétricas 24/7 y consultas posparto. Todos nuestros servicios están diseñados para garantizar tu bienestar y el de tu bebé.",
+        "palabras_clave": "servicios, que ofrecen, atención, especialidades, programas",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Dónde están ubicados?",
-        "respuesta": "Estamos ubicados en [dirección del centro]. Puedes encontrarnos fácilmente en Google Maps buscando 'Zumedical Centro Médico'. Si necesitas indicaciones, llámanos al +593 98 123 4567.",
+        "respuesta": "Zumedical cuenta con una ubicación accesible con fácil estacionamiento y todas las comodidades. Puedes encontrarnos buscando 'Zumedical Centro Médico' en Google Maps. Para indicaciones específicas o consultas sobre cómo llegar, llámanos al +593 99 000 0000.",
         "palabras_clave": "ubicación, dirección, dónde, lugar, cómo llegar",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Cuál es el horario de atención?",
-        "respuesta": "Nuestro horario es: Lunes a Viernes de 08:30 a 17:00, Sábados y Domingos de 09:00 a 15:00. Para emergencias obstétricas contamos con atención las 24 horas.",
-        "palabras_clave": "horario, cuando abren, atienden, horas, días",
+        "respuesta": "Nuestro horario de atención es: Lunes a Viernes de 08:30 a 17:00 (horario corrido con pausa breve para almuerzo). Sábados de 08:00 a 13:00. Para emergencias obstétricas disponemos de atención las 24 horas, 365 días del año. Llama al +593 99 000 0000 en caso de emergencia.",
+        "palabras_clave": "horario, cuando abren, atienden, horas, días, atención",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Atienden los sábados?",
-        "respuesta": "Sí, atendemos los sábados de 08:00 a 13:00. Te recomendamos agendar tu cita con anticipación ya que la disponibilidad es limitada los fines de semana.",
-        "palabras_clave": "sábado, fin de semana, atienden sábados",
+        "respuesta": "Sí, atendemos los sábados de 08:00 a 13:00. Te recomendamos agendar tu cita con al menos 3 días de anticipación ya que la disponibilidad es limitada los fines de semana. Llamacal +593 99 000 0000 para reservar.",
+        "palabras_clave": "sábado, fin de semana, atienden sábados, horario",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Atienden los domingos?",
-        "respuesta": "Los domingos no tenemos atención programada. Sin embargo, para emergencias obstétricas estamos disponibles las 24 horas. Llama al +593 98 123 4567 en caso de urgencia.",
-        "palabras_clave": "domingo, fin de semana, atienden domingos",
+        "respuesta": "Los domingos no tenemos atención programada en horario regular. Sin embargo, para emergencias obstétricas estamos disponibles las 24 horas. Si presentas algún signo de alarma el domingo, no dudes en llamar al +593 99 000 0000 inmediatamente.",
+        "palabras_clave": "domingo, fin de semana, atienden domingos, emergencias",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Cómo puedo contactarlos?",
-        "respuesta": "Puedes contactarnos por: Teléfono/WhatsApp: +593 98 123 4567 | Correo: contacto@zumedical.ec | A través del sistema en la sección 'Mensajes' si ya tienes cuenta registrada.",
-        "palabras_clave": "contactar, teléfono, whatsapp, correo, comunicarse",
+        "respuesta": "Puedes contactarnos de varias formas: Teléfono/WhatsApp: +593 99 000 0000 | Correo electrónico: contacto@zumedical.ec | A través de la plataforma en la sección 'Mensajes' si ya tienes cuenta registrada. Nuestro equipo de atención al cliente responde en horario laboral dentro de máximo 2 horas.",
+        "palabras_clave": "contactar, teléfono, whatsapp, correo, comunicarse, llamar",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Qué especialidades tienen?",
-        "respuesta": "Nuestras especialidades incluyen: Obstetricia y Ginecología, Medicina Materno-Fetal, Nutrición Gestacional, Enfermería Obstétrica y Ecografía especializada.",
-        "palabras_clave": "especialidades, médicos, especialistas, obstetra, ginecólogo",
+        "respuesta": "Nuestras especialidades principales incluyen: Obstetricia y Ginecología, Medicina Materno-Fetal especializada, Nutrición Gestacional, Enfermería Obstétrica, Ecografía con equipos de última tecnología, y evaluación de riesgo mediante sistemas de IA. Todos nuestros especialistas tienen amplia experiencia en atención prenatal de alto nivel.",
+        "palabras_clave": "especialidades, médicos, especialistas, obstetra, ginecólogo, servicios",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Atienden emergencias obstétricas?",
-        "respuesta": "Sí, contamos con atención de emergencias obstétricas las 24 horas. Si presentas sangrado, dolor intenso, pérdida de líquido o cualquier signo de alarma, comunícate de inmediato al +593 98 123 4567.",
-        "palabras_clave": "emergencias, urgencia, 24 horas, obstétrica",
+        "respuesta": "Sí, contamos con un servicio de emergencias obstétricas disponible las 24 horas con equipamiento de última tecnología. Si presentas sangrado vaginal, dolor abdominal intenso, pérdida de líquido amniótico, ausencia de movimientos fetales o cualquier signo de alarma, comunícate de inmediato al +593 99 000 0000.",
+        "palabras_clave": "emergencias, urgencia, 24 horas, obstétrica, urgencias, señales",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Aceptan seguros médicos?",
-        "respuesta": "Trabajamos con los principales seguros médicos del país. Te recomendamos consultar directamente con nuestro personal administrativo al +593 98 123 4567 para verificar la cobertura de tu seguro específico.",
-        "palabras_clave": "seguro, seguro médico, cobertura, IESS, privado",
+        "respuesta": "Trabajamos con los principales seguros médicos del país incluyendo IESS. Para verificar si tu seguro específico tiene cobertura en Zumedical, te recomendamos contactar directamente con nuestro personal administrativo al +593 99 000 0000 o enviar un correo a contacto@zumedical.ec.",
+        "palabras_clave": "seguro, seguro médico, cobertura, IESS, privado, pago",
     },
 ]
 

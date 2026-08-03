@@ -1311,7 +1311,8 @@ def toggle_modulo_prenatal(request, paciente_id):
         if activar and paciente_usuario.genero != 'femenino':
             messages.error(request, 'Solo las pacientes registradas como femeninas pueden activar el módulo prenatal.')
             return redirect(request.POST.get('next', 'lista_pacientes_enfermera'))
-        perfil.tiene_prenatal = activar
+
+        perfil.estado_embarazo = 'ACTIVO' if activar else 'NINGUNO'
         perfil.save()
 
         if activar:
@@ -1626,16 +1627,53 @@ def reprogramar_cita(request, cita_id):
     if rol_lower not in ['enfermera', 'secretaria']:
         return redireccionar_por_rol(request.user)
  
-    cita = Cita.objects.get(id=cita_id)
- 
-    if request.method == 'POST':
-        cita.fecha = request.POST.get('fecha')
-        cita.hora = request.POST.get('hora')
-        cita.save()
-        registrar_log(request, 'UPDATE', 'Citas', f"Enfermera reprogramó cita {cita.id} a {cita.fecha} {cita.hora}", 'INFO')
+    try:
+        cita = Cita.objects.get(id=cita_id)
+    except Cita.DoesNotExist:
+        messages.error(request, 'La cita no existe.')
         return redirect('citas_enfermera')
  
-    return render(request, 'enfermera/reprogramar.html', {
+    if request.method == 'POST':
+        nueva_fecha = request.POST.get('fecha')
+        nueva_hora = request.POST.get('hora')
+        
+        # Validar que los campos no estén vacíos
+        if not nueva_fecha or not nueva_hora:
+            messages.error(request, 'Por favor completa la fecha y la hora.')
+            return render(request, 'enfermera/reprogramar_enfermera.html', {
+                'cita': cita,
+                'hoy': timezone.now().date(),
+            })
+        
+        # Validar que no exista otra cita en esa fecha y hora para el mismo médico
+        cita_existente = Cita.objects.filter(
+            medico=cita.medico,
+            fecha=nueva_fecha,
+            hora=nueva_hora
+        ).exclude(id=cita_id).exists()
+        
+        if cita_existente:
+            messages.error(request, 'Ya existe una cita para este médico en esa fecha y hora. Por favor selecciona otro horario.')
+            return render(request, 'enfermera/reprogramar_enfermera.html', {
+                'cita': cita,
+                'hoy': timezone.now().date(),
+            })
+        
+        try:
+            cita.fecha = nueva_fecha
+            cita.hora = nueva_hora
+            cita.save()
+            registrar_log(request, 'UPDATE', 'Citas', f"Enfermera reprogramó cita {cita.id} a {cita.fecha} {cita.hora}", 'INFO')
+            messages.success(request, 'Cita reprogramada correctamente.')
+            return redirect('citas_enfermera')
+        except Exception as e:
+            messages.error(request, f'Error al reprogramar la cita: {str(e)}')
+            return render(request, 'enfermera/reprogramar_enfermera.html', {
+                'cita': cita,
+                'hoy': timezone.now().date(),
+            })
+ 
+    return render(request, 'enfermera/reprogramar_enfermera.html', {
         'cita': cita,
         'hoy': timezone.now().date(),
     })
@@ -2710,10 +2748,9 @@ def programar_parto(request):
         if request.user.rol != 'medico':
             return redireccionar_por_rol(request.user)
         
-        # Solo pacientes con embarazo y panel prenatal activos
+        # Solo pacientes con embarazo activo y vinculadas al médico
         ids_embarazo_activo = Paciente.objects.filter(
             estado_embarazo='ACTIVO',
-            tiene_prenatal=True,
         ).values_list('usuario_id', flat=True)
         
         ids_asignadas = Paciente.objects.filter(
@@ -2740,7 +2777,7 @@ def programar_parto(request):
     except Exception as e:
         logger.error(f"Error en programar_parto (GET): {str(e)}", exc_info=True)
         messages.error(request, f'Error al cargar la página: {str(e)}')
-        return redirect('dashboard_medico')
+        return redirect('medico_dashboard')
 
     if request.method == 'POST':
         try:
@@ -2762,10 +2799,10 @@ def programar_parto(request):
                     id=paciente_id, rol='paciente', id__in=todos_ids
                 ).distinct().get()
                 
-                # Verificar que tenga embarazo y panel prenatal activos
+                # Verificar que la paciente tenga embarazo activo
                 paciente_perfil = Paciente.objects.get(usuario=paciente_obj)
-                if paciente_perfil.estado_embarazo != 'ACTIVO' or not paciente_perfil.tiene_prenatal:
-                    messages.error(request, 'La paciente debe tener embarazo y panel prenatal activos para programar el parto.')
+                if paciente_perfil.estado_embarazo != 'ACTIVO':
+                    messages.error(request, 'La paciente debe tener un embarazo activo para programar el parto.')
                     return render(request, 'medico/programar_parto.html',
                                   {'pacientes': pacientes_prenatales, 'pacientes_json': pacientes_json})
                     
@@ -2859,7 +2896,7 @@ def editar_parto(request, parto_id):
                 messages.error(request, f'Error al actualizar la programación: {str(e)}')
 
         pacientes_prenatales = Usuario.objects.filter(
-            rol='paciente', is_active=True, paciente__estado_embarazo='ACTIVO', paciente__tiene_prenatal=True
+            rol='paciente', is_active=True, paciente__estado_embarazo='ACTIVO'
         ).distinct().order_by('first_name')
         
         # Preparar JSON de pacientes para búsqueda en tiempo real
@@ -2916,6 +2953,7 @@ def eliminar_parto(request, parto_id):
 def lista_programaciones_parto(request):
     """Lista todas las programaciones de parto del médico."""
     import logging
+    from collections import OrderedDict
     from django.utils import timezone
     from datetime import datetime
     
@@ -2928,22 +2966,55 @@ def lista_programaciones_parto(request):
             return redireccionar_por_rol(request.user)
 
         ahora = timezone.localtime()
-        programaciones = list(ProgramacionParto.objects.select_related(
+        busqueda = request.GET.get('q', '').strip()
+        fecha_desde = request.GET.get('fecha_desde', '').strip()
+        fecha_hasta = request.GET.get('fecha_hasta', '').strip()
+
+        programaciones_qs = ProgramacionParto.objects.select_related(
             'paciente', 'medico'
-        ).order_by('fecha_programada', 'hora_programada'))
+        ).filter(medico=request.user)
+
+        if busqueda:
+            programaciones_qs = programaciones_qs.filter(
+                Q(paciente__first_name__icontains=busqueda) |
+                Q(paciente__last_name__icontains=busqueda) |
+                Q(paciente__username__icontains=busqueda) |
+                Q(paciente__paciente__cedula__icontains=busqueda)
+            )
+        if fecha_desde:
+            programaciones_qs = programaciones_qs.filter(fecha_programada__gte=fecha_desde)
+        if fecha_hasta:
+            programaciones_qs = programaciones_qs.filter(fecha_programada__lte=fecha_hasta)
+
+        programaciones = list(programaciones_qs.order_by('-fecha_programada', 'hora_programada'))
+
+        def agrupar_por_mes(items):
+            grupos = OrderedDict()
+            for item in items:
+                if item.fecha_programada:
+                    clave = item.fecha_programada.strftime('%Y-%m')
+                    mes = item.fecha_programada.strftime('%B %Y').capitalize()
+                else:
+                    clave = 'sin-fecha'
+                    mes = 'Sin fecha'
+                if clave not in grupos:
+                    grupos[clave] = {'mes': mes, 'items': []}
+                grupos[clave]['items'].append(item)
+            return list(grupos.values())
 
         activas, historial = [], []
         for p in programaciones:
-            fecha_hora = timezone.make_aware(
-                datetime.combine(p.fecha_programada, p.hora_programada),
-                timezone.get_current_timezone()
-            )
-            p.ya_paso = fecha_hora < ahora
+            fecha_hora = None
+            if p.fecha_programada and p.hora_programada:
+                fecha_hora = timezone.make_aware(
+                    datetime.combine(p.fecha_programada, p.hora_programada),
+                    timezone.get_current_timezone()
+                )
+            p.ya_paso = bool(fecha_hora and fecha_hora < ahora)
             p.pendiente_cierre = p.ya_paso and p.estado in ('programado', 'confirmado', 'reprogramado')
             perfil = getattr(p.paciente, 'paciente', None)
             p.prenatal_activo = bool(
                 perfil
-                and getattr(perfil, 'tiene_prenatal', False)
                 and getattr(perfil, 'estado_embarazo', '') == 'ACTIVO'
             )
             if p.estado in ('realizado', 'cancelado') or p.ya_paso or not p.prenatal_activo:
@@ -2952,11 +3023,22 @@ def lista_programaciones_parto(request):
                 activas.append(p)
 
         return render(request, 'medico/lista_programaciones_parto.html',
-                      {'programaciones': programaciones, 'activas': activas, 'historial': historial})
+                      {
+                          'programaciones': programaciones,
+                          'activas': activas,
+                          'historial': historial,
+                          'grupos_activas': agrupar_por_mes(activas),
+                          'grupos_historial': agrupar_por_mes(historial),
+                          'filtros': {
+                              'q': busqueda,
+                              'fecha_desde': fecha_desde,
+                              'fecha_hasta': fecha_hasta,
+                          },
+                      })
     except Exception as e:
         logger.error(f"Error en lista_programaciones_parto: {str(e)}", exc_info=True)
         messages.error(request, f'Error al cargar las programaciones: {str(e)}')
-        return redirect('dashboard_medico')
+        return redirect('medico_dashboard')
 
 
 @login_required

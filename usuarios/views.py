@@ -1661,8 +1661,10 @@ def reprogramar_cita(request, cita_id):
             })
         
         try:
-            cita.fecha = nueva_fecha
-            cita.hora = nueva_hora
+            from datetime import datetime
+            # Convertir strings a tipos correctos
+            cita.fecha = datetime.strptime(nueva_fecha, '%Y-%m-%d').date()
+            cita.hora = datetime.strptime(nueva_hora, '%H:%M').time()
             cita.save()
             registrar_log(request, 'UPDATE', 'Citas', f"Enfermera reprogramó cita {cita.id} a {cita.fecha} {cita.hora}", 'INFO')
             messages.success(request, 'Cita reprogramada correctamente.')

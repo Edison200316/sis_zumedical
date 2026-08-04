@@ -373,7 +373,7 @@ class EditarPacienteEnfermeraForm(forms.ModelForm):
     )
     email = forms.EmailField(
         label='Correo',
-        required=True,
+        required=False,
         widget=forms.EmailInput(attrs={'class': 'form-control'})
     )
 

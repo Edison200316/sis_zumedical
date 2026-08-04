@@ -463,58 +463,8 @@
         </button>
     </div>
 
-    <!-- SIDEBAR -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-brand">
-            <div class="sidebar-brand-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
-            <div class="sidebar-brand-text"><h2>Zumedical</h2><span>Paciente</span></div>
-        </div>
- 
-        <a href="{% url 'mi_perfil' %}" class="sidebar-user active">
-            <div class="sidebar-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}</div>
-            <div class="sidebar-user-info">
-                <p>Mi perfil</p>
-                <h3>{{ request.user.get_full_name|default:request.user.username }}</h3>
-            </div>
-            <div class="sidebar-user-chevron">
-                <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
-            </div>
-        </a>
- 
-        <nav class="sidebar-nav">
-            <div class="nav-label">Menú</div>
-            <a href="{% url 'paciente_dashboard' %}" class="nav-item">
-                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-                Inicio
-            </a>
-            <a href="{% url 'paciente_general_agendar' %}" class="nav-item">
-                <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                Agendar Cita
-            </a>
-            <a href="{% url 'paciente_general_citas' %}" class="nav-item">
-                <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-                Mis Citas
-            </a>
-            <div class="nav-label">Inteligencia Artificial</div>
-            <a href="{% url 'chatbot_page' %}" class="nav-item">
-                <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                Asistente Virtual
-                <span class="nav-badge">IA</span>
-            </a>
-            <a href="{% url 'evaluar_riesgo' %}" class="nav-item">
-                <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-                Evaluar Riesgo
-                <span class="nav-badge">IA</span>
-            </a>
-        </nav>
- 
-        <div class="sidebar-footer">
-            <a href="{% url 'logout' %}" class="btn-logout">
-                <svg viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-                Cerrar sesión
-            </a>
-        </div>
-    </aside>
+    <!-- SIDEBAR PRENATAL ESTÁNDAR -->
+    {% include "paciente/_sidebar_prenatal.html" %}
  
     <!-- MAIN -->
     <main class="main">

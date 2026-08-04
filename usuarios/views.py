@@ -582,6 +582,7 @@ def agendar_cita(request):
     from landing.models import Especialidad
 
     # Todas las especialidades (excepto partos) y todos los médicos activos
+    # IMPORTANTE: Permitir CUALQUIER especialidad, no solo prenatal
     especialidades_prenatales = Especialidad.objects.filter(activo=True).exclude(nombre__icontains='parto').exclude(nombre__icontains='cesárea')
     medicos_prenatales = Medico.objects.filter(
         usuario__is_active=True

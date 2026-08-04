@@ -13,6 +13,18 @@ CATEGORÍAS:
     TOTAL                → 102 preguntas
 """
 
+def obtener_informacion_contacto():
+    """
+    Obtiene información real de contacto del centro médico.
+    """
+    try:
+        from landing.models import InformacionContacto
+        info = InformacionContacto.obtener()
+        return info
+    except:
+        return None
+
+
 def obtener_especialidades_info():
     """
     Obtiene información real de especialidades de la landing para el chatbot.
@@ -28,6 +40,56 @@ def obtener_especialidades_info():
         return info if info else ""
     except:
         return ""
+
+
+def construir_respuesta_ubicacion():
+    """Construye respuesta dinámica sobre ubicación"""
+    info = obtener_informacion_contacto()
+    if info:
+        return f"Zumedical está ubicado en {info.direccion}. Puedes encontrarnos buscando 'Zumedical Centro Médico' en Google Maps. Para indicaciones específicas, llámanos al {info.telefono_1}."
+    return "Zumedical cuenta con una ubicación accesible con fácil estacionamiento y todas las comodidades. Puedes encontrarnos buscando 'Zumedical Centro Médico' en Google Maps. Para indicaciones específicas o consultas sobre cómo llegar, llámanos al +593 99 000 0000."
+
+
+def construir_respuesta_horarios():
+    """Construye respuesta dinámica sobre horarios"""
+    info = obtener_informacion_contacto()
+    if info:
+        emergencia = " Para emergencias obstétricas disponemos de atención las 24 horas, 365 días del año." if info.emergencias_24h else ""
+        return f"""Nuestro horario de atención es:
+Lunes a Viernes: {info.horario_lunes_viernes}
+Sábados: {info.horario_sabados}
+Domingos: {info.horario_domingos}{emergencia}
+Llama al {info.telefono_1} en caso de emergencia."""
+    return "Nuestro horario de atención es: Lunes a Viernes de 08:30 a 17:00 (horario corrido con pausa breve para almuerzo). Sábados de 08:00 a 13:00. Para emergencias obstétricas disponemos de atención las 24 horas, 365 días del año. Llama al +593 99 000 0000 en caso de emergencia."
+
+
+def construir_respuesta_sabados():
+    """Construye respuesta dinámica sobre atención los sábados"""
+    info = obtener_informacion_contacto()
+    if info:
+        return f"Sí, atendemos los sábados de {info.horario_sabados}. Te recomendamos agendar tu cita con al menos 3 días de anticipación ya que la disponibilidad es limitada los fines de semana. Llama al {info.telefono_1} para reservar."
+    return "Sí, atendemos los sábados de 08:00 a 13:00. Te recomendamos agendar tu cita con al menos 3 días de anticipación ya que la disponibilidad es limitada los fines de semana. Llama al +593 99 000 0000 para reservar."
+
+
+def construir_respuesta_domingos():
+    """Construye respuesta dinámica sobre atención los domingos"""
+    info = obtener_informacion_contacto()
+    if info:
+        return f"Los domingos no tenemos atención programada en horario regular. Sin embargo, para emergencias obstétricas estamos disponibles las 24 horas. Si presentas algún signo de alarma el domingo, no dudes en llamar al {info.telefono_1} inmediatamente."
+    return "Los domingos no tenemos atención programada en horario regular. Sin embargo, para emergencias obstétricas estamos disponibles las 24 horas. Si presentas algún signo de alarma el domingo, no dudes en llamar al +593 99 000 0000 inmediatamente."
+
+
+def construir_respuesta_contacto():
+    """Construye respuesta dinámica sobre cómo contactar"""
+    info = obtener_informacion_contacto()
+    if info:
+        tel_2 = f" o {info.telefono_2}" if info.telefono_2 else ""
+        return f"""Puedes contactarnos de varias formas:
+Teléfono/WhatsApp: {info.telefono_1}{tel_2}
+Correo electrónico: {info.email}
+A través de la plataforma en la sección 'Mensajes' si ya tienes cuenta registrada.
+Nuestro equipo de atención al cliente responde en horario laboral dentro de máximo 2 horas."""
+    return "Puedes contactarnos de varias formas: Teléfono/WhatsApp: +593 99 000 0000 | Correo electrónico: contacto@zumedical.ec | A través de la plataforma en la sección 'Mensajes' si ya tienes cuenta registrada. Nuestro equipo de atención al cliente responde en horario laboral dentro de máximo 2 horas."
 
 
 def construir_respuesta_especialidades():
@@ -114,31 +176,31 @@ _CENTRO_MEDICO = [
     {
         "categoria": "centro_medico",
         "pregunta": "¿Dónde están ubicados?",
-        "respuesta": "Zumedical cuenta con una ubicación accesible con fácil estacionamiento y todas las comodidades. Puedes encontrarnos buscando 'Zumedical Centro Médico' en Google Maps. Para indicaciones específicas o consultas sobre cómo llegar, llámanos al +593 99 000 0000.",
+        "respuesta": construir_respuesta_ubicacion(),
         "palabras_clave": "ubicación, dirección, dónde, lugar, cómo llegar",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Cuál es el horario de atención?",
-        "respuesta": "Nuestro horario de atención es: Lunes a Viernes de 08:30 a 17:00 (horario corrido con pausa breve para almuerzo). Sábados de 08:00 a 13:00. Para emergencias obstétricas disponemos de atención las 24 horas, 365 días del año. Llama al +593 99 000 0000 en caso de emergencia.",
+        "respuesta": construir_respuesta_horarios(),
         "palabras_clave": "horario, cuando abren, atienden, horas, días, atención",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Atienden los sábados?",
-        "respuesta": "Sí, atendemos los sábados de 08:00 a 13:00. Te recomendamos agendar tu cita con al menos 3 días de anticipación ya que la disponibilidad es limitada los fines de semana. Llama al +593 99 000 0000 para reservar.",
+        "respuesta": construir_respuesta_sabados(),
         "palabras_clave": "sábado, fin de semana, atienden sábados, horario",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Atienden los domingos?",
-        "respuesta": "Los domingos no tenemos atención programada en horario regular. Sin embargo, para emergencias obstétricas estamos disponibles las 24 horas. Si presentas algún signo de alarma el domingo, no dudes en llamar al +593 99 000 0000 inmediatamente.",
+        "respuesta": construir_respuesta_domingos(),
         "palabras_clave": "domingo, fin de semana, atienden domingos, emergencias",
     },
     {
         "categoria": "centro_medico",
         "pregunta": "¿Cómo puedo contactarlos?",
-        "respuesta": "Puedes contactarnos de varias formas: Teléfono/WhatsApp: +593 99 000 0000 | Correo electrónico: contacto@zumedical.ec | A través de la plataforma en la sección 'Mensajes' si ya tienes cuenta registrada. Nuestro equipo de atención al cliente responde en horario laboral dentro de máximo 2 horas.",
+        "respuesta": construir_respuesta_contacto(),
         "palabras_clave": "contactar, teléfono, whatsapp, correo, comunicarse, llamar",
     },
     {

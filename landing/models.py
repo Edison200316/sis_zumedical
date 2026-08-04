@@ -1,5 +1,6 @@
 from django.db import models
 
+
 class Especialidad(models.Model):
     TIPO_CHOICES = [
         ('prenatal', 'Prenatal'),
@@ -34,3 +35,30 @@ class MedicoLanding(models.Model):
 
     def __str__(self):
         return self.nombre
+
+
+class InformacionContacto(models.Model):
+    """Información de contacto del centro médico Zumedical"""
+    
+    direccion = models.CharField(max_length=300, default="2 de Agosto & Av. 13 de Diciembre, Valencia, Ecuador")
+    telefono_1 = models.CharField(max_length=20, default="0994385607")
+    telefono_2 = models.CharField(max_length=20, default="0989895673", blank=True)
+    email = models.EmailField(default="zumedical20@gmail.com")
+    horario_lunes_viernes = models.CharField(max_length=100, default="8:30 - 17:00")
+    horario_sabados = models.CharField(max_length=100, default="9:00 - 15:00")
+    horario_domingos = models.CharField(max_length=100, default="9:00 - 15:00")
+    emergencias_24h = models.BooleanField(default=True)
+    actualizado_en = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name = "Información de Contacto"
+        verbose_name_plural = "Información de Contacto"
+
+    def __str__(self):
+        return "Información de Contacto - Zumedical"
+
+    @classmethod
+    def obtener(cls):
+        """Obtiene o crea la única instancia"""
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj

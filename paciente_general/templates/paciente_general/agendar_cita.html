@@ -33,7 +33,6 @@
         .nav-item{display:flex;align-items:center;gap:.7rem;padding:.72rem 1rem;border-radius:10px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.88rem;transition:all .2s;margin-bottom:.2rem}
         .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white}
         .nav-item i{width:18px;text-align:center;font-size:15px}
-        .nav-badge{margin-left:auto;background:#e74c3c;color:white;font-size:.68rem;font-weight:600;padding:.15rem .5rem;border-radius:999px;min-width:20px;text-align:center}
         .sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12)}
         .btn-logout{display:flex;align-items:center;gap:.7rem;padding:.72rem 1rem;border-radius:10px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem;transition:all .2s}
         .btn-logout:hover{background:rgba(255,255,255,.15);color:white}
@@ -190,12 +189,16 @@
         <a href="{% url 'paciente_general_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Mis Citas
         </a>
-    </nav>
-            {% if citas_pendientes %}<span class="nav-badge">{{ citas_pendientes }}</span>{% endif %}
-        </a>
         {% if request.user.paciente.estado_embarazo == 'ACTIVO' %}
         <a href="{% url 'paciente_dashboard' %}" class="nav-item" style="margin-top: 1.5rem;">
             <i class="fa-solid fa-person-pregnant"></i> Mi embarazo
+        </a>
+        <div class="nav-lbl">Inteligencia Artificial</div>
+        <a href="{% url 'chatbot_page' %}" class="nav-item">
+            <i class="fa-solid fa-comments"></i> Asistente Virtual
+        </a>
+        <a href="{% url 'evaluar_riesgo' %}" class="nav-item">
+            <i class="fa-solid fa-dna"></i> Evaluación de Riesgo
         </a>
         {% endif %}
     </nav>

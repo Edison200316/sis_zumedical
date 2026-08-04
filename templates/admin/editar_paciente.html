@@ -204,6 +204,9 @@ tbody tr:hover{background:var(--mg-bg)}
 <div class="form-group"><label>Cédula</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><input type="text" id="id_cedula" name="cedula" value="{{ paciente.cedula }}" maxlength="10" inputmode="numeric"></div><div class="field-msg" id="msg_cedula"></div></div>
 </div>
 <div class="form-row">
+<div class="form-group"><label>Usuario</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><input type="text" id="id_username" name="username" value="{{ paciente.usuario.username }}" maxlength="150" required></div><div class="field-msg" id="msg_username"></div></div>
+</div>
+<div class="form-row">
 <div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" id="id_telefono" name="telefono" value="{{ paciente.telefono }}" maxlength="10" inputmode="numeric"></div><div class="field-msg" id="msg_telefono"></div></div>
 <div class="form-group"><label>Edad</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><input type="number" name="edad" value="{{ paciente.edad|default:'' }}" min="1" max="99" maxlength="3" oninput="this.value=this.value.slice(0,3)"></div></div>
 </div>

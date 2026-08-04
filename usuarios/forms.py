@@ -279,6 +279,29 @@ class CitaEnfermeraForm(forms.ModelForm):
             'motivo': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
         }
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        from medicos.models import Medico
+
+        medicos_reales_ids = Medico.objects.filter(
+            usuario__is_active=True,
+            usuario__rol='medico',
+            especialidad__isnull=False,
+        ).exclude(
+            usuario__username__iregex=r'^(medico_verif|medico_test|test_medico)'
+        ).values_list('usuario_id', flat=True)
+
+        self.fields['medico'].queryset = Usuario.objects.filter(
+            id__in=medicos_reales_ids,
+            is_active=True,
+            rol='medico',
+        ).order_by('first_name', 'last_name', 'username')
+
+        def medico_label(obj):
+            return obj.get_full_name() or obj.username
+
+        self.fields['medico'].label_from_instance = medico_label
+
 
 class ControlPrenatalForm(forms.ModelForm):
     """Formulario para registrar controles prenatales"""
@@ -359,6 +382,12 @@ class ControlPrenatalForm(forms.ModelForm):
 
 class EditarPacienteEnfermeraForm(forms.ModelForm):
     """Formulario para que enfermera edite datos de paciente"""
+    username = forms.CharField(
+        label='Usuario',
+        max_length=150,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
     first_name = forms.CharField(
         label='Nombre',
         max_length=150,
@@ -390,6 +419,7 @@ class EditarPacienteEnfermeraForm(forms.ModelForm):
     def __init__(self, *args, usuario=None, **kwargs):
         super().__init__(*args, **kwargs)
         if usuario:
+            self.fields['username'].initial = usuario.username
             self.fields['first_name'].initial = usuario.first_name
             self.fields['last_name'].initial = usuario.last_name
             self.fields['email'].initial = usuario.email
@@ -397,6 +427,7 @@ class EditarPacienteEnfermeraForm(forms.ModelForm):
     def save(self, commit=True, usuario=None):
         paciente = super().save(commit=False)
         if usuario:
+            usuario.username = self.cleaned_data.get('username')
             usuario.first_name = self.cleaned_data.get('first_name')
             usuario.last_name = self.cleaned_data.get('last_name')
             usuario.email = self.cleaned_data.get('email')

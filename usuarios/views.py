@@ -1547,7 +1547,13 @@ def agendar_cita_enfermera(request):
     # Pasar médicos con sus especialidades para el JS del template
     from medicos.models import Medico
     import json
-    medicos_qs = Medico.objects.select_related('usuario', 'especialidad').filter(usuario__is_active=True)
+    medicos_qs = Medico.objects.select_related('usuario', 'especialidad').filter(
+        usuario__is_active=True,
+        usuario__rol='medico',
+        especialidad__isnull=False,
+    ).exclude(
+        usuario__username__iregex=r'^(medico_verif|medico_test|test_medico)'
+    )
     medicos_data = [
         {
             'usuario_id': m.usuario.id,
@@ -1598,12 +1604,13 @@ def editar_paciente_enfermera(request, paciente_id):
     rol_lower = request.user.rol.lower() if request.user.rol else ''
     if rol_lower not in ['enfermera', 'secretaria']:
         return redireccionar_por_rol(request.user)
-    paciente = get_object_or_404(Usuario, id=paciente_id)
+    paciente = get_object_or_404(Usuario, id=paciente_id, rol='paciente')
+    from pacientes.models import Paciente
+    perfil, _ = Paciente.objects.get_or_create(usuario=paciente)
     if request.method == 'POST':
-        form = EditarPacienteEnfermeraForm(request.POST, instance=paciente)
+        form = EditarPacienteEnfermeraForm(request.POST, instance=perfil, usuario=paciente)
         if form.is_valid():
             # Validar cédula duplicada (excluir el propio paciente)
-            from pacientes.models import Paciente
             cedula_nueva = form.cleaned_data.get('cedula', '').strip()
             if cedula_nueva:
                 duplicado = Paciente.objects.filter(cedula=cedula_nueva).exclude(usuario=paciente).first()
@@ -1612,10 +1619,14 @@ def editar_paciente_enfermera(request, paciente_id):
                     return render(request, 'enfermera/editar_paciente_enfermera.html', {
                         'form': form, 'paciente': paciente, 'error_cedula': True
                     })
-            form.save()
+            username_nuevo = form.cleaned_data.get('username', '').strip()
+            if Usuario.objects.filter(username__iexact=username_nuevo).exclude(id=paciente.id).exists():
+                messages.error(request, f'El usuario "{username_nuevo}" ya está registrado.')
+                return render(request, 'enfermera/editar_paciente_enfermera.html', {
+                    'form': form, 'paciente': paciente
+                })
+            form.save(usuario=paciente)
             # Actualizar cédula y teléfono en modelo Paciente
-            from pacientes.models import Paciente
-            perfil, _ = Paciente.objects.get_or_create(usuario=paciente)
             if cedula_nueva:
                 perfil.cedula = cedula_nueva
             telefono_nuevo = form.cleaned_data.get('telefono', '').strip()
@@ -1628,7 +1639,7 @@ def editar_paciente_enfermera(request, paciente_id):
         else:
             messages.error(request, "Por favor corrige los errores del formulario.")
     else:
-        form = EditarPacienteEnfermeraForm(instance=paciente)
+        form = EditarPacienteEnfermeraForm(instance=perfil, usuario=paciente)
     
     return render(request, 'enfermera/editar_paciente_enfermera.html', {
         'form': form,
@@ -2204,6 +2215,15 @@ def admin_editar_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
 
     if request.method == 'POST':
+        username = request.POST.get('username', '').strip()
+        if username and Usuario.objects.filter(username__iexact=username).exclude(id=paciente.usuario.id).exists():
+            messages.error(request, f'El usuario "{username}" ya está registrado.')
+            return render(request, 'admin/editar_paciente.html', {
+                'paciente': paciente,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
+        if username:
+            paciente.usuario.username = username
         paciente.usuario.first_name = request.POST.get('first_name', '').strip()
         paciente.usuario.last_name  = request.POST.get('last_name', '').strip()
         paciente.usuario.email      = request.POST.get('email', '').strip()

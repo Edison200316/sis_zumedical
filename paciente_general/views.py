@@ -307,9 +307,16 @@ def medicos_disponibles(request):
     especialidad_id = request.GET.get('especialidad_id')
     if especialidad_id:
         medicos = Medico.objects.filter(
-            especialidad_id=especialidad_id
+            especialidad_id=especialidad_id,
+            usuario__is_active=True
         ).select_related('usuario')
-        data = [{'id': m.id, 'nombre': str(m)} for m in medicos]
+        data = [
+            {
+                'id': m.usuario.id,  # Retornar usuario_id, no medico.id
+                'nombre': str(m)
+            } 
+            for m in medicos
+        ]
     else:
         data = []
     return JsonResponse({'medicos': data})

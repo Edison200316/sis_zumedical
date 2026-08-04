@@ -380,7 +380,6 @@
         </a>
         <a href="{% url 'todas_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Citas
-            {% if citas_pendientes %}<span class="nav-badge-alert">{{ citas_pendientes }}</span>{% endif %}
         </a>
         <a href="{% url 'controles_admin' %}" class="nav-item">
             <i class="fa-solid fa-heart-pulse"></i> Controles Prenatales

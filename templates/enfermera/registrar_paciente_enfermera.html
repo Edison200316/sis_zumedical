@@ -536,7 +536,7 @@ function updateCC(id, len, max){
 }
 
 // -- PROGRESS --
-var TOTAL_FIELDS = 8;
+var TOTAL_FIELDS = 7;
 var fieldValid = {};
 function updateProgress(){
     var count = Object.values(fieldValid).filter(Boolean).length;
@@ -618,7 +618,7 @@ function validarEmail(input){
     setInputState(input, val.length > 0 ? (ok ? 'ok' : 'err') : '');
     setStatus('email', val.length > 0 ? (ok ? 'ok' : 'err') : '');
     setMsg('email', val.length === 0 ? 'ejemplo@dominio.com' : ok ? 'Correo válido' : 'Formato incorrecto (ej: nombre@correo.com)', val.length === 0 ? 'hint' : ok ? 'ok' : 'err');
-    setValid('email', ok);
+    setValid('email', val.length === 0 || ok);
 }
 
 // -- TOGGLE OJO --
@@ -718,7 +718,7 @@ document.addEventListener('DOMContentLoaded', function(){
         if(!fieldValid.ced)   errs.push('Cédula inválida (10 dígitos)');
         if(!fieldValid.tel)   errs.push('Teléfono inválido (10 dígitos)');
         if(!fieldValid.usr)   errs.push('Usuario inválido');
-        if(!fieldValid.email) errs.push('Correo inválido');
+        if(em.value.trim() && !fieldValid.email) errs.push('Correo inválido');
         if(!fieldValid.pw1)   errs.push('Contraseña muy corta');
         if(!fieldValid.pw2)   errs.push('Las contraseñas no coinciden');
 

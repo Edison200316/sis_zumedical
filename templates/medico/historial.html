@@ -1582,8 +1582,10 @@
       @media (max-width: 768px) {
         html,
         body {
-          height: 100vh;
-          overflow: hidden;
+          min-height: 100%;
+          height: auto;
+          overflow-x: hidden;
+          overflow-y: auto;
         }
         body {
           flex-direction: column;
@@ -1620,7 +1622,8 @@
           margin-left: 0;
           padding: 1.1rem;
           padding-top: calc(1.1rem + 64px);
-          height: 100vh;
+          min-height: calc(100vh - 64px);
+          height: auto;
           overflow-y: auto;
           -webkit-overflow-scrolling: touch;
         }

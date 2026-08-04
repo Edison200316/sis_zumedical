@@ -8,6 +8,74 @@ body {
   min-height: 100vh;
 }
 
+.sidebar .sb-av,
+.sidebar .sb-avatar,
+.sidebar .sidebar-user-avatar {
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px !important;
+  min-height: 38px !important;
+  max-width: 38px !important;
+  max-height: 38px !important;
+  border-radius: 50% !important;
+  background: rgba(255,255,255,.2) !important;
+  border: 1px solid rgba(255,255,255,.35) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #fff !important;
+  font-size: .82rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+  text-decoration: none !important;
+  flex-shrink: 0 !important;
+}
+
+.sidebar .nav-lbl,
+.sidebar .nav-label {
+  color: rgba(255,255,255,.55) !important;
+  font-size: .68rem !important;
+  letter-spacing: .12em !important;
+  text-transform: uppercase !important;
+  padding: .65rem .9rem .45rem !important;
+  margin: 0 !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+}
+
+.sidebar a.nav-item,
+.sidebar .nav-item {
+  color: rgba(255,255,255,.88) !important;
+  text-decoration: none !important;
+  background: transparent !important;
+}
+
+.sidebar a.nav-item:hover,
+.sidebar .nav-item:hover,
+.sidebar a.nav-item.active,
+.sidebar .nav-item.active {
+  background: rgba(255,255,255,.18) !important;
+  color: #fff !important;
+}
+
+.sidebar .sb-user-info p,
+.sidebar .sidebar-user-info p {
+  color: rgba(255,255,255,.65) !important;
+}
+
+.sidebar .sb-user-info h3,
+.sidebar .sidebar-user-info h3 {
+  color: #fff !important;
+}
+
+.sidebar .sb-footer,
+.sidebar .sidebar-footer {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin-top: auto !important;
+}
+
 .sidebar{
   width:var(--sw);height:100vh;
   background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);
@@ -16,7 +84,8 @@ body {
   box-shadow:4px 0 24px rgba(138,37,99,.2);
   transition:transform .3s ease;
   z-index:200;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .sidebar + .main,
@@ -43,7 +112,7 @@ body {
 .nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white}
 .nav-item svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;flex-shrink:0}
 .nav-badge{margin-left:auto;background:rgba(255,255,255,.25);color:white;font-size:.68rem;font-weight:600;padding:.15rem .5rem;border-radius:999px;min-width:20px;text-align:center}
-.sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12);flex-shrink:0;}
+.sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12);flex-shrink:0;margin-top:auto;}
 .btn-logout{display:flex;align-items:center;gap:.75rem;padding:.75rem 1rem;border-radius:10px;color:rgba(255,255,255,.8);text-decoration:none;font-size:.9rem;transition:all .2s;width:100%}
 .btn-logout:hover{background:rgba(255,255,255,.15);color:white}
 .btn-logout svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
@@ -91,13 +160,15 @@ body {
     top: 64px;
     left: 0;
     bottom: 0; 
-    height: auto;
-    transform: translateX(-100%);
-    z-index: 350;
-    overflow: hidden;
+    height: calc(100vh - 64px) !important;
+    max-height: calc(100vh - 64px) !important;
+    transform: translateX(-100%) !important;
+    z-index: 350 !important;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
   .sidebar.open {
-    transform: translateX(0);
+    transform: translateX(0) !important;
   }
   .sidebar + .main,
   .sidebar ~ .main {

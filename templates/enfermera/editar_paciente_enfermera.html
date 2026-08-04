@@ -477,7 +477,7 @@ function updateCC(id, len, max){
     el.textContent = len + '/' + max;
 }
 
-var TOTAL_FIELDS = 6;
+var TOTAL_FIELDS = 5;
 var fieldValid = {};
 function updateProgress(){
     var count = Object.values(fieldValid).filter(Boolean).length;
@@ -535,9 +535,9 @@ function validarUsuario(input){
 function validarEmail(input){
     var val = input.value.trim();
     var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
-    setInputState(input, ok ? 'ok' : 'err');
-    setStatus('email', ok ? 'ok' : 'err');
-    setValid('email', ok);
+    setInputState(input, val.length > 0 ? (ok ? 'ok' : 'err') : '');
+    setStatus('email', val.length > 0 ? (ok ? 'ok' : 'err') : '');
+    setValid('email', val.length === 0 || ok);
 }
 
 document.addEventListener('DOMContentLoaded', function(){

@@ -61,6 +61,20 @@
     .page-sub{color:var(--muted);font-size:.88rem;margin-top:.2rem;}
     .btn-primary{background:var(--mg);color:white;border:none;padding:.65rem 1.4rem;border-radius:10px;font-size:.9rem;font-weight:500;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;transition:all .2s;}
     .btn-primary:hover{background:var(--mg-d);}
+    .filters{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap;background:white;border:1px solid var(--mg-border);border-radius:14px;padding:1rem 1.1rem;margin-bottom:1.35rem;}
+    .filter-chips{display:flex;gap:.45rem;flex-wrap:wrap;flex:1;}
+    .filter-chip{border:1.5px solid var(--mg-border);background:var(--bg);color:var(--muted);border-radius:9px;padding:.52rem .9rem;font-family:"DM Sans",sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;}
+    .filter-chip.active{background:var(--mg);border-color:var(--mg);color:white;}
+    .filter-date{border:1.5px solid var(--mg-border);background:var(--bg);color:var(--text);border-radius:9px;padding:.52rem .85rem;font-family:"DM Sans",sans-serif;font-size:.82rem;outline:none;}
+    .filter-clear{border:none;background:transparent;color:var(--mg);font-family:"DM Sans",sans-serif;font-size:.82rem;font-weight:600;cursor:pointer;padding:.45rem;}
+    .confirm-overlay{position:fixed;inset:0;background:rgba(42,16,32,.42);display:none;align-items:center;justify-content:center;z-index:900;padding:1rem;}
+    .confirm-overlay.open{display:flex;}
+    .confirm-modal{width:min(92vw,360px);background:white;border:1px solid var(--mg-border);border-radius:14px;box-shadow:0 18px 50px rgba(42,16,32,.22);overflow:hidden;}
+    .confirm-modal-head{padding:1rem 1.1rem;border-bottom:1px solid var(--mg-border);display:flex;align-items:center;gap:.65rem;color:var(--red);font-weight:700;}
+    .confirm-modal-body{padding:1rem 1.1rem;color:var(--text);font-size:.9rem;line-height:1.45;}
+    .confirm-modal-actions{display:flex;gap:.6rem;justify-content:flex-end;padding:0 1.1rem 1.1rem;}
+    .confirm-btn{border:1px solid var(--mg-border);border-radius:9px;padding:.55rem .95rem;font-family:"DM Sans",sans-serif;font-size:.84rem;font-weight:700;cursor:pointer;background:white;color:var(--mg);}
+    .confirm-btn.danger{background:var(--red);border-color:var(--red);color:white;}
     /* Cards grid */
     .partos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1.25rem;}
     .parto-card{background:white;border-radius:16px;border:1px solid var(--mg-border);overflow:hidden;transition:transform .2s,box-shadow .2s;}
@@ -110,6 +124,9 @@
       .partos-grid{grid-template-columns:1fr}
       .top-row{flex-direction:column;align-items:stretch}
       .btn-primary{width:100%;justify-content:center}
+      .filters{align-items:stretch}
+      .filter-chips,.filter-date,.filter-clear{width:100%}
+      .filter-chip{flex:1}
       .parto-actions,.parto-actions form,.parto-actions a,.parto-actions button{width:100%;justify-content:center}
       .page-title{font-size:1.6rem}
     }
@@ -150,12 +167,22 @@
     {% endfor %}
   {% endif %}
 
+  <div class="filters" id="parto-filters">
+    <div class="filter-chips">
+      <button type="button" class="filter-chip active" data-filter="todos">Todas</button>
+      <button type="button" class="filter-chip" data-filter="atendida">Atendida</button>
+      <button type="button" class="filter-chip" data-filter="no-atendida">No atendida</button>
+    </div>
+    <input type="date" class="filter-date" id="parto-fecha" title="Filtrar por fecha">
+    <button type="button" class="filter-clear" id="parto-limpiar">Limpiar</button>
+  </div>
+
   {% if programaciones %}
   {% if activas %}
   <div class="section-title">Próximas programaciones <span class="pill">{{ activas|length }}</span></div>
   <div class="partos-grid">
     {% for p in activas %}
-    <div class="parto-card">
+    <div class="parto-card" data-atendida="{% if p.estado == 'realizado' %}atendida{% else %}no-atendida{% endif %}" data-fecha="{{ p.fecha_programada|date:'Y-m-d' }}">
       <div class="parto-card-top">
         <div class="parto-paciente">
           <div class="parto-av">{% if p.paciente.first_name %}{{ p.paciente.first_name|slice:":1" }}{{ p.paciente.last_name|slice:":1" }}{% else %}{{ p.paciente.username|slice:":1"|upper }}{% endif %}</div>
@@ -186,7 +213,7 @@
             <input type="hidden" name="estado" value="realizado">
             <button type="submit" class="btn-done">✅ Atendida</button>
           </form>
-          <form method="post" action="{% url 'eliminar_parto' p.id %}" onsubmit="return confirm('¿Eliminar esta programación de parto?');">
+          <form method="post" action="{% url 'eliminar_parto' p.id %}" class="delete-parto-form">
             {% csrf_token %}
             <button type="submit" class="btn-delete">🗑 Eliminar</button>
           </form>
@@ -201,7 +228,7 @@
   <div class="section-title">Historial de partos <span class="pill">{{ historial|length }}</span></div>
   <div class="partos-grid">
     {% for p in historial %}
-    <div class="parto-card historial">
+    <div class="parto-card historial" data-atendida="{% if p.estado == 'realizado' %}atendida{% else %}no-atendida{% endif %}" data-fecha="{{ p.fecha_programada|date:'Y-m-d' }}">
       <div class="parto-card-top">
         <div class="parto-paciente">
           <div class="parto-av">{% if p.paciente.first_name %}{{ p.paciente.first_name|slice:":1" }}{{ p.paciente.last_name|slice:":1" }}{% else %}{{ p.paciente.username|slice:":1"|upper }}{% endif %}</div>
@@ -236,7 +263,7 @@
             <button type="submit" class="btn-done">✅ Atendida</button>
           </form>
           {% endif %}
-          <form method="post" action="{% url 'eliminar_parto' p.id %}" onsubmit="return confirm('¿Eliminar esta programación de parto?');">
+          <form method="post" action="{% url 'eliminar_parto' p.id %}" class="delete-parto-form">
             {% csrf_token %}
             <button type="submit" class="btn-delete">🗑 Eliminar</button>
           </form>
@@ -246,6 +273,9 @@
     {% endfor %}
   </div>
   {% endif %}
+  <div id="parto-no-results" style="display:none;background:white;border:1px solid var(--mg-border);border-radius:14px;padding:2rem;text-align:center;color:var(--muted);font-size:.9rem;">
+    No hay programaciones con ese filtro.
+  </div>
   {% else %}
   <div style="background:white;border-radius:16px;border:1px solid var(--mg-border)">
     <div class="empty">
@@ -257,6 +287,17 @@
   </div>
   {% endif %}
 </main>
+
+<div class="confirm-overlay" id="delete-parto-modal" aria-hidden="true">
+  <div class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="delete-parto-title">
+    <div class="confirm-modal-head" id="delete-parto-title">Eliminar programación</div>
+    <div class="confirm-modal-body">¿Deseas eliminar esta programación de parto?</div>
+    <div class="confirm-modal-actions">
+      <button type="button" class="confirm-btn" id="delete-parto-cancel">Cancelar</button>
+      <button type="button" class="confirm-btn danger" id="delete-parto-confirm">Eliminar</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // ── HAMBURGUESA ──
@@ -270,6 +311,75 @@ function closeSidebar() {
   document.getElementById('overlay').classList.remove('active');
   document.getElementById('hamburger').classList.remove('open');
 }
+
+var partoFiltro = 'todos';
+var partoFecha = '';
+function aplicarFiltrosParto() {
+  var visibles = 0;
+  document.querySelectorAll('.parto-card').forEach(function(card) {
+    var okEstado = partoFiltro === 'todos' || card.dataset.atendida === partoFiltro;
+    var okFecha = !partoFecha || card.dataset.fecha === partoFecha;
+    var mostrar = okEstado && okFecha;
+    card.style.display = mostrar ? '' : 'none';
+    if (mostrar) visibles++;
+  });
+  document.querySelectorAll('.partos-grid').forEach(function(grid) {
+    var tiene = Array.from(grid.querySelectorAll('.parto-card')).some(function(card) {
+      return card.style.display !== 'none';
+    });
+    var titulo = grid.previousElementSibling;
+    grid.style.display = tiene ? '' : 'none';
+    if (titulo && titulo.classList.contains('section-title')) titulo.style.display = tiene ? '' : 'none';
+  });
+  var empty = document.getElementById('parto-no-results');
+  if (empty) empty.style.display = visibles === 0 ? 'block' : 'none';
+}
+document.querySelectorAll('.filter-chip').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.filter-chip').forEach(function(b) { b.classList.remove('active'); });
+    btn.classList.add('active');
+    partoFiltro = btn.dataset.filter || 'todos';
+    aplicarFiltrosParto();
+  });
+});
+document.getElementById('parto-fecha')?.addEventListener('change', function() {
+  partoFecha = this.value;
+  aplicarFiltrosParto();
+});
+document.getElementById('parto-limpiar')?.addEventListener('click', function() {
+  partoFiltro = 'todos';
+  partoFecha = '';
+  var fecha = document.getElementById('parto-fecha');
+  if (fecha) fecha.value = '';
+  document.querySelectorAll('.filter-chip').forEach(function(b) { b.classList.toggle('active', b.dataset.filter === 'todos'); });
+  aplicarFiltrosParto();
+});
+
+var deletePartoForm = null;
+var deletePartoModal = document.getElementById('delete-parto-modal');
+document.querySelectorAll('.delete-parto-form').forEach(function(form) {
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    deletePartoForm = form;
+    deletePartoModal.classList.add('open');
+    deletePartoModal.setAttribute('aria-hidden', 'false');
+  });
+});
+document.getElementById('delete-parto-cancel')?.addEventListener('click', function() {
+  deletePartoModal.classList.remove('open');
+  deletePartoModal.setAttribute('aria-hidden', 'true');
+  deletePartoForm = null;
+});
+document.getElementById('delete-parto-confirm')?.addEventListener('click', function() {
+  if (deletePartoForm) deletePartoForm.submit();
+});
+deletePartoModal?.addEventListener('click', function(e) {
+  if (e.target === deletePartoModal) {
+    deletePartoModal.classList.remove('open');
+    deletePartoModal.setAttribute('aria-hidden', 'true');
+    deletePartoForm = null;
+  }
+});
 </script>
 </body>
 </html>

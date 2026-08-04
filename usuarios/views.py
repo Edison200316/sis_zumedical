@@ -17,6 +17,9 @@ from django.urls import reverse
 from django.core.paginator import Paginator
 import csv
 import json
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 
@@ -982,7 +985,11 @@ def registrar_control(request):
     """
     try:
         if request.method == 'POST':
-            form = ControlPrenatalForm(request.POST, medico=request.user)
+            data = request.POST.copy()
+            for campo in ('peso', 'altura', 'glucosa', 'temperatura'):
+                if campo in data:
+                    data[campo] = data.get(campo, '').replace(',', '.')
+            form = ControlPrenatalForm(data, medico=request.user)
             if form.is_valid():
                 control = form.save(commit=False)
                 control.medico = request.user
@@ -1103,7 +1110,13 @@ def _ejecutar_ia_en_control(control, request=None):
         }
 
         logger.info(f'[IA] Prediccion para paciente {perfil} -- datos: {datos_clinicos}')
-        resultado = ml_engine.predict(datos_clinicos)
+        try:
+            resultado = ml_engine.predict(datos_clinicos)
+        except Exception as e:
+            logger.error(f'[IA] Error al ejecutar predict: {e}', exc_info=True)
+            # Devolver None para permitir que se registre el control sin IA
+            return None
+        
         logger.info(f'[IA] Resultado: {resultado.nivel_riesgo} ({resultado.puntuacion}%)')
 
         resultado_json = json.dumps({
@@ -2588,10 +2601,19 @@ def registrar_consulta_general(request):
             except: return None
 
         def _float(campo):
-            try: return float(request.POST.get(campo, '')) or None
+            try: return float(request.POST.get(campo, '').replace(',', '.')) or None
             except: return None
 
-        consulta = ConsultaGeneral.objects.create(
+        def _date(campo):
+            from django.utils.dateparse import parse_date
+            return parse_date(request.POST.get(campo, '').strip() or '') or None
+
+        def _time(campo):
+            from django.utils.dateparse import parse_time
+            return parse_time(request.POST.get(campo, '').strip() or '') or None
+
+        try:
+            consulta = ConsultaGeneral.objects.create(
             paciente                 = paciente_obj,
             medico                   = request.user,
             especialidad             = _val('especialidad', 'medicina_general'),
@@ -2635,9 +2657,14 @@ def registrar_consulta_general(request):
             diagnostico_3_cie10      = _val('diag3_cie10'),
             diagnostico_3_presuntivo = bool(request.POST.get('diag3_presuntivo')),
             diagnostico_3_definitivo = bool(request.POST.get('diag3_definitivo')),
-            proxima_cita             = request.POST.get('proxima_cita') or None,
-            proxima_cita_hora        = request.POST.get('proxima_cita_hora') or None,
-        )
+            proxima_cita             = _date('proxima_cita'),
+            proxima_cita_hora        = _time('proxima_cita_hora'),
+            )
+        except Exception as e:
+            logger.error(f"Error en registrar_consulta_general: {e}", exc_info=True)
+            messages.error(request, 'No se pudo registrar la consulta. Revisa los campos e intenta nuevamente.')
+            return render(request, 'medico/registrar_consulta_unificada.html',
+                          {'pacientes': pacientes_generales, 'pac_preseleccionado': pac_preseleccionado})
         registrar_log(request, 'CREATE', 'Consultas Generales',
             f'Consulta {consulta.get_especialidad_display()} registrada para paciente {paciente_obj.get_full_name()} por {request.user.rol}', 'INFO')
         messages.success(request, f'Consulta de {consulta.get_especialidad_display()} para {paciente_obj.get_full_name()} registrada correctamente.')

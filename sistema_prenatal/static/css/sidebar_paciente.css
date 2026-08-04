@@ -719,7 +719,7 @@ aside#sidebar > .sb-brand:first-of-type {
     padding-top: 0 !important;
     transform: translateX(-105%) !important;
     z-index: 99999 !important;
-    overflow-y: hidden !important;
+    overflow-y: auto !important;
   }
   body aside.sidebar#sidebar.open,
   body .sidebar#sidebar.open,
@@ -730,7 +730,7 @@ aside#sidebar > .sb-brand:first-of-type {
   /* Navegación con scroll en mobile */
   .sidebar .sb-nav {
     flex: 1 1 auto !important;
-    max-height: calc(100vh - 340px) !important;
+    max-height: none !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
@@ -740,6 +740,7 @@ aside#sidebar > .sb-brand:first-of-type {
   /* Footer siempre visible en mobile */
   .sidebar .sb-footer {
     flex-shrink: 0 !important;
+    margin-top: auto !important;
     display: block !important;
     visibility: visible !important;
     opacity: 1 !important;

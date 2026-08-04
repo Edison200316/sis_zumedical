@@ -824,7 +824,8 @@ aside#sidebar > .sidebar-brand:first-of-type {
     transform: translateX(-100%) !important;
     z-index: 250 !important;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.2) !important;
-    overflow: hidden !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
     display: flex !important;
     flex-direction: column !important;
   }
@@ -839,7 +840,7 @@ aside#sidebar > .sidebar-brand:first-of-type {
   .sidebar .sb-nav,
   .sidebar .sidebar-nav {
     flex: 1 1 auto !important;
-    max-height: calc(100vh - 340px) !important;
+    max-height: none !important;
     overflow-y: auto !important;
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
@@ -850,6 +851,7 @@ aside#sidebar > .sidebar-brand:first-of-type {
   .sidebar .sb-footer,
   .sidebar .sidebar-footer {
     flex-shrink: 0 !important;
+    margin-top: auto !important;
     border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
     display: block !important;
     visibility: visible !important;

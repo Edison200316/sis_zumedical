@@ -621,6 +621,27 @@ function validarEmail(input){
     setValid('email', val.length === 0 || ok);
 }
 
+function validarEmailDisponible(input){
+    var val = input.value.trim();
+    if(!val || !fieldValid.email) return;
+    fetch("{% url 'verificar_disponibilidad' %}?campo=email&valor=" + encodeURIComponent(val))
+        .then(function(r){ return r.json(); })
+        .then(function(data){
+            if(!data.disponible){
+                setInputState(input, 'err');
+                setStatus('email', 'err');
+                setMsg('email', data.mensaje || 'Este correo ya está registrado', 'err');
+                setValid('email', false);
+            } else {
+                setInputState(input, 'ok');
+                setStatus('email', 'ok');
+                setMsg('email', 'Correo disponible', 'ok');
+                setValid('email', true);
+            }
+        })
+        .catch(function(){});
+}
+
 // -- TOGGLE OJO --
 function togglePw(id, btn){
     var inp = document.getElementById(id);
@@ -699,6 +720,7 @@ document.addEventListener('DOMContentLoaded', function(){
     tel.addEventListener('input', function(){ validarDigitos(this,'tel','tel',10,'Teléfono'); });
     usr.addEventListener('input', function(){ validarUsuario(this); });
     em.addEventListener('input',  function(){ validarEmail(this); });
+    em.addEventListener('blur',   function(){ validarEmailDisponible(this); });
     p1.addEventListener('input',  function(){ updateStrength(this.value); });
     p2.addEventListener('input',  checkMatch);
 

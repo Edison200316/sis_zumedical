@@ -251,7 +251,7 @@
         <a href="{% url 'paciente_general_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Mis Citas
         </a>
-        {% if tiene_prenatal_activo or request.user.paciente.estado_embarazo == 'ACTIVO' %}
+        {% if request.user.puede_prenatal %}
         <a href="{% url 'paciente_dashboard' %}" class="nav-item" style="margin-top: 1.5rem;">
             <i class="fa-solid fa-person-pregnant"></i> Mi embarazo
         </a>

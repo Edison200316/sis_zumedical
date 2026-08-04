@@ -189,8 +189,8 @@ def login_view(request):
             except User.DoesNotExist:
                 pass
             except User.MultipleObjectsReturned:
-                # Si hay varios usuarios con el mismo email, tomar el primero
-                user_obj = User.objects.filter(email__iexact=username_or_email).first()
+                messages.error(request, 'Hay más de una cuenta con ese correo. Ingresa con tu usuario.')
+                return render(request, 'login.html', {'especialidad_id': especialidad_id, 'tipo_paciente': tipo_paciente})
 
         if user_obj:
             # Verificar si la cuenta está desactivada
@@ -508,8 +508,8 @@ def registro_paciente(request):
 
 def verificar_disponibilidad(request):
     """
-    Endpoint AJAX (GET) — verifica si username o cédula ya existen.
-    ?campo=username&valor=XXX  |  ?campo=cedula&valor=XXX
+    Endpoint AJAX (GET) — verifica si username, cédula o email ya existen.
+    ?campo=username&valor=XXX  |  ?campo=cedula&valor=XXX  |  ?campo=email&valor=XXX
     """
     campo = request.GET.get('campo', '').strip()
     valor = request.GET.get('valor', '').strip()
@@ -530,6 +530,12 @@ def verificar_disponibilidad(request):
             return JsonResponse({'disponible': False, 'mensaje': 'Esta cédula ya está registrada.'})
         return JsonResponse({'disponible': True, 'mensaje': 'Cédula disponible.'})
 
+    if campo == 'email':
+        existe = Usuario.objects.filter(email__iexact=valor).exists()
+        if existe:
+            return JsonResponse({'disponible': False, 'mensaje': 'Este correo ya está registrado.'})
+        return JsonResponse({'disponible': True, 'mensaje': 'Correo disponible.'})
+
     return JsonResponse({'disponible': False, 'mensaje': 'Campo no válido.'})
 
 
@@ -542,9 +548,13 @@ def mi_perfil(request):
         action = request.POST.get('action')
 
         if action == 'perfil':
+            email = request.POST.get('email', '').strip()
+            if email and Usuario.objects.filter(email__iexact=email).exclude(id=request.user.id).exists():
+                messages.error(request, 'Este correo ya está registrado.')
+                return redirect('mi_perfil')
             request.user.first_name = request.POST.get('first_name', '')
             request.user.last_name = request.POST.get('last_name', '')
-            request.user.email = request.POST.get('email', '')
+            request.user.email = email
             request.user.save()
             registrar_log(request, 'UPDATE', 'Perfil',
                 'Paciente prenatal actualizó sus datos personales', 'INFO')
@@ -2092,9 +2102,18 @@ def admin_editar_usuario(request, usuario_id):
     usuario = get_object_or_404(User, id=usuario_id)
 
     if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        if email and User.objects.filter(email__iexact=email).exclude(id=usuario.id).exists():
+            messages.error(request, f'El correo "{email}" ya está registrado.')
+            return render(request, 'admin/editar_usuario.html', {
+                'usuario': usuario,
+                'roles': ['admin', 'medico', 'enfermera', 'paciente'],
+                'medico_perfil': getattr(usuario, 'medico', None) if usuario.rol == 'medico' else None,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
         usuario.first_name = request.POST.get('first_name', '').strip()
         usuario.last_name  = request.POST.get('last_name', '').strip()
-        usuario.email      = request.POST.get('email', '').strip()
+        usuario.email      = email
         nuevo_rol = request.POST.get('rol', usuario.rol)
         usuario.rol = nuevo_rol
         password = request.POST.get('password', '').strip()
@@ -2178,6 +2197,12 @@ def admin_crear_paciente(request):
                 'form_data': request.POST,
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
+        if email and User.objects.filter(email__iexact=email).exists():
+            messages.error(request, f'El correo "{email}" ya está registrado.')
+            return render(request, 'admin/crear_paciente.html', {
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
 
         user = User.objects.create_user(
             username=username, password=password,
@@ -2224,9 +2249,16 @@ def admin_editar_paciente(request, paciente_id):
             })
         if username:
             paciente.usuario.username = username
+        email = request.POST.get('email', '').strip()
+        if email and Usuario.objects.filter(email__iexact=email).exclude(id=paciente.usuario.id).exists():
+            messages.error(request, f'El correo "{email}" ya está registrado.')
+            return render(request, 'admin/editar_paciente.html', {
+                'paciente': paciente,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
         paciente.usuario.first_name = request.POST.get('first_name', '').strip()
         paciente.usuario.last_name  = request.POST.get('last_name', '').strip()
-        paciente.usuario.email      = request.POST.get('email', '').strip()
+        paciente.usuario.email      = email
         password = request.POST.get('password', '').strip()
         if password:
             paciente.usuario.set_password(password)
@@ -2367,9 +2399,17 @@ def admin_editar_medico(request, medico_id):
     especialidades = Especialidad.objects.filter(activo=True)
 
     if request.method == 'POST':
+        email = request.POST.get('email', '').strip()
+        if email and Usuario.objects.filter(email__iexact=email).exclude(id=medico.usuario.id).exists():
+            messages.error(request, f'El correo "{email}" ya está registrado.')
+            return render(request, 'admin/editar_medico.html', {
+                'medico': medico,
+                'especialidades': especialidades,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
         medico.usuario.first_name = request.POST.get('first_name', '').strip()
         medico.usuario.last_name  = request.POST.get('last_name', '').strip()
-        medico.usuario.email      = request.POST.get('email', '').strip()
+        medico.usuario.email      = email
         password = request.POST.get('password', '').strip()
         if password:
             medico.usuario.set_password(password)
@@ -2489,6 +2529,12 @@ def admin_crear_paciente_general(request):
 
         if Usuario.objects.filter(username=username).exists():
             messages.error(request, f'El usuario "{username}" ya existe.')
+            return render(request, 'admin/crear_paciente_general.html', {
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
+        if email and Usuario.objects.filter(email__iexact=email).exists():
+            messages.error(request, f'El correo "{email}" ya está registrado.')
             return render(request, 'admin/crear_paciente_general.html', {
                 'form_data': request.POST,
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
@@ -3016,6 +3062,15 @@ def lista_programaciones_parto(request):
             return redireccionar_por_rol(request.user)
 
         ahora = timezone.localtime()
+        hoy = timezone.localdate()
+        ProgramacionParto.objects.filter(
+            medico=request.user,
+            estado__in=['programado', 'confirmado', 'reprogramado'],
+        ).filter(
+            Q(fecha_programada__lt=hoy) |
+            Q(fecha_programada=hoy, hora_programada__lte=ahora.time())
+        ).update(estado='realizado')
+
         busqueda = request.GET.get('q', '').strip()
         fecha_desde = request.GET.get('fecha_desde', '').strip()
         fecha_hasta = request.GET.get('fecha_hasta', '').strip()

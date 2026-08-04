@@ -153,9 +153,9 @@ class ProgramacionParto(models.Model):
         ('induccion',     'Inducción del Parto'),
     ]
     ESTADO_CHOICES = [
-        ('programado',  'Programado'),
+        ('programado',  'Pendiente'),
         ('confirmado',  'Confirmado'),
-        ('realizado',   'Realizado'),
+        ('realizado',   'Atendida'),
         ('cancelado',   'Cancelado'),
         ('reprogramado','Reprogramado'),
     ]

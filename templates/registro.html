@@ -978,6 +978,15 @@
             });
         });
 
+        document.getElementById('id_email').addEventListener('blur', function() {
+            const { input, status, msg } = getEls('id_email');
+            if (!input.value.trim() || !validateEmail()) return;
+            checkDisponibilidad('email', input.value.trim(), (data) => {
+                if (!data.disponible) setInvalid(input, status, msg, data.mensaje);
+                else setValid(input, status, msg, data.mensaje);
+            });
+        });
+
         // Genero change
         const generoSel = document.getElementById('id_genero');
         if (generoSel) generoSel.addEventListener('change', validateGenero);

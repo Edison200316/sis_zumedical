@@ -2,6 +2,7 @@ from django.urls import path
 from django.contrib.auth import views as auth_views
 from . import views
 from . import views_recuperacion
+from paciente_general import views as paciente_general_views
 
 urlpatterns = [
     path('login/', views.login_view, name='login'),
@@ -29,6 +30,7 @@ urlpatterns = [
     path('agendar-cita/', views.agendar_cita, name='agendar_cita'),
     path('mis-citas/', views.ver_citas, name='ver_citas'),
     path('mi-perfil/', views.mi_perfil, name='mi_perfil'),
+    path('paciente/general/agendar/', paciente_general_views.agendar_cita),
 
     path('citas-medico/', views.citas_medico, name='citas_medico'),
     path('cambiar-estado/<int:cita_id>/', views.cambiar_estado_cita, name='cambiar_estado_cita'),

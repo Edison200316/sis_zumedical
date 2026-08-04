@@ -225,6 +225,12 @@ class RegistroPacienteForm(forms.ModelForm):
             raise forms.ValidationError('Esta cédula ya está registrada.')
         return cedula
 
+    def clean_email(self):
+        email = (self.cleaned_data.get('email') or '').strip()
+        if email and Usuario.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError('Este correo ya está registrado.')
+        return email
+
     def clean(self):
         cleaned_data = super().clean()
         password = cleaned_data.get('password')
@@ -429,11 +435,22 @@ class EditarPacienteEnfermeraForm(forms.ModelForm):
 
     def __init__(self, *args, usuario=None, **kwargs):
         super().__init__(*args, **kwargs)
+        self.usuario = usuario
         if usuario:
             self.fields['username'].initial = usuario.username
             self.fields['first_name'].initial = usuario.first_name
             self.fields['last_name'].initial = usuario.last_name
             self.fields['email'].initial = usuario.email
+
+    def clean_email(self):
+        email = (self.cleaned_data.get('email') or '').strip()
+        if email:
+            qs = Usuario.objects.filter(email__iexact=email)
+            if self.usuario:
+                qs = qs.exclude(pk=self.usuario.pk)
+            if qs.exists():
+                raise forms.ValidationError('Este correo ya está registrado.')
+        return email
 
     def save(self, commit=True, usuario=None):
         paciente = super().save(commit=False)

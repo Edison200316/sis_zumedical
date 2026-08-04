@@ -1247,8 +1247,10 @@
         .cita-row {
           align-items: flex-start;
           gap: .8rem;
+          flex-wrap: wrap;
         }
         .cita-data {
+          flex: 1 1 calc(100% - 60px);
           min-width: 0;
         }
         .cita-paciente {
@@ -1275,6 +1277,11 @@
         }
         .date-badge {
           flex-basis: 100%;
+        }
+        .badge-mini {
+          margin-left: 52px;
+          max-width: calc(100% - 52px);
+          white-space: normal;
         }
         .side-panel {
           grid-template-columns: 1fr;
@@ -1742,9 +1749,7 @@
               </span>
             </div>
             <span class="badge-mini badge-{{ cita.estado }}">
-              {% if cita.estado == 'pendiente' %}Pendiente {% elif cita.estado
-              == 'atendido' %}Atendido {% elif cita.estado == 'cancelado'
-              %}Cancelado {% else %}{{ cita.estado }}{% endif %}
+              {% if cita.estado == 'pendiente' %}Pendiente{% elif cita.estado == 'confirmada' %}Confirmada{% elif cita.estado == 'atendido' %}Atendido{% elif cita.estado == 'cancelado' or cita.estado == 'cancelada' %}Cancelado{% else %}{{ cita.estado }}{% endif %}
             </span>
           </div>
           {% endfor %} {% else %}

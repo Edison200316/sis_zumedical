@@ -268,9 +268,13 @@ def mi_perfil(request):
         form_type = request.POST.get('form_type', 'datos')
 
         if form_type == 'datos':
+            email = request.POST.get('email', user.email).strip()
+            if email and Usuario.objects.filter(email__iexact=email).exclude(id=user.id).exists():
+                messages.error(request, 'Este correo ya está registrado.')
+                return redirect('paciente_general_perfil')
             user.first_name = request.POST.get('first_name', user.first_name).strip()
             user.last_name  = request.POST.get('last_name',  user.last_name).strip()
-            user.email      = request.POST.get('email',      user.email).strip()
+            user.email      = email
             user.save()
             registrar_log(request, 'UPDATE', 'Perfil',
                 'El paciente actualizó sus datos personales', 'INFO')

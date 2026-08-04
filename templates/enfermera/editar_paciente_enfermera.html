@@ -284,7 +284,7 @@
 <aside class="sidebar" id="sidebar">
     <div class="sb-brand">
         <div class="sb-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
-        <div class="sb-brand-text"><h2>Zumedical</h2><span>Secretaría</span></div>
+        <div class="sb-brand-text"><h2>Zumedical</h2><span>Enfermera</span></div>
     </div>
     <a href="{% url 'perfil_enfermera' %}" class="sb-user">
         <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}</div>

@@ -260,6 +260,10 @@ def agendar_cita(request):
 @no_cache_view
 def mi_perfil(request):
     user = request.user
+    perfil = getattr(user, 'paciente', None)
+    if perfil and getattr(perfil, 'estado_embarazo', '') == 'ACTIVO':
+        return redirect('mi_perfil')
+
     if request.method == 'POST':
         form_type = request.POST.get('form_type', 'datos')
 

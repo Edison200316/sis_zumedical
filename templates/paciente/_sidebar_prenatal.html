@@ -4,7 +4,7 @@
         <div class="sb-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
         <div class="sb-brand-text"><h2>Zumedical</h2><span>Embarazo</span></div>
     </div>
-    <a href="{% url 'paciente_general_perfil' %}" class="sb-user">
+    <a href="{% url 'mi_perfil' %}" class="sb-user">
         <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}U{% endif %}</div>
         <div class="sb-user-info">
             <p>Mi perfil</p>

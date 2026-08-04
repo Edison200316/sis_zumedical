@@ -85,6 +85,16 @@
     .filter-input:focus,.filter-select:focus{border-color:var(--mg);background:#fff;}
     .btn-clear-filters{border:1.5px solid var(--mg-border);background:#fff;color:var(--mg);border-radius:10px;padding:.65rem 1rem;font-family:"DM Sans",sans-serif;font-size:.86rem;font-weight:600;cursor:pointer;}
     .btn-clear-filters:hover{background:var(--mg-bg);}
+    .native-select-hidden{position:absolute;width:1px!important;height:1px!important;opacity:0;pointer-events:none;}
+    .custom-filter-select{position:relative;width:100%;max-width:100%;}
+    .custom-filter-btn{width:100%;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:.75rem;border:1.5px solid var(--mg-border);border-radius:10px;background:var(--bg);padding:.65rem .8rem;font-family:"DM Sans",sans-serif;font-size:.86rem;color:var(--text);cursor:pointer;outline:none;}
+    .custom-filter-btn:focus,.custom-filter-select.open .custom-filter-btn{border-color:var(--mg);background:#fff;}
+    .custom-filter-btn span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+    .custom-filter-btn svg{width:14px;height:14px;stroke:var(--mg-d);fill:none;stroke-width:2;flex-shrink:0;}
+    .custom-filter-menu{display:none;position:absolute;left:0;right:0;top:calc(100% + .35rem);width:100%;max-height:190px;overflow-y:auto;background:white;border:1.5px solid var(--mg-border);border-radius:10px;box-shadow:0 10px 24px rgba(138,37,99,.14);z-index:50;}
+    .custom-filter-select.open .custom-filter-menu{display:block;}
+    .custom-filter-option{width:100%;display:block;border:0;background:white;color:var(--text);padding:.7rem .9rem;text-align:left;font-family:"DM Sans",sans-serif;font-size:.86rem;line-height:1.3;cursor:pointer;white-space:normal;overflow-wrap:anywhere;}
+    .custom-filter-option:hover,.custom-filter-option.active{background:var(--mg-bg);color:var(--mg-d);font-weight:600;}
     /* Programaciones List */
     .prog-list{margin-bottom:1.5rem;}
     .prog-item{display:flex;align-items:center;gap:1rem;padding:1rem 1.5rem;border-bottom:1px solid var(--mg-border);background:white;transition:background .2s;}
@@ -131,6 +141,8 @@
         min-height:44px;
         font-size:.88rem;
       }
+      .custom-filter-menu{position:static;margin-top:.35rem;max-height:180px;}
+      .custom-filter-btn,.custom-filter-option{font-size:.88rem;}
       .btn-clear-filters{
         display:flex;
         align-items:center;
@@ -172,11 +184,22 @@
     <div class="sec-title"><div class="sec-icon">📋</div>Programaciones Programadas</div>
     <div class="filters">
       <input type="search" id="filtro-paciente" class="filter-input" placeholder="Buscar por paciente...">
-      <select id="filtro-estado" class="filter-select">
+      <select id="filtro-estado" class="filter-select native-select-hidden" tabindex="-1" aria-hidden="true">
         <option value="">Todos los estados</option>
         <option value="atendida">Atendida</option>
         <option value="no_atendida">No atendida</option>
       </select>
+      <div class="custom-filter-select" id="estado-filter-custom">
+        <button type="button" class="custom-filter-btn" id="estado-filter-btn" aria-haspopup="listbox" aria-expanded="false">
+          <span id="estado-filter-label">Todos los estados</span>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        <div class="custom-filter-menu" id="estado-filter-menu" role="listbox">
+          <button type="button" class="custom-filter-option active" data-value="">Todos los estados</button>
+          <button type="button" class="custom-filter-option" data-value="atendida">Atendida</button>
+          <button type="button" class="custom-filter-option" data-value="no_atendida">No atendida</button>
+        </div>
+      </div>
       <input type="date" id="filtro-fecha" class="filter-input">
       <button type="button" class="btn-clear-filters" id="limpiar-filtros">Limpiar</button>
     </div>
@@ -400,9 +423,46 @@ document.addEventListener('DOMContentLoaded', function() {
   const filtroF = document.getElementById('filtro-fecha');
   const btnLimpiar = document.getElementById('limpiar-filtros');
   const progList = document.getElementById('prog-list');
+  const estadoCustom = document.getElementById('estado-filter-custom');
+  const estadoBtn = document.getElementById('estado-filter-btn');
+  const estadoLabel = document.getElementById('estado-filter-label');
+  const estadoMenu = document.getElementById('estado-filter-menu');
+  const estadoOptions = estadoMenu ? estadoMenu.querySelectorAll('.custom-filter-option') : [];
   
   // Datos de programaciones (llenar desde el servidor)
   const programacionesData = {{ programaciones_json|default:'[]'|safe }};
+
+  function closeEstadoMenu() {
+    if (!estadoCustom || !estadoBtn) return;
+    estadoCustom.classList.remove('open');
+    estadoBtn.setAttribute('aria-expanded', 'false');
+  }
+
+  function setEstadoFilter(value, text, triggerChange) {
+    if (!filtroE || !estadoLabel) return;
+    filtroE.value = value;
+    estadoLabel.textContent = text || 'Todos los estados';
+    estadoOptions.forEach(option => option.classList.toggle('active', option.dataset.value === value));
+    closeEstadoMenu();
+    if (triggerChange) filtroE.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  if (estadoBtn && estadoCustom) {
+    estadoBtn.addEventListener('click', function() {
+      const isOpen = estadoCustom.classList.toggle('open');
+      estadoBtn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+    });
+  }
+
+  estadoOptions.forEach(option => {
+    option.addEventListener('click', function() {
+      setEstadoFilter(option.dataset.value, option.textContent.trim(), true);
+    });
+  });
+
+  document.addEventListener('click', function(e) {
+    if (estadoCustom && !estadoCustom.contains(e.target)) closeEstadoMenu();
+  });
   
   function renderList() {
     const q = (filtroP?.value || '').toLowerCase().trim();
@@ -454,7 +514,7 @@ document.addEventListener('DOMContentLoaded', function() {
   filtroF?.addEventListener('change', renderList);
   btnLimpiar?.addEventListener('click', () => {
     if (filtroP) filtroP.value = '';
-    if (filtroE) filtroE.value = '';
+    setEstadoFilter('', 'Todos los estados', false);
     if (filtroF) filtroF.value = '';
     renderList();
   });

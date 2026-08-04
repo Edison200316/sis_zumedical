@@ -230,8 +230,19 @@ class RegistroPacienteForm(forms.ModelForm):
         password = cleaned_data.get('password')
         password_confirm = cleaned_data.get('password_confirm')
 
+        if password:
+            import re
+            if len(password) < 8:
+                self.add_error('password', 'La contraseña debe tener mínimo 8 caracteres.')
+            if not re.search(r'[A-ZÁÉÍÓÚÑ]', password):
+                self.add_error('password', 'La contraseña debe incluir una letra mayúscula.')
+            if not re.search(r'\d', password):
+                self.add_error('password', 'La contraseña debe incluir un número.')
+            if not re.search(r'[^A-Za-z0-9ÁÉÍÓÚÑáéíóúñ]', password):
+                self.add_error('password', 'La contraseña debe incluir un símbolo.')
+
         if password and password_confirm and password != password_confirm:
-            raise forms.ValidationError('Las contraseñas no coinciden.')
+            self.add_error('password_confirm', 'Las contraseñas no coinciden.')
 
         return cleaned_data
 

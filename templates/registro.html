@@ -632,7 +632,7 @@
                     <label for="id_password1">Contraseña</label>
                     <div class="input-wrap">
                         <svg class="field-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        <input type="password" id="id_password1" name="password1"
+                        <input type="password" id="id_password1" name="password"
                                placeholder="Crea tu contraseña" autocomplete="new-password">
                         <button type="button" class="toggle-pass" data-target="id_password1" aria-label="Mostrar contraseña">
                             <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
@@ -649,7 +649,7 @@
                         <li id="req-sym"><i class="fa-regular fa-circle-xmark"></i> Un símbolo (!@#$%...)</li>
                     </ul>
                     <p class="field-msg" id="msg_password1"></p>
-                    {{ form.password1.errors }}
+                    {{ form.password.errors }}
                 </div>
 
                 <!-- CONFIRMAR CONTRASEÑA -->
@@ -657,14 +657,14 @@
                     <label for="id_password2">Confirmar contraseña</label>
                     <div class="input-wrap">
                         <svg class="field-icon" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                        <input type="password" id="id_password2" name="password2"
+                        <input type="password" id="id_password2" name="password_confirm"
                                placeholder="Repite tu contraseña" autocomplete="new-password">
                         <button type="button" class="toggle-pass" data-target="id_password2" aria-label="Mostrar contraseña">
                             <svg viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
                         </button>
                     </div>
                     <p class="field-msg" id="msg_password2"></p>
-                    {{ form.password2.errors }}
+                    {{ form.password_confirm.errors }}
                 </div>
 
                 <button type="submit" class="btn-register" id="btnRegister">
@@ -803,7 +803,7 @@
         function validateEmail() {
             const { input, status, msg } = getEls('id_email');
             const val = input.value.trim();
-            if (!val) { setInvalid(input, status, msg, 'El correo es obligatorio.'); return false; }
+            if (!val) { clearStatus(input, status, msg); return true; }
             // Regex más estricto: usuario@dominio.extensión (extensión mínimo 2 letras)
             if (!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(val)) {
                 setInvalid(input, status, msg, 'Ingresa un correo válido. Ej: nombre@correo.com');
@@ -898,6 +898,13 @@
                 msg.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${SVG_X}</svg>Mínimo 8 caracteres.`;
                 return false;
             }
+            if (!/[A-Z]/.test(val) || !/[0-9]/.test(val) || !/[^A-Za-z0-9]/.test(val)) {
+                input.classList.remove('is-valid');
+                input.classList.add('is-invalid');
+                msg.className = 'field-msg error';
+                msg.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${SVG_X}</svg>Incluye mayúscula, número y símbolo.`;
+                return false;
+            }
             input.classList.remove('is-invalid');
             input.classList.add('is-valid');
             msg.className = 'field-msg';
@@ -936,7 +943,11 @@
             const input = document.getElementById(id);
             if (!input) return;
             input.addEventListener('blur', () => { if (input.value) validFn(); });
-            input.addEventListener('input', () => { if (input.classList.contains('is-invalid')) validFn(); });
+            input.addEventListener('input', () => {
+                if (input.value || input.classList.contains('is-invalid') || input.classList.contains('is-valid')) {
+                    validFn();
+                }
+            });
         }
 
         bindField('id_first_name',  () => validateName('id_first_name', 'El nombre'));
@@ -995,7 +1006,9 @@
         const pass1El = document.getElementById('id_password1');
         pass1El.addEventListener('input', () => {
             updateStrengthBar(pass1El.value);
-            if (pass1El.classList.contains('is-invalid')) validatePassword1();
+            if (pass1El.value || pass1El.classList.contains('is-invalid') || pass1El.classList.contains('is-valid')) {
+                validatePassword1();
+            }
             // Re-validar confirmación si ya tiene algo
             const p2 = document.getElementById('id_password2');
             if (p2.value) validatePassword2();
@@ -1003,7 +1016,8 @@
         pass1El.addEventListener('blur', () => { if (pass1El.value) validatePassword1(); });
 
         document.getElementById('id_password2').addEventListener('input', () => {
-            if (document.getElementById('id_password2').classList.contains('is-invalid')) {
+            const p2 = document.getElementById('id_password2');
+            if (p2.value || p2.classList.contains('is-invalid') || p2.classList.contains('is-valid')) {
                 validatePassword2();
             }
         });

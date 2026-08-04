@@ -1382,14 +1382,8 @@
             <div class="cita-row">
               <div class="cita-num">{{ forloop.counter }}</div>
               <div class="cita-info">
-                <div class="cita-paciente">
-                  {{ cita.paciente.get_full_name|default:cita.paciente.username
-                  }}
-                </div>
-                <div class="cita-meta">
-                  {{ cita.fecha|date:"d/m/Y" }} · {{ cita.motivo|default:"Sin
-                  motivo" }}
-                </div>
+                <div class="cita-paciente">{{ cita.paciente.get_full_name|default:cita.paciente.username }}</div>
+                <div class="cita-meta">{{ cita.fecha|date:"d/m/Y" }} · {{ cita.motivo|default:"Sin motivo" }}</div>
               </div>
               <div class="cita-right">
                 <span class="cita-hora">{{ cita.hora|time:"H:i" }}</span>
@@ -1483,11 +1477,7 @@
                   ></div>
                 </div>
                 <div class="act-body">
-                  <div class="act-text">
-                    {{
-                    cita.paciente.get_full_name|default:cita.paciente.username
-                    }} — {{ cita.motivo|default:"consulta" }}
-                  </div>
+                  <div class="act-text">{{ cita.paciente.get_full_name|default:cita.paciente.username }} — {{ cita.motivo|default:"consulta" }}</div>
                   <div class="act-time">
                     {{ cita.fecha|date:"d/m/Y" }} · {{ cita.hora|time:"H:i" }}
                   </div>

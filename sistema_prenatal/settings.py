@@ -116,7 +116,8 @@ AUTH_USER_MODEL = 'usuarios.Usuario'
 MIDDLEWARE = [
     'sistema_prenatal.middleware.HealthCheckMiddleware',  # responde /health/ sin tocar BD
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # sirve estáticos en producción
+    # WhiteNoiseMiddleware desactivado en Vercel: usa su propio sistema de static files
+    # 'whitenoise.middleware.WhiteNoiseMiddleware',  # sirve estáticos en producción
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -189,7 +190,7 @@ USE_TZ = True
 # ============================================================
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'          # donde collectstatic deposita los archivos
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [
     path for path in [
         BASE_DIR / 'static',
@@ -197,7 +198,15 @@ STATICFILES_DIRS = [
     ]
     if path.exists()
 ]
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# StaticFilesStorage básico: entrega CSS sin transformaciones en Vercel
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+
+# WHITENOISE: Desactivar compresión de CSS en Vercel
+WHITENOISE_SKIP_COMPRESS_OFFLINE = True
+WHITENOISE_MIMETYPES = {
+    '.css': 'text/css; charset=utf-8',
+    '.js': 'application/javascript; charset=utf-8',
+}
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

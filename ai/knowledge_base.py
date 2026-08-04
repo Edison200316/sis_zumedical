@@ -13,6 +13,39 @@ CATEGORÍAS:
     TOTAL                → 102 preguntas
 """
 
+def obtener_especialidades_info():
+    """
+    Obtiene información real de especialidades de la landing para el chatbot.
+    """
+    try:
+        from landing.models import Especialidad
+        especialidades = Especialidad.objects.filter(activo=True)
+        
+        info = ""
+        for esp in especialidades:
+            info += f"- {esp.nombre}: {esp.descripcion}\n"
+        
+        return info if info else ""
+    except:
+        return ""
+
+
+def construir_respuesta_especialidades():
+    """
+    Construye una respuesta dinámica sobre especialidades.
+    """
+    esp_info = obtener_especialidades_info()
+    
+    if esp_info:
+        return f"""Nuestras especialidades principales son:
+
+{esp_info}
+
+Todos nuestros especialistas tienen amplia experiencia en atención de calidad. ¿Cuál especialidad te interesa?"""
+    else:
+        return """Nuestras especialidades principales incluyen: Obstetricia y Ginecología, Medicina Materno-Fetal especializada, Nutrición Gestacional, Enfermería Obstétrica, Ecografía con equipos de última tecnología, y evaluación de riesgo mediante sistemas de IA. Todos nuestros especialistas tienen amplia experiencia en atención prenatal de alto nivel."""
+
+
 # ---------------------------------------------------------------------------
 # Metadatos de categorías (para construir el menú principal del chatbot)
 # ---------------------------------------------------------------------------
@@ -75,7 +108,7 @@ _CENTRO_MEDICO = [
     {
         "categoria": "centro_medico",
         "pregunta": "¿Qué servicios ofrece Zumedical?",
-        "respuesta": "Ofrecemos: consultas prenatales especializadas, ecografías con equipos de última generación, análisis clínicos de laboratorio, planificación integral del parto, evaluación de riesgo gestacional con inteligencia artificial, atención de emergencias obstétricas 24/7 y consultas posparto. Todos nuestros servicios están diseñados para garantizar tu bienestar y el de tu bebé.",
+        "respuesta": construir_respuesta_especialidades(),
         "palabras_clave": "servicios, que ofrecen, atención, especialidades, programas",
     },
     {
@@ -93,7 +126,7 @@ _CENTRO_MEDICO = [
     {
         "categoria": "centro_medico",
         "pregunta": "¿Atienden los sábados?",
-        "respuesta": "Sí, atendemos los sábados de 08:00 a 13:00. Te recomendamos agendar tu cita con al menos 3 días de anticipación ya que la disponibilidad es limitada los fines de semana. Llamacal +593 99 000 0000 para reservar.",
+        "respuesta": "Sí, atendemos los sábados de 08:00 a 13:00. Te recomendamos agendar tu cita con al menos 3 días de anticipación ya que la disponibilidad es limitada los fines de semana. Llama al +593 99 000 0000 para reservar.",
         "palabras_clave": "sábado, fin de semana, atienden sábados, horario",
     },
     {
@@ -111,7 +144,7 @@ _CENTRO_MEDICO = [
     {
         "categoria": "centro_medico",
         "pregunta": "¿Qué especialidades tienen?",
-        "respuesta": "Nuestras especialidades principales incluyen: Obstetricia y Ginecología, Medicina Materno-Fetal especializada, Nutrición Gestacional, Enfermería Obstétrica, Ecografía con equipos de última tecnología, y evaluación de riesgo mediante sistemas de IA. Todos nuestros especialistas tienen amplia experiencia en atención prenatal de alto nivel.",
+        "respuesta": construir_respuesta_especialidades(),
         "palabras_clave": "especialidades, médicos, especialistas, obstetra, ginecólogo, servicios",
     },
     {

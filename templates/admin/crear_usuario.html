@@ -98,6 +98,9 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 .pwd-rule.met .icon-check{display:block}
 .pwd-strength{height:4px;border-radius:2px;background:var(--mg-border);margin-top:0.6rem;overflow:hidden}
 .pwd-strength-bar{height:100%;width:0%;border-radius:2px;background:var(--error);transition:width 0.25s ease,background 0.25s ease}
+.pwd-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0.3rem;color:var(--mg-l);transition:color 0.2s}
+.pwd-toggle:hover{color:var(--mg)}
+.pwd-toggle svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
 .form-actions{display:flex;gap:0.75rem;align-items:center;margin-top:1.75rem;flex-wrap:wrap}
 .btn-primary{display:inline-flex;align-items:center;gap:0.5rem;padding:0.8rem 1.6rem;background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white;border:none;border-radius:10px;font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;transition:opacity 0.2s;text-decoration:none}
 .btn-primary:hover{opacity:0.9}
@@ -217,7 +220,7 @@ tbody tr:hover{background:var(--mg-bg)}
 <div class="form-section-title">Credenciales</div>
 <div class="form-row">
 <div class="form-group"><label>Usuario</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><input type="text" name="username" id="usernameInput" value="{{ form_data.username|default:'' }}" placeholder="nombre_usuario" maxlength="30" autocomplete="off" required></div><div class="field-error" id="usernameError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Solo letras, números, puntos y guion bajo, sin espacios</span></div></div>
-<div class="form-group"><label>Contraseña</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" name="password" id="passwordInput" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required></div>
+<div class="form-group"><label>Contraseña</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" name="password" id="passwordInput" placeholder="Mínimo 8 caracteres" autocomplete="new-password" required style="padding-right:2.8rem"><button type="button" class="pwd-toggle" id="togglePwd" onclick="togglePassword()"><svg id="eyeOpen" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg id="eyeClosed" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
 <div class="pwd-strength"><div class="pwd-strength-bar" id="pwdStrengthBar"></div></div>
 <div class="pwd-rules">
 <div class="pwd-rule" id="ruleLength"><svg class="icon-x" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg><svg class="icon-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg><span>Mínimo 8 caracteres</span></div>
@@ -259,6 +262,21 @@ function closeSidebar() {
     sb.classList.remove('open');
     ov.classList.remove('active');
     hb.classList.remove('open');
+}
+
+function togglePassword() {
+    const pwdInput = document.getElementById('passwordInput');
+    const eyeOpen = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
+    if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        eyeOpen.style.display = 'none';
+        eyeClosed.style.display = 'block';
+    } else {
+        pwdInput.type = 'password';
+        eyeOpen.style.display = 'block';
+        eyeClosed.style.display = 'none';
+    }
 }
 
 function toggleExtra(rol) {

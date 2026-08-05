@@ -87,6 +87,9 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 .input-wrap input.valid{border-color:#9CCBA3}
 .pwd-meter{height:5px;border-radius:4px;background:#F1DCE7;margin-top:0.5rem;overflow:hidden}
 .pwd-meter-bar{height:100%;width:0%;border-radius:4px;background:#C0392B;transition:width 0.25s ease,background 0.25s ease}
+.pwd-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0.3rem;color:var(--mg-l);transition:color 0.2s}
+.pwd-toggle:hover{color:var(--mg)}
+.pwd-toggle svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
 .pwd-checklist{list-style:none;margin-top:0.5rem;display:flex;flex-direction:column;gap:0.25rem}
 .pwd-checklist li{font-size:0.74rem;color:var(--muted);display:flex;align-items:center;gap:0.4rem}
 .pwd-checklist li i{font-size:0.7rem;color:#C0392B}
@@ -221,7 +224,7 @@ tbody tr:hover{background:var(--mg-bg)}
 <div class="form-section-title">Credenciales de acceso</div>
 <div class="form-row">
 <div class="form-group"><label>Usuario</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><input type="text" id="id_username" name="username" placeholder="nombre_paciente" required></div><div class="field-msg" id="msg_username"></div></div>
-<div class="form-group"><label>Contraseña</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" id="id_password" name="password" placeholder="Mínimo 8 caracteres" required></div>
+<div class="form-group"><label>Contraseña</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" id="id_password" name="password" placeholder="Mínimo 8 caracteres" required style="padding-right:2.8rem"><button type="button" class="pwd-toggle" onclick="togglePassword()"><svg id="eyeOpen" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg id="eyeClosed" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
 <div class="pwd-meter" id="pwd_meter"><div class="pwd-meter-bar" id="pwd_meter_bar"></div></div>
 <ul class="pwd-checklist" id="pwd_checklist">
 <li id="chk_len"><i class="fa-solid fa-circle-xmark"></i> Mínimo 8 caracteres</li>
@@ -240,6 +243,21 @@ tbody tr:hover{background:var(--mg-bg)}
 </div>
 </main>
 <script>
+function togglePassword() {
+    const pwdInput = document.getElementById('id_password');
+    const eyeOpen = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
+    if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        eyeOpen.style.display = 'none';
+        eyeClosed.style.display = 'inline';
+    } else {
+        pwdInput.type = 'password';
+        eyeOpen.style.display = 'inline';
+        eyeClosed.style.display = 'none';
+    }
+}
+
 // ── Hamburguesa móvil ──
 function toggleSidebar() {
     const sb = document.getElementById('sidebar');

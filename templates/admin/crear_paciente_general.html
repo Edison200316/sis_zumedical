@@ -87,6 +87,9 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 .input-wrap input.valid{border-color:#9CCBA3}
 .pwd-meter{height:5px;border-radius:4px;background:#F1DCE7;margin-top:.5rem;overflow:hidden}
 .pwd-meter-bar{height:100%;width:0%;border-radius:4px;background:#C0392B;transition:width .25s ease,background .25s ease}
+.pwd-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0.3rem;color:var(--purple-l);transition:color 0.2s}
+.pwd-toggle:hover{color:var(--purple)}
+.pwd-toggle i{font-size:16px}
 .pwd-checklist{list-style:none;margin-top:.5rem;display:flex;flex-direction:column;gap:.25rem}
 .pwd-checklist li{font-size:.74rem;color:var(--muted);display:flex;align-items:center;gap:.4rem}
 .pwd-checklist li i{font-size:.7rem;color:#C0392B}
@@ -280,7 +283,11 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                         <label>Contraseña</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-lock"></i>
-                            <input type="password" id="id_password" name="password" placeholder="Mínimo 8 caracteres" required>
+                            <input type="password" id="id_password" name="password" placeholder="Mínimo 8 caracteres" required style="padding-right:2.8rem">
+                            <button type="button" class="pwd-toggle" onclick="togglePassword()">
+                                <i class="fa-solid fa-eye" id="eyeOpen"></i>
+                                <i class="fa-solid fa-eye-slash" id="eyeClosed" style="display:none"></i>
+                            </button>
                         </div>
                         <div class="pwd-meter" id="pwd_meter"><div class="pwd-meter-bar" id="pwd_meter_bar"></div></div>
                         <ul class="pwd-checklist" id="pwd_checklist">
@@ -304,6 +311,21 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 </main>
 
 <script>
+function togglePassword() {
+    const pwdInput = document.getElementById('id_password');
+    const eyeOpen = document.getElementById('eyeOpen');
+    const eyeClosed = document.getElementById('eyeClosed');
+    if (pwdInput.type === 'password') {
+        pwdInput.type = 'text';
+        eyeOpen.style.display = 'none';
+        eyeClosed.style.display = 'inline';
+    } else {
+        pwdInput.type = 'password';
+        eyeOpen.style.display = 'inline';
+        eyeClosed.style.display = 'none';
+    }
+}
+
 function toggleSidebar() {
     const sb = document.getElementById('sidebar');
     const ov = document.getElementById('overlay');

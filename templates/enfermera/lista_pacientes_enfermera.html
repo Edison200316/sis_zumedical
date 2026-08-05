@@ -378,14 +378,18 @@
                     <td data-label="Acciones">
                         <div class="td-actions">
                             <a href="{% url 'editar_paciente_enfermera' p.usuario.id %}" class="btn-sm btn-secondary" onclick="event.stopPropagation()">Editar</a>
-                            <form method="post" action="{% url 'toggle_modulo_prenatal' p.usuario.id %}" onclick="event.stopPropagation()" style="display:inline;">
-                                {% csrf_token %}
-                                <input type="hidden" name="next" value="{% url 'lista_pacientes_enfermera' %}">
-                                <input type="hidden" name="activar" value="{% if p.tiene_prenatal %}0{% else %}1{% endif %}">
-                                <button type="submit" class="btn-sm btn-toggle {% if not p.tiene_prenatal %}off{% endif %}">
-                                    {% if p.tiene_prenatal %}Desactivar prenatal{% else %}Activar prenatal{% endif %}
-                                </button>
-                            </form>
+                            {% if p.tiene_prenatal or p.usuario.genero == 'femenino' or p.usuario.genero == 'F' %}
+                                <form method="post" action="{% url 'toggle_modulo_prenatal' p.usuario.id %}" onclick="event.stopPropagation()" style="display:inline;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="{% url 'lista_pacientes_enfermera' %}">
+                                    <input type="hidden" name="activar" value="{% if p.tiene_prenatal %}0{% else %}1{% endif %}">
+                                    <button type="submit" class="btn-sm btn-toggle {% if not p.tiene_prenatal %}off{% endif %}">
+                                        {% if p.tiene_prenatal %}Desactivar prenatal{% else %}Activar prenatal{% endif %}
+                                    </button>
+                                </form>
+                            {% else %}
+                                <span class="btn-sm btn-secondary" onclick="event.stopPropagation()" title="Solo pacientes femeninas pueden activar embarazo">No aplica prenatal</span>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>

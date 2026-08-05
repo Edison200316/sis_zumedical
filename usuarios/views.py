@@ -75,6 +75,10 @@ def q_citas_con_acceso_prenatal():
     return Q(paciente__paciente__estado_embarazo='ACTIVO') | Q(medico__medico__especialidad__tipo='prenatal')
 
 
+def es_genero_femenino(valor):
+    return (valor or '').strip().lower() in ('femenino', 'f')
+
+
 User = get_user_model()
  
 from functools import wraps
@@ -479,12 +483,15 @@ def registro_paciente(request):
     especialidad_param = request.GET.get('tipo') or request.POST.get('especialidad_param') or ''
 
     if request.method == 'POST':
-        form = RegistroPacienteForm(request.POST)
+        post_data = request.POST.copy()
+        if tipo == 'prenatal':
+            post_data['genero'] = 'femenino'
+        form = RegistroPacienteForm(post_data)
         if form.is_valid():
             try:
                 user = form.save(commit=True)
                 login(request, user)
-                messages.success(request, f'¡Cuenta creada con éxito! Bienvenido/a, {user.first_name}.')
+                request.session['mensaje_bienvenida_registro'] = f'¡Cuenta creada con éxito! Bienvenido/a, {user.first_name}.'
                 return redirect('paciente_general_dashboard')
             except Exception as e:
                 messages.error(request, f'Error al crear la cuenta: {str(e)}')
@@ -950,6 +957,13 @@ def activar_embarazo(request, paciente_id):
     from pacientes.models import Paciente
     paciente = get_object_or_404(Paciente, id=paciente_id)
     nombre = paciente.usuario.get_full_name()
+
+    if not es_genero_femenino(paciente.usuario.genero):
+        messages.error(request, 'Solo las pacientes registradas como femeninas pueden activar embarazo.')
+        referer = request.META.get('HTTP_REFERER')
+        if referer:
+            return redirect(referer)
+        return redirect('pacientes_medico')
     
     # Activar embarazo
     paciente.estado_embarazo = 'ACTIVO'
@@ -1332,7 +1346,7 @@ def toggle_modulo_prenatal(request, paciente_id):
         if paciente_usuario.paciente.estado_embarazo == 'ACTIVO':
             messages.error(request, 'Solo las pacientes generales usan activación de módulo prenatal.')
             return redirect(request.POST.get('next', 'lista_pacientes_enfermera'))
-        if activar and paciente_usuario.genero != 'femenino':
+        if activar and not es_genero_femenino(paciente_usuario.genero):
             messages.error(request, 'Solo las pacientes registradas como femeninas pueden activar el módulo prenatal.')
             return redirect(request.POST.get('next', 'lista_pacientes_enfermera'))
 
@@ -2190,6 +2204,7 @@ def admin_crear_paciente(request):
         last_name  = request.POST.get('last_name', '').strip()
         email      = request.POST.get('email', '').strip()
         password   = request.POST.get('password', '')
+        genero     = 'femenino'
 
         if User.objects.filter(username=username).exists():
             messages.error(request, f'El usuario "{username}" ya existe.')
@@ -2207,7 +2222,7 @@ def admin_crear_paciente(request):
         user = User.objects.create_user(
             username=username, password=password,
             first_name=first_name, last_name=last_name,
-            email=email, rol='paciente'
+            email=email, rol='paciente', genero=genero
         )
         from pacientes.models import Paciente
         paciente, _ = Paciente.objects.get_or_create(usuario=user)
@@ -2526,6 +2541,14 @@ def admin_crear_paciente_general(request):
         telefono   = request.POST.get('telefono', '').strip()
         edad       = request.POST.get('edad') or None
         direccion  = request.POST.get('direccion', '').strip()
+        genero     = request.POST.get('genero', '').strip()
+
+        if genero not in ('femenino', 'masculino', 'otro'):
+            messages.error(request, 'Selecciona un género válido.')
+            return render(request, 'admin/crear_paciente_general.html', {
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
 
         if Usuario.objects.filter(username=username).exists():
             messages.error(request, f'El usuario "{username}" ya existe.')
@@ -2543,7 +2566,7 @@ def admin_crear_paciente_general(request):
         user = Usuario.objects.create_user(
             username=username, password=password,
             first_name=first_name, last_name=last_name,
-            email=email, rol='paciente'
+            email=email, rol='paciente', genero=genero
         )
         from pacientes.models import Paciente
         paciente, _ = Paciente.objects.get_or_create(usuario=user)
@@ -3784,6 +3807,10 @@ def activar_embarazo(request, paciente_id):
     from medicos.models import Medico
 
     paciente = get_object_or_404(Paciente, id=paciente_id)
+
+    if not es_genero_femenino(paciente.usuario.genero):
+        messages.error(request, 'Solo las pacientes registradas como femeninas pueden activar embarazo.')
+        return redirect('ficha_paciente', paciente_id=paciente_id)
 
     # Verificar que el médico sea prenatal
     try:

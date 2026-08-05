@@ -2473,7 +2473,7 @@
                   {% if user.rol == 'medico' or user.rol == 'admin' %}
                   <button
                     class="btn-action btn-edit"
-                    onclick="abrirEditarControl({{ c.id }})"
+                    data-action="editar-control"
                     title="Editar control"
                     data-control-id="{{ c.id }}"
                     style="
@@ -2512,7 +2512,7 @@
                   </button>
                   <button
                     class="btn-action btn-delete"
-                    onclick="abrirConfirmarEliminar({{ c.id }})"
+                    data-action="eliminar-control"
                     title="Eliminar control"
                     data-control-id="{{ c.id }}"
                     style="
@@ -2552,7 +2552,7 @@
                   {% endif %}
                   <button
                     class="btn-pdf"
-                    onclick="generarPDF(this)"
+                    data-action="pdf-control"
                     data-paciente="{{ c.paciente.get_full_name|default:c.paciente.username }}"
                     data-fecha="{{ c.fecha|date:'d/m/Y' }}"
                     data-semanas="{{ c.semanas_gestacion }}"
@@ -2718,7 +2718,7 @@
               {% if user.rol == 'medico' or user.rol == 'admin' %}
               <button
                 class="btn-action btn-edit"
-                onclick="abrirEditarControl({{ c.id }})"
+                data-action="editar-control"
                 data-control-id="{{ c.id }}"
                 style="
                   display: flex;
@@ -2758,7 +2758,7 @@
               </button>
               <button
                 class="btn-action btn-delete"
-                onclick="abrirConfirmarEliminar({{ c.id }})"
+                data-action="eliminar-control"
                 data-control-id="{{ c.id }}"
                 style="
                   display: flex;
@@ -2802,7 +2802,7 @@
             <div style="margin-top: 0.6rem">
               <button
                 class="cc-pdf"
-                onclick="generarPDF(this)"
+                data-action="pdf-control"
                 data-paciente="{{ c.paciente.get_full_name|default:c.paciente.username }}"
                 data-fecha="{{ c.fecha|date:'d/m/Y' }}"
                 data-semanas="{{ c.semanas_gestacion }}"
@@ -3991,6 +3991,37 @@
           var md = document.getElementById("modal-eliminar-overlay");
           if (me && me.classList.contains("open")) cerrarEditarModal();
           if (md && md.classList.contains("open")) cerrarEliminarModal();
+        }
+      });
+
+      document.addEventListener("click", function (e) {
+        var editBtn = e.target.closest(".btn-edit[data-control-id]");
+        if (editBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          abrirEditarControl(editBtn.getAttribute("data-control-id"));
+          return;
+        }
+
+        var deleteBtn = e.target.closest(".btn-delete[data-control-id]");
+        if (deleteBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          abrirConfirmarEliminar(deleteBtn.getAttribute("data-control-id"));
+          return;
+        }
+
+        var pdfBtn = e.target.closest(".btn-pdf, .cc-pdf");
+        if (pdfBtn) {
+          e.preventDefault();
+          e.stopPropagation();
+          generarPDF(pdfBtn);
+          return;
+        }
+
+        var detailTarget = e.target.closest(".pac-cell, .cc-top");
+        if (detailTarget && !e.target.closest("button,a,select,input,textarea")) {
+          openModal(detailTarget);
         }
       });
 

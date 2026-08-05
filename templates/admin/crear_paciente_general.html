@@ -253,11 +253,11 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                         <label>Género</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-venus-mars"></i>
-                            <select name="genero">
+                            <select name="genero" required>
                                 <option value="">Seleccionar...</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Femenino</option>
-                                <option value="O">Otro / Prefiero no decir</option>
+                                <option value="masculino" {% if form_data.genero == 'masculino' %}selected{% endif %}>Masculino</option>
+                                <option value="femenino" {% if form_data.genero == 'femenino' %}selected{% endif %}>Femenino</option>
+                                <option value="otro" {% if form_data.genero == 'otro' %}selected{% endif %}>Otro / Prefiero no indicar</option>
                             </select>
                         </div>
                     </div>
@@ -322,6 +322,14 @@ function closeSidebar() {
 (function() {
     const NAME_RE = /^[A-Za-zÁÉÍÓÚáéíóúÑñÜü\s]*$/;
     const fields = {};
+    const generoInput = document.querySelector('select[name="genero"]');
+    if (generoInput) {
+        fields.genero = generoInput.value !== '';
+        generoInput.addEventListener('change', function() {
+            fields.genero = generoInput.value !== '';
+            updateSubmit();
+        });
+    }
 
     function setMsg(id, text, cls) {
         const el = document.getElementById('msg_' + id);
@@ -456,7 +464,7 @@ function closeSidebar() {
     function updateSubmit() {
         const btn = document.getElementById('submitBtn');
         if (!btn) return;
-        const requiredOk = fields.first_name && fields.last_name && fields.username && fields.password;
+        const requiredOk = fields.first_name && fields.last_name && fields.username && fields.password && fields.genero;
         const optionalOk = (fields.email !== false) && (fields.cedula !== false) && (fields.telefono !== false);
         btn.disabled = !(requiredOk && optionalOk);
     }

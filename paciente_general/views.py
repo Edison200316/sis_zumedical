@@ -88,6 +88,10 @@ def dashboard(request):
     user = request.user
     hoy = timezone.localdate()
 
+    mensaje_bienvenida = request.session.pop('mensaje_bienvenida_registro', None)
+    if mensaje_bienvenida:
+        messages.success(request, mensaje_bienvenida)
+
     # ── AUTO-CANCELAR citas vencidas (con 30 min de margen) ──
     auto_cancelar_citas(user)
 
@@ -198,21 +202,33 @@ def agendar_cita(request):
         fecha = request.POST.get('fecha')
         hora = request.POST.get('hora')
         if especialidad_id and medico_id and fecha and hora:
-            from datetime import date
+            from datetime import date, time
             hoy = timezone.localdate()
             hora_actual = timezone.localtime().time()
-            fecha_obj = date.fromisoformat(fecha)
-            
+            try:
+                fecha_obj = date.fromisoformat(fecha)
+                h_h, h_m = map(int, hora.split(':'))
+                hora_obj = time(h_h, h_m)
+            except (TypeError, ValueError):
+                messages.error(request, 'Selecciona una fecha y hora válidas.')
+                return render(request, 'paciente_general/agendar_cita.html', {
+                    'especialidades': especialidades,
+                    'hoy': hoy,
+                    'citas_pendientes': Cita.objects.filter(
+                        paciente=request.user, estado__in=['pendiente', 'confirmada'], fecha__gte=hoy
+                    ).count(),
+                })
+
             # Validar fecha y hora pasada
-            from datetime import time
-            h_h, h_m = map(int, hora.split(':'))
-            hora_obj = time(h_h, h_m)
 
             if fecha_obj < hoy or (fecha_obj == hoy and hora_obj < hora_actual):
                 messages.error(request, 'No puedes agendar una cita en una fecha u hora pasada.')
                 return render(request, 'paciente_general/agendar_cita.html', {
                     'especialidades': especialidades,
                     'hoy': hoy,
+                    'citas_pendientes': Cita.objects.filter(
+                        paciente=request.user, estado__in=['pendiente', 'confirmada'], fecha__gte=hoy
+                    ).count(),
                 })
             medico = get_object_or_404(Medico, id=medico_id)
             motivo = request.POST.get('motivo', '').strip()
@@ -228,6 +244,9 @@ def agendar_cita(request):
                 return render(request, 'paciente_general/agendar_cita.html', {
                     'especialidades': especialidades,
                     'hoy': hoy,
+                    'citas_pendientes': Cita.objects.filter(
+                        paciente=request.user, estado__in=['pendiente', 'confirmada'], fecha__gte=hoy
+                    ).count(),
                 })
 
             cita = Cita.objects.create(

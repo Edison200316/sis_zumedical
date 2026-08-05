@@ -3808,7 +3808,7 @@ def ficha_paciente(request, paciente_id):
 
 
 @login_required
-def activar_embarazo(request, paciente_id):
+def activar_embarazo_nuevo(request, paciente_id):
     """Activa un nuevo embarazo para la paciente (Doctor prenatal)"""
     if request.user.rol != 'medico':
         return redireccionar_por_rol(request.user)

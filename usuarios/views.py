@@ -451,10 +451,19 @@ def paciente_dashboard(request):
         )
         parto_programado = None
         if tiene_prenatal_activo:
+            print(f"DEBUG: Buscando programación de parto para usuario {request.user.id} - {request.user.username}")
+            programaciones = ProgramacionParto.objects.filter(paciente=request.user)
+            print(f"DEBUG: Total programaciones encontradas: {programaciones.count()}")
+            for prog in programaciones:
+                print(f"DEBUG: Programación - ID:{prog.id}, Estado:{prog.estado}, Fecha:{prog.fecha_programada}")
+            
             parto_programado = ProgramacionParto.objects.filter(
                 paciente=request.user,
                 estado__in=['programado', 'confirmado'],
             ).order_by('fecha_programada', 'hora_programada').first()
+            print(f"DEBUG: Parto programado encontrado: {parto_programado}")
+        else:
+            print(f"DEBUG: No tiene prenatal activo - perfil:{perfil}, tiene_prenatal:{getattr(perfil, 'tiene_prenatal', False) if perfil else None}, estado:{getattr(perfil, 'estado_embarazo', '') if perfil else None}")
         print(f"DEBUG: Parto programado: {parto_programado}")
 
         print("DEBUG: Renderizando template...")

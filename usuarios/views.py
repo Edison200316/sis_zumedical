@@ -3062,13 +3062,29 @@ def eliminar_parto(request, parto_id):
     """Elimina una programación de parto desde la lista del médico."""
     import logging
     logger = logging.getLogger(__name__)
+    
+    logger.info(f"Intentando eliminar parto con ID: {parto_id}")
+    logger.info(f"Usuario: {request.user.username}, Método: {request.method}")
+    
     try:
         from paciente_general.models import ProgramacionParto
 
         if request.user.rol != 'medico':
+            messages.error(request, 'Solo los médicos pueden eliminar programaciones de parto.')
             return redireccionar_por_rol(request.user)
 
-        parto = get_object_or_404(ProgramacionParto, id=parto_id)
+        # Buscar la programación
+        try:
+            parto = ProgramacionParto.objects.get(id=parto_id)
+            logger.info(f"Parto encontrado: {parto}")
+        except ProgramacionParto.DoesNotExist:
+            logger.error(f"No se encontró ProgramacionParto con ID {parto_id}")
+            # Listar todas las programaciones para debug
+            todas = ProgramacionParto.objects.all().values_list('id', flat=True)
+            logger.error(f"IDs existentes: {list(todas)}")
+            messages.error(request, f'No se encontró la programación de parto con ID {parto_id}.')
+            return redirect('lista_programaciones_parto')
+        
         paciente_nombre = parto.paciente.get_full_name() or parto.paciente.username
 
         if request.method == 'POST':
@@ -3078,8 +3094,9 @@ def eliminar_parto(request, parto_id):
             messages.success(request, f'Programación de parto de {paciente_nombre} eliminada correctamente.')
             return redirect('lista_programaciones_parto')
 
-        messages.error(request, 'Acción no permitida para eliminar la programación.')
+        messages.error(request, 'Debe usar el método POST para eliminar la programación.')
         return redirect('lista_programaciones_parto')
+        
     except Exception as e:
         logger.error(f"Error en eliminar_parto: {str(e)}", exc_info=True)
         messages.error(request, f'Error al eliminar la programación: {str(e)}')

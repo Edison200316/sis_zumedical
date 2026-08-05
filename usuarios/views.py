@@ -76,6 +76,10 @@ def q_citas_con_acceso_prenatal():
 
 
 def es_genero_femenino(valor):
+    """Verifica si el género es femenino. Si está vacío/None, se asume femenino por compatibilidad."""
+    if not valor or valor.strip() == '':
+        # Si el género no está definido, asumimos femenino para pacientes legacy
+        return True
     return (valor or '').strip().lower() in ('femenino', 'f')
 
 
@@ -974,6 +978,11 @@ def activar_embarazo(request, paciente_id):
         if referer:
             return redirect(referer)
         return redirect('pacientes_medico')
+    
+    # Si el género está vacío, asignarlo automáticamente como femenino
+    if not paciente.usuario.genero or paciente.usuario.genero.strip() == '':
+        paciente.usuario.genero = 'femenino'
+        paciente.usuario.save()
     
     # Activar embarazo
     paciente.estado_embarazo = 'ACTIVO'
@@ -3821,6 +3830,11 @@ def activar_embarazo_nuevo(request, paciente_id):
     if not es_genero_femenino(paciente.usuario.genero):
         messages.error(request, 'Solo las pacientes registradas como femeninas pueden activar embarazo.')
         return redirect('ficha_paciente', paciente_id=paciente_id)
+    
+    # Si el género está vacío, asignarlo automáticamente como femenino
+    if not paciente.usuario.genero or paciente.usuario.genero.strip() == '':
+        paciente.usuario.genero = 'femenino'
+        paciente.usuario.save()
 
     # Verificar que el médico sea prenatal
     try:

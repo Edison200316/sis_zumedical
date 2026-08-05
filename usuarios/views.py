@@ -481,6 +481,7 @@ def paciente_dashboard(request):
 def registro_paciente(request):
     # ?tipo=ginecologia, ?tipo=medicina, etc. (podemos recibir la especialidad)
     especialidad_param = request.GET.get('tipo') or request.POST.get('especialidad_param') or ''
+    tipo = request.GET.get('tipo_paciente') or request.POST.get('tipo_paciente') or 'general'
 
     if request.method == 'POST':
         post_data = request.POST.copy()

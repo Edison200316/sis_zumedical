@@ -2052,6 +2052,14 @@ DOMINIOS_EMAIL_PERMITIDOS = {
 }
 
 
+def _admin_citas_pendientes_count():
+    try:
+        return Cita.objects.filter(estado='pendiente').count()
+    except Exception:
+        logger.exception("Error al contar citas pendientes para el panel admin")
+        return 0
+
+
 def _validar_usuario_admin(first_name, last_name, username, email, password, rol=None, roles_validos=None, password_confirm=None):
     import re
     from django.core.exceptions import ValidationError
@@ -2095,7 +2103,13 @@ def admin_crear_usuario(request):
 
     from landing.models import Especialidad
 
-    especialidades = Especialidad.objects.filter(activo=True)
+    try:
+        especialidades = Especialidad.objects.filter(activo=True)
+        list(especialidades[:1])
+    except Exception:
+        logger.exception("Error al cargar especialidades en crear usuario")
+        especialidades = Especialidad.objects.none()
+        messages.error(request, 'No se pudieron cargar las especialidades médicas. Revisa la base de datos o las migraciones en producción.')
     roles = ['admin', 'medico', 'enfermera', 'paciente']
 
     if request.method == 'POST':
@@ -2129,7 +2143,7 @@ def admin_crear_usuario(request):
                 'roles': roles,
                 'especialidades': especialidades,
                 'form_data': request.POST,
-                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+                'citas_pendientes': _admin_citas_pendientes_count(),
             })
 
         if User.objects.filter(username=username).exists():
@@ -2138,7 +2152,7 @@ def admin_crear_usuario(request):
                 'roles': roles,
                 'especialidades': especialidades,
                 'form_data': request.POST,
-                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+                'citas_pendientes': _admin_citas_pendientes_count(),
             })
         if email and User.objects.filter(email__iexact=email).exists():
             messages.error(request, f'El correo "{email}" ya está registrado.')
@@ -2146,7 +2160,7 @@ def admin_crear_usuario(request):
                 'roles': roles,
                 'especialidades': especialidades,
                 'form_data': request.POST,
-                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+                'citas_pendientes': _admin_citas_pendientes_count(),
             })
 
         with transaction.atomic():
@@ -2446,7 +2460,13 @@ def admin_crear_medico(request):
     from medicos.models import Medico
     from landing.models import Especialidad
 
-    especialidades = Especialidad.objects.filter(activo=True)
+    try:
+        especialidades = Especialidad.objects.filter(activo=True)
+        list(especialidades[:1])
+    except Exception:
+        logger.exception("Error al cargar especialidades en crear médico")
+        especialidades = Especialidad.objects.none()
+        messages.error(request, 'No se pudieron cargar las especialidades médicas. Revisa la base de datos o las migraciones en producción.')
 
     if request.method == 'POST':
         username   = request.POST.get('username', '').strip()
@@ -2476,7 +2496,7 @@ def admin_crear_medico(request):
             return render(request, 'admin/crear_medico.html', {
                 'form_data': request.POST,
                 'especialidades': especialidades,
-                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+                'citas_pendientes': _admin_citas_pendientes_count(),
             })
 
         if Usuario.objects.filter(username=username).exists():
@@ -2484,14 +2504,14 @@ def admin_crear_medico(request):
             return render(request, 'admin/crear_medico.html', {
                 'form_data': request.POST,
                 'especialidades': especialidades,
-                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+                'citas_pendientes': _admin_citas_pendientes_count(),
             })
         if email and Usuario.objects.filter(email__iexact=email).exists():
             messages.error(request, f'El correo "{email}" ya está registrado.')
             return render(request, 'admin/crear_medico.html', {
                 'form_data': request.POST,
                 'especialidades': especialidades,
-                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+                'citas_pendientes': _admin_citas_pendientes_count(),
             })
 
         try:
@@ -2509,11 +2529,11 @@ def admin_crear_medico(request):
                 )
         except Exception as exc:
             logger.exception("Error al crear médico desde el panel admin")
-            messages.error(request, f'No se pudo crear el médico: {exc}')
+            messages.error(request, 'No se pudo crear el médico. Revisa los datos e intenta nuevamente.')
             return render(request, 'admin/crear_medico.html', {
                 'form_data': request.POST,
                 'especialidades': especialidades,
-                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+                'citas_pendientes': _admin_citas_pendientes_count(),
             })
         messages.success(request, f'Médico "{first_name} {last_name}" creado correctamente.')
         registrar_log(request, 'CREATE', 'Médicos',
@@ -2522,7 +2542,7 @@ def admin_crear_medico(request):
 
     return render(request, 'admin/crear_medico.html', {
         'especialidades': especialidades,
-        'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+        'citas_pendientes': _admin_citas_pendientes_count(),
     })
 
 

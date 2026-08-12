@@ -7,6 +7,7 @@ from .forms import RegistroPacienteForm, CitaForm, CitaEnfermeraForm, ControlPre
 from .models import Usuario, LogAuditoria
 from citas.models import Cita
 from datetime import time, timedelta
+from django.db import transaction
 from django.db.models import Q, Count
 from control_prenatal.models import ControlPrenatal
 from django.http import JsonResponse, HttpResponse
@@ -1086,57 +1087,80 @@ def _ejecutar_ia_en_control(control, request=None):
             logger.error(f'[IA] No existe perfil Paciente para usuario {control.paciente}')
             return None
 
-        # Edad del paciente
-        edad = int(perfil.edad or 25)
-        if not (10 <= edad <= 60):
-            edad = 25
+        def dato_fuera_de_rango(nombre, valor, minimo, maximo, unidad=''):
+            if valor < minimo or valor > maximo:
+                logger.error(
+                    f'[IA] Dato inválido para {nombre}: {valor} {unidad}. '
+                    f'Rango permitido: {minimo}-{maximo} {unidad}'
+                )
+                return True
+            return False
 
-        # Parsear presion arterial con validacion
+        # Edad del paciente. La IA no debe analizar con una edad inventada.
+        try:
+            edad = int(perfil.edad)
+            if dato_fuera_de_rango('edad', edad, 10, 60, 'años'):
+                return None
+        except (TypeError, ValueError):
+            logger.error(f'[IA] Edad inválida para paciente {perfil}: {perfil.edad}')
+            return None
+
+        # Parsear presión arterial. No ejecutar IA con valores irreales.
         try:
             sistolica  = int(control.presion_sistolica)
             diastolica = int(control.presion_diastolica)
-            if not (60 <= sistolica <= 200):
-                sistolica = 120
-            if not (40 <= diastolica <= 140):
-                diastolica = 80
+            if (
+                dato_fuera_de_rango('presión sistólica', sistolica, 70, 250, 'mmHg')
+                or dato_fuera_de_rango('presión diastólica', diastolica, 40, 150, 'mmHg')
+                or sistolica <= diastolica
+            ):
+                return None
         except Exception:
-            sistolica, diastolica = 120, 80
+            logger.error(f'[IA] Presión arterial inválida: {control.presion_arterial}')
+            return None
 
-        # BMI calculado desde peso/altura (mas preciso)
+        # BMI calculado desde peso/altura. No reemplazar ceros por valores normales.
         try:
             altura = float(control.altura)
             peso   = float(control.peso)
-            if altura > 0 and peso > 0:
-                bmi = round(peso / (altura ** 2), 2)
-            else:
-                bmi = 23.0
-            bmi = max(10.0, min(bmi, 60.0))
+            if (
+                dato_fuera_de_rango('altura', altura, 1.20, 2.20, 'm')
+                or dato_fuera_de_rango('peso', peso, 30.0, 250.0, 'kg')
+            ):
+                return None
+            bmi = round(peso / (altura ** 2), 2)
+            if dato_fuera_de_rango('IMC', bmi, 10.0, 80.0):
+                return None
         except Exception:
-            bmi = 23.0
+            logger.error('[IA] Peso o altura inválidos para calcular IMC')
+            return None
 
         # Glucosa: mg/dL -> mmol/L para el modelo
         try:
             glucosa_mgdl = float(control.glucosa)
-            if glucosa_mgdl <= 0:
-                glucosa_mgdl = 90.0
+            if dato_fuera_de_rango('glucosa', glucosa_mgdl, 40.0, 400.0, 'mg/dL'):
+                return None
             glucosa_mmol = round(glucosa_mgdl / 18.0, 3)
-            glucosa_mmol = max(3.0, min(glucosa_mmol, 25.0))
         except Exception:
-            glucosa_mmol = 5.0
-            glucosa_mgdl = 90.0
+            logger.error(f'[IA] Glucosa inválida: {control.glucosa}')
+            return None
 
-        # Frecuencia cardiaca y temperatura con validacion
+        # Frecuencia cardiaca y temperatura con validación. Sin defaults silenciosos.
         try:
             fc = int(control.frecuencia_cardiaca)
-            fc = max(40, min(fc, 180))
+            if dato_fuera_de_rango('frecuencia cardíaca', fc, 40, 180, 'lpm'):
+                return None
         except Exception:
-            fc = 75
+            logger.error(f'[IA] Frecuencia cardíaca inválida: {control.frecuencia_cardiaca}')
+            return None
 
         try:
             temp = float(control.temperatura)
-            temp = max(95.0, min(temp, 106.0))
+            if dato_fuera_de_rango('temperatura', temp, 95.0, 106.0, '°F'):
+                return None
         except Exception:
-            temp = 98.0
+            logger.error(f'[IA] Temperatura inválida: {control.temperatura}')
+            return None
 
         # Vector de datos clinicos para el modelo
         datos_clinicos = {
@@ -2054,6 +2078,11 @@ def admin_crear_usuario(request):
     if request.user.rol != 'admin':
         return redireccionar_por_rol(request.user)
 
+    from landing.models import Especialidad
+
+    especialidades = Especialidad.objects.filter(activo=True)
+    roles = ['admin', 'medico', 'enfermera', 'paciente']
+
     if request.method == 'POST':
         username   = request.POST.get('username', '').strip()
         first_name = request.POST.get('first_name', '').strip()
@@ -2061,14 +2090,19 @@ def admin_crear_usuario(request):
         email      = request.POST.get('email', '').strip()
         rol        = request.POST.get('rol', '')
         password   = request.POST.get('password', '')
-        roles = ['admin', 'medico', 'enfermera', 'paciente']
         errores = _validar_usuario_admin(first_name, last_name, username, email, password, rol, roles)
+        especialidad_obj = None
 
         if rol == 'medico':
-            especialidad = request.POST.get('especialidad', '').strip()
+            especialidad_id = request.POST.get('especialidad_id', '').strip()
             telefono_med = request.POST.get('telefono_med', '').strip()
-            if not especialidad:
+            if not especialidad_id:
                 errores.append("La especialidad del médico es obligatoria.")
+            else:
+                try:
+                    especialidad_obj = especialidades.get(id=especialidad_id)
+                except Especialidad.DoesNotExist:
+                    errores.append("Selecciona una especialidad médica válida.")
             if telefono_med and (not telefono_med.isdigit() or len(telefono_med) != 10):
                 errores.append("El teléfono del médico debe tener 10 dígitos.")
 
@@ -2077,6 +2111,7 @@ def admin_crear_usuario(request):
                 messages.error(request, error)
             return render(request, 'admin/crear_usuario.html', {
                 'roles': roles,
+                'especialidades': especialidades,
                 'form_data': request.POST,
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
@@ -2085,6 +2120,7 @@ def admin_crear_usuario(request):
             messages.error(request, f'El usuario "{username}" ya existe.')
             return render(request, 'admin/crear_usuario.html', {
                 'roles': roles,
+                'especialidades': especialidades,
                 'form_data': request.POST,
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
@@ -2092,29 +2128,29 @@ def admin_crear_usuario(request):
             messages.error(request, f'El correo "{email}" ya está registrado.')
             return render(request, 'admin/crear_usuario.html', {
                 'roles': roles,
+                'especialidades': especialidades,
                 'form_data': request.POST,
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
 
-        user = User.objects.create_user(
-            username=username, password=password,
-            first_name=first_name, last_name=last_name,
-            email=email, rol=rol
-        )
-
-        # Crear perfiles según rol
-        if rol == 'medico':
-            from medicos.models import Medico
-            Medico.objects.get_or_create(
-                usuario=user,
-                defaults={
-                    'especialidad': request.POST.get('especialidad', ''),
-                    'telefono': request.POST.get('telefono_med', '')
-                }
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=username, password=password,
+                first_name=first_name, last_name=last_name,
+                email=email, rol=rol
             )
-        elif rol == 'paciente':
-            from pacientes.models import Paciente
-            Paciente.objects.get_or_create(usuario=user)
+
+            # Crear perfiles según rol
+            if rol == 'medico':
+                from medicos.models import Medico
+                Medico.objects.create(
+                    usuario=user,
+                    especialidad=especialidad_obj,
+                    telefono=request.POST.get('telefono_med', '').strip()
+                )
+            elif rol == 'paciente':
+                from pacientes.models import Paciente
+                Paciente.objects.get_or_create(usuario=user)
 
         messages.success(request, f'Usuario "{username}" creado correctamente.')
         registrar_log(request, 'CREATE', 'Usuarios',
@@ -2122,7 +2158,8 @@ def admin_crear_usuario(request):
         return redirect('lista_usuarios')
 
     return render(request, 'admin/crear_usuario.html', {
-        'roles': ['admin', 'medico', 'enfermera', 'paciente'],
+        'roles': roles,
+        'especialidades': especialidades,
         'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
     })
 
@@ -2133,6 +2170,9 @@ def admin_editar_usuario(request, usuario_id):
         return redireccionar_por_rol(request.user)
 
     usuario = get_object_or_404(User, id=usuario_id)
+    from landing.models import Especialidad
+
+    especialidades = Especialidad.objects.filter(activo=True)
 
     if request.method == 'POST':
         email = request.POST.get('email', '').strip()
@@ -2141,26 +2181,63 @@ def admin_editar_usuario(request, usuario_id):
             return render(request, 'admin/editar_usuario.html', {
                 'usuario': usuario,
                 'roles': ['admin', 'medico', 'enfermera', 'paciente'],
+                'especialidades': especialidades,
                 'medico_perfil': getattr(usuario, 'medico', None) if usuario.rol == 'medico' else None,
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
-        usuario.first_name = request.POST.get('first_name', '').strip()
-        usuario.last_name  = request.POST.get('last_name', '').strip()
-        usuario.email      = email
         nuevo_rol = request.POST.get('rol', usuario.rol)
-        usuario.rol = nuevo_rol
-        password = request.POST.get('password', '').strip()
-        if password:
-            usuario.set_password(password)
-        usuario.save()
+        telefono_med = request.POST.get('telefono_med', '').strip()
+        especialidad_obj = None
 
-        # Actualizar perfil médico si aplica
         if nuevo_rol == 'medico':
-            from medicos.models import Medico
-            medico, _ = Medico.objects.get_or_create(usuario=usuario)
-            medico.especialidad = request.POST.get('especialidad', medico.especialidad)
-            medico.telefono     = request.POST.get('telefono_med', medico.telefono)
-            medico.save()
+            especialidad_id = request.POST.get('especialidad_id', '').strip()
+            if not especialidad_id:
+                messages.error(request, 'La especialidad del médico es obligatoria.')
+                return render(request, 'admin/editar_usuario.html', {
+                    'usuario': usuario,
+                    'roles': ['admin', 'medico', 'enfermera', 'paciente'],
+                    'especialidades': especialidades,
+                    'medico_perfil': getattr(usuario, 'medico', None),
+                    'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+                })
+            try:
+                especialidad_obj = especialidades.get(id=especialidad_id)
+            except Especialidad.DoesNotExist:
+                messages.error(request, 'Selecciona una especialidad médica válida.')
+                return render(request, 'admin/editar_usuario.html', {
+                    'usuario': usuario,
+                    'roles': ['admin', 'medico', 'enfermera', 'paciente'],
+                    'especialidades': especialidades,
+                    'medico_perfil': getattr(usuario, 'medico', None),
+                    'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+                })
+            if telefono_med and (not telefono_med.isdigit() or len(telefono_med) != 10):
+                messages.error(request, 'El teléfono del médico debe tener 10 dígitos.')
+                return render(request, 'admin/editar_usuario.html', {
+                    'usuario': usuario,
+                    'roles': ['admin', 'medico', 'enfermera', 'paciente'],
+                    'especialidades': especialidades,
+                    'medico_perfil': getattr(usuario, 'medico', None),
+                    'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+                })
+
+        with transaction.atomic():
+            usuario.first_name = request.POST.get('first_name', '').strip()
+            usuario.last_name  = request.POST.get('last_name', '').strip()
+            usuario.email      = email
+            usuario.rol = nuevo_rol
+            password = request.POST.get('password', '').strip()
+            if password:
+                usuario.set_password(password)
+            usuario.save()
+
+            # Actualizar perfil médico si aplica
+            if nuevo_rol == 'medico':
+                from medicos.models import Medico
+                medico, _ = Medico.objects.get_or_create(usuario=usuario)
+                medico.especialidad = especialidad_obj
+                medico.telefono     = telefono_med
+                medico.save()
 
         messages.success(request, f'Usuario "{usuario.username}" actualizado correctamente.')
         registrar_log(request, 'UPDATE', 'Usuarios',
@@ -2178,6 +2255,7 @@ def admin_editar_usuario(request, usuario_id):
     return render(request, 'admin/editar_usuario.html', {
         'usuario': usuario,
         'roles': ['admin', 'medico', 'enfermera', 'paciente'],
+        'especialidades': especialidades,
         'medico_perfil': medico_perfil,
         'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
     })
@@ -2363,10 +2441,17 @@ def admin_crear_medico(request):
         telefono   = request.POST.get('telefono', '').strip()
         especialidad_id = request.POST.get('especialidad_id', '').strip()
         errores = _validar_usuario_admin(first_name, last_name, username, email, password)
+        especialidad_obj = None
+
         if telefono and (not telefono.isdigit() or len(telefono) != 10):
             errores.append("El teléfono debe tener 10 dígitos.")
         if not especialidad_id:
             errores.append("Selecciona una especialidad médica.")
+        else:
+            try:
+                especialidad_obj = especialidades.get(id=especialidad_id)
+            except Especialidad.DoesNotExist:
+                errores.append("Selecciona una especialidad médica válida.")
 
         if errores:
             for error in errores:
@@ -2392,24 +2477,18 @@ def admin_crear_medico(request):
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
 
-        user = Usuario.objects.create_user(
-            username=username, password=password,
-            first_name=first_name, last_name=last_name,
-            email=email, rol='medico'
-        )
+        with transaction.atomic():
+            user = Usuario.objects.create_user(
+                username=username, password=password,
+                first_name=first_name, last_name=last_name,
+                email=email, rol='medico'
+            )
 
-        especialidad_obj = None
-        if especialidad_id:
-            try:
-                especialidad_obj = Especialidad.objects.get(id=especialidad_id)
-            except Especialidad.DoesNotExist:
-                pass
-
-        Medico.objects.create(
-            usuario=user,
-            especialidad=especialidad_obj,
-            telefono=telefono
-        )
+            Medico.objects.create(
+                usuario=user,
+                especialidad=especialidad_obj,
+                telefono=telefono
+            )
         messages.success(request, f'Médico "{first_name} {last_name}" creado correctamente.')
         registrar_log(request, 'CREATE', 'Médicos',
             f'Médico "{first_name} {last_name}" (usuario: {username}) registrado', 'INFO')
@@ -2433,7 +2512,40 @@ def admin_editar_medico(request, medico_id):
     especialidades = Especialidad.objects.filter(activo=True)
 
     if request.method == 'POST':
+        first_name = request.POST.get('first_name', '').strip()
+        last_name = request.POST.get('last_name', '').strip()
         email = request.POST.get('email', '').strip()
+        telefono = request.POST.get('telefono', '').strip()
+        password = request.POST.get('password', '').strip()
+        especialidad_id = request.POST.get('especialidad_id', '').strip()
+        errores = _validar_usuario_admin(
+            first_name,
+            last_name,
+            medico.usuario.username,
+            email,
+            password or 'Aa1!aaaa'
+        )
+        especialidad_obj = None
+
+        if telefono and (not telefono.isdigit() or len(telefono) != 10):
+            errores.append("El teléfono debe tener 10 dígitos.")
+        if not especialidad_id:
+            errores.append("Selecciona una especialidad médica.")
+        else:
+            try:
+                especialidad_obj = especialidades.get(id=especialidad_id)
+            except Especialidad.DoesNotExist:
+                errores.append("Selecciona una especialidad médica válida.")
+
+        if errores:
+            for error in errores:
+                messages.error(request, error)
+            return render(request, 'admin/editar_medico.html', {
+                'medico': medico,
+                'especialidades': especialidades,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
+
         if email and Usuario.objects.filter(email__iexact=email).exclude(id=medico.usuario.id).exists():
             messages.error(request, f'El correo "{email}" ya está registrado.')
             return render(request, 'admin/editar_medico.html', {
@@ -2441,25 +2553,18 @@ def admin_editar_medico(request, medico_id):
                 'especialidades': especialidades,
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
-        medico.usuario.first_name = request.POST.get('first_name', '').strip()
-        medico.usuario.last_name  = request.POST.get('last_name', '').strip()
-        medico.usuario.email      = email
-        password = request.POST.get('password', '').strip()
-        if password:
-            medico.usuario.set_password(password)
-        medico.usuario.save()
 
-        especialidad_id = request.POST.get('especialidad_id', '').strip()
-        if especialidad_id:
-            try:
-                medico.especialidad = Especialidad.objects.get(id=especialidad_id)
-            except Especialidad.DoesNotExist:
-                medico.especialidad = None
-        else:
-            medico.especialidad = None
+        with transaction.atomic():
+            medico.usuario.first_name = first_name
+            medico.usuario.last_name  = last_name
+            medico.usuario.email      = email
+            if password:
+                medico.usuario.set_password(password)
+            medico.usuario.save()
 
-        medico.telefono = request.POST.get('telefono', '').strip()
-        medico.save()
+            medico.especialidad = especialidad_obj
+            medico.telefono = telefono
+            medico.save()
 
         messages.success(request, 'Médico actualizado correctamente.')
         registrar_log(request, 'UPDATE', 'Médicos',

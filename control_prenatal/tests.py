@@ -39,6 +39,11 @@ class EditarControlPrenatalTest(TestCase):
             rol='paciente',
             genero='femenino'
         )
+        perfil_paciente = self.paciente.paciente
+        perfil_paciente.edad = 28
+        perfil_paciente.medico_prenatal = self.medico
+        perfil_paciente.estado_embarazo = 'ACTIVO'
+        perfil_paciente.save()
         
         # Crear historia clínica para el paciente
         self.historia = HistoriaClinica.objects.create(
@@ -210,16 +215,19 @@ class EditarControlPrenatalTest(TestCase):
         self.assertFalse(data['success'])
         self.assertIn('inválidos', data['error'].lower())
 
-    def test_post_edit_control_missing_required_field(self):
-        """Test: POST rechaza datos incompletos (campo requerido faltante)."""
+    def test_post_edit_control_rechaza_campo_ia_en_cero(self):
+        """Test: POST rechaza datos clínicos irreales para la IA."""
         self.client.login(username='medico_test', password='pass123456')
         
         updated_data = {
             'paciente': self.paciente.id,
+            'semanas_gestacion': 0,
             'presion_arterial': '120/80',
-            # Falta semanas_gestacion que es requerido
             'peso': 70.0,
             'altura': 1.62,
+            'glucosa': 95.0,
+            'frecuencia_cardiaca': 75,
+            'temperatura': 98.6,
         }
         
         response = self.client.post(
@@ -383,3 +391,92 @@ class EditarControlPrenatalTest(TestCase):
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.content)
         self.assertTrue(data['success'])
+from django.contrib.auth import get_user_model
+from django.db import connection
+from django.test import TestCase
+
+from pacientes.models import Paciente
+from control_prenatal.forms import ControlPrenatalForm as ControlPrenatalAppForm
+from usuarios.forms import ControlPrenatalForm as MedicoControlPrenatalForm
+
+
+class ControlPrenatalFormValidacionIATest(TestCase):
+    def setUp(self):
+        with connection.cursor() as cursor:
+            cursor.execute(
+                """
+                SELECT setval(
+                    pg_get_serial_sequence('pacientes_paciente', 'id'),
+                    COALESCE((SELECT MAX(id) FROM pacientes_paciente), 1),
+                    true
+                )
+                """
+            )
+        User = get_user_model()
+        self.medico = User.objects.create_user(
+            username='medico_ia_validacion',
+            password='Aa1!aaaa',
+            first_name='Medico',
+            last_name='IA',
+            rol='medico',
+        )
+        self.paciente_user = User.objects.create_user(
+            username='paciente_ia_validacion',
+            password='Aa1!aaaa',
+            first_name='Paciente',
+            last_name='IA',
+            rol='paciente',
+        )
+        paciente = self.paciente_user.paciente
+        paciente.cedula = '1234567890'
+        paciente.edad = 28
+        paciente.medico_prenatal = self.medico
+        paciente.estado_embarazo = 'ACTIVO'
+        paciente.save()
+
+    def datos_validos(self):
+        return {
+            'paciente': self.paciente_user.id,
+            'semanas_gestacion': 24,
+            'presion_arterial': '120/80',
+            'peso': 68.5,
+            'altura': 1.62,
+            'glucosa': 92,
+            'frecuencia_cardiaca': 76,
+            'temperatura': 98.6,
+            'embarazos_previos': 0,
+            'proteinuria': 'Negativa',
+            'observaciones': 'Control normal',
+        }
+
+    def assert_formulario_rechaza(self, form_class, campo, valor):
+        data = self.datos_validos()
+        data[campo] = valor
+        form = form_class(data, medico=self.medico)
+        self.assertFalse(form.is_valid())
+        self.assertIn(campo, form.errors)
+
+    def test_formularios_aceptan_datos_clinicos_reales(self):
+        for form_class in (ControlPrenatalAppForm, MedicoControlPrenatalForm):
+            form = form_class(self.datos_validos(), medico=self.medico)
+            self.assertTrue(form.is_valid(), form.errors)
+
+    def test_formularios_rechazan_ceros_en_campos_ia(self):
+        campos = [
+            'semanas_gestacion',
+            'peso',
+            'altura',
+            'glucosa',
+            'frecuencia_cardiaca',
+            'temperatura',
+        ]
+        for form_class in (ControlPrenatalAppForm, MedicoControlPrenatalForm):
+            for campo in campos:
+                with self.subTest(form=form_class.__module__, campo=campo):
+                    self.assert_formulario_rechaza(form_class, campo, 0)
+
+    def test_formularios_rechazan_presion_irreal(self):
+        for form_class in (ControlPrenatalAppForm, MedicoControlPrenatalForm):
+            with self.subTest(form=form_class.__module__):
+                self.assert_formulario_rechaza(form_class, 'presion_arterial', '0/0')
+                self.assert_formulario_rechaza(form_class, 'presion_arterial', '80/120')

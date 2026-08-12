@@ -230,7 +230,12 @@ def agendar_cita(request):
                         paciente=request.user, estado__in=['pendiente', 'confirmada'], fecha__gte=hoy
                     ).count(),
                 })
-            medico = get_object_or_404(Medico, usuario_id=medico_id)
+            medico = get_object_or_404(
+                Medico.objects.select_related('usuario', 'especialidad'),
+                usuario_id=medico_id,
+                usuario__is_active=True,
+                especialidad_id=especialidad_id,
+            )
             motivo = request.POST.get('motivo', '').strip()
 
             # Verificar que el horario no esté ocupado
@@ -255,7 +260,7 @@ def agendar_cita(request):
                 fecha=fecha,
                 hora=hora,
                 estado='pendiente',
-                especialidad_id=especialidad_id,
+                especialidad=medico.especialidad,
                 motivo=motivo,
             )
             registrar_log(request, 'CREATE', 'Citas',

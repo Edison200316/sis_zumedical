@@ -210,8 +210,8 @@ tbody tr:hover{background:var(--mg-bg)}
     <label>Especialidad</label>
     <div class="input-wrap">
         <svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
-        <select name="especialidad_id">
-            <option value="">— Sin especialidad asignada —</option>
+        <select name="especialidad_id" id="especialidadSelect" required>
+            <option value="">Selecciona una especialidad</option>
             {% for esp in especialidades %}
             <option value="{{ esp.id }}" {% if medico.especialidad and medico.especialidad.id == esp.id %}selected{% endif %}>
                 {{ esp.nombre }} ({{ esp.get_tipo_display }})
@@ -219,6 +219,7 @@ tbody tr:hover{background:var(--mg-bg)}
             {% endfor %}
         </select>
     </div>
+    <div class="field-error" id="especialidadError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Selecciona una especialidad médica</span></div>
 </div>
 </div>
 <div class="form-section">
@@ -341,6 +342,16 @@ emailInput.addEventListener('input', function () {
     validarFormulario();
 });
 
+const especialidadSelect = document.getElementById('especialidadSelect');
+const especialidadError = document.getElementById('especialidadError');
+especialidadSelect.addEventListener('change', function () {
+    const valido = this.value !== '';
+    this.classList.toggle('input-invalid', !valido);
+    this.classList.toggle('input-valid', valido);
+    especialidadError.classList.toggle('show', !valido);
+    validarFormulario();
+});
+
 // Contraseña opcional: solo se valida si el usuario empieza a escribir
 const passwordInput = document.getElementById('passwordInput');
 const pwdStrengthBar = document.getElementById('pwdStrengthBar');
@@ -406,12 +417,14 @@ function validarFormulario() {
     const lastName  = document.getElementById('lastName').value.trim();
     const email     = emailInput.value.trim();
     const telefono  = telefonoInput.value.trim();
+    const especialidad = especialidadSelect.value;
     const password  = passwordInput.value;
 
     const nombreOk   = firstName.length > 0 && soloLetras.test(firstName);
     const apellidoOk = lastName.length > 0 && soloLetras.test(lastName);
     const emailOk    = email.length === 0 || emailRegex.test(email);
     const telefonoOk = telefono.length === 0 || telefono.length === 10;
+    const especialidadOk = especialidad !== '';
     let pwdOk = true;
     if (password.length > 0) {
         const pwdChecks = passwordChecks(password);
@@ -419,7 +432,8 @@ function validarFormulario() {
     }
 
     const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = !(nombreOk && apellidoOk && emailOk && telefonoOk && pwdOk);
+    submitBtn.disabled = !(nombreOk && apellidoOk && emailOk && telefonoOk && especialidadOk && pwdOk);
 }
+validarFormulario();
 </script>
 </body></html>

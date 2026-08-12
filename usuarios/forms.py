@@ -1,9 +1,13 @@
+import re
+
 from django import forms
+from django.core.exceptions import ValidationError
 from django.contrib.auth import get_user_model
 from .models import CodigoRecuperacionPassword
 from pacientes.models import Paciente
 from citas.models import Cita
 from control_prenatal.models import ControlPrenatal
+from control_prenatal.forms import _validar_rango
 
 Usuario = get_user_model()
 
@@ -368,7 +372,7 @@ class ControlPrenatalForm(forms.ModelForm):
         
         User = get_user_model()
         
-        if medico:
+        if medico and getattr(medico, 'rol', '') == 'medico':
             ids_asignadas = Paciente.objects.filter(
                 medico_prenatal=medico
             ).values_list('usuario_id', flat=True)
@@ -395,6 +399,93 @@ class ControlPrenatalForm(forms.ModelForm):
             return nombre
         
         self.fields['paciente'].label_from_instance = label_from_instance
+
+        campos_requeridos_ia = [
+            'paciente', 'semanas_gestacion', 'presion_arterial', 'peso',
+            'altura', 'glucosa', 'frecuencia_cardiaca', 'temperatura',
+        ]
+        for nombre in campos_requeridos_ia:
+            self.fields[nombre].required = True
+
+        attrs_por_campo = {
+            'semanas_gestacion': {'min': '4', 'max': '42', 'step': '1', 'placeholder': 'Ej: 24'},
+            'peso': {'min': '30', 'max': '250', 'step': '0.1', 'placeholder': 'Ej: 68.5'},
+            'altura': {'min': '1.20', 'max': '2.20', 'step': '0.01', 'placeholder': 'Ej: 1.62'},
+            'glucosa': {'min': '40', 'max': '400', 'step': '0.1', 'placeholder': 'Ej: 90'},
+            'frecuencia_cardiaca': {'min': '40', 'max': '180', 'step': '1', 'placeholder': 'Ej: 75'},
+            'temperatura': {'min': '95', 'max': '106', 'step': '0.1', 'placeholder': 'Ej: 98.6'},
+            'embarazos_previos': {'min': '0', 'max': '20', 'step': '1', 'placeholder': 'Ej: 0'},
+        }
+        for nombre, attrs in attrs_por_campo.items():
+            self.fields[nombre].widget.attrs.update(attrs)
+        self.fields['presion_arterial'].widget.attrs.update({
+            'placeholder': 'Ej: 120/80',
+            'pattern': r'\d{2,3}/\d{2,3}',
+        })
+
+    def clean_semanas_gestacion(self):
+        return _validar_rango(
+            self.cleaned_data.get('semanas_gestacion'),
+            'semanas_gestacion',
+            'Las semanas de gestación'
+        )
+
+    def clean_paciente(self):
+        paciente = self.cleaned_data.get('paciente')
+        perfil = getattr(paciente, 'paciente', None) if paciente else None
+        edad = getattr(perfil, 'edad', None)
+        if edad is None:
+            raise ValidationError('La paciente debe tener una edad registrada para evaluar el riesgo con IA.')
+        if edad < 10 or edad > 60:
+            raise ValidationError('La edad de la paciente debe estar entre 10 y 60 años para la evaluación IA.')
+        return paciente
+
+    def clean_peso(self):
+        return _validar_rango(self.cleaned_data.get('peso'), 'peso', 'El peso')
+
+    def clean_altura(self):
+        return _validar_rango(self.cleaned_data.get('altura'), 'altura', 'La altura')
+
+    def clean_glucosa(self):
+        return _validar_rango(self.cleaned_data.get('glucosa'), 'glucosa', 'La glucosa')
+
+    def clean_frecuencia_cardiaca(self):
+        return _validar_rango(
+            self.cleaned_data.get('frecuencia_cardiaca'),
+            'frecuencia_cardiaca',
+            'La frecuencia cardíaca'
+        )
+
+    def clean_temperatura(self):
+        return _validar_rango(
+            self.cleaned_data.get('temperatura'),
+            'temperatura',
+            'La temperatura'
+        )
+
+    def clean_embarazos_previos(self):
+        return _validar_rango(
+            self.cleaned_data.get('embarazos_previos'),
+            'embarazos_previos',
+            'Los embarazos anteriores'
+        )
+
+    def clean_presion_arterial(self):
+        presion = (self.cleaned_data.get('presion_arterial') or '').strip()
+        match = re.fullmatch(r'(\d{2,3})\s*/\s*(\d{2,3})', presion)
+        if not match:
+            raise ValidationError('Ingresa la presión arterial en formato sistólica/diastólica, por ejemplo 120/80.')
+
+        sistolica = int(match.group(1))
+        diastolica = int(match.group(2))
+        if not (70 <= sistolica <= 250):
+            raise ValidationError('La presión sistólica debe estar entre 70 y 250 mmHg.')
+        if not (40 <= diastolica <= 150):
+            raise ValidationError('La presión diastólica debe estar entre 40 y 150 mmHg.')
+        if sistolica <= diastolica:
+            raise ValidationError('La presión sistólica debe ser mayor que la diastólica.')
+
+        return f'{sistolica}/{diastolica}'
 
 
 class EditarPacienteEnfermeraForm(forms.ModelForm):

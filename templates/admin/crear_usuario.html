@@ -349,43 +349,119 @@ function validarCampoLetras(inputId, errorId) {
 validarCampoLetras('firstName', 'firstNameError');
 validarCampoLetras('lastName', 'lastNameError');
 
+function validarLetrasObligatorio(inputId, errorId, etiqueta, mostrarVacio = false) {
+    const input = document.getElementById(inputId);
+    const error = document.getElementById(errorId);
+    const errorText = error.querySelector('span');
+    const valor = input.value.trim();
+    if (valor.length === 0) {
+        input.classList.toggle('input-invalid', mostrarVacio);
+        input.classList.remove('input-valid');
+        errorText.textContent = `${etiqueta} es obligatorio`;
+        error.classList.toggle('show', mostrarVacio);
+        return false;
+    }
+    if (!soloLetras.test(input.value)) {
+        input.classList.add('input-invalid');
+        input.classList.remove('input-valid');
+        errorText.textContent = 'Solo se permiten letras y espacios';
+        error.classList.add('show');
+        return false;
+    }
+    input.classList.add('input-valid');
+    input.classList.remove('input-invalid');
+    error.classList.remove('show');
+    return true;
+}
+
+document.getElementById('firstName').addEventListener('blur', function () {
+    validarLetrasObligatorio('firstName', 'firstNameError', 'El nombre', true);
+    validarFormulario();
+});
+document.getElementById('lastName').addEventListener('blur', function () {
+    validarLetrasObligatorio('lastName', 'lastNameError', 'El apellido', true);
+    validarFormulario();
+});
+
 // Usuario: sin espacios ni símbolos raros
 const usernameInput = document.getElementById('usernameInput');
 const usernameError = document.getElementById('usernameError');
+const usernameErrorText = usernameError.querySelector('span');
 bloquearCaracterInvalido(usernameInput, usuarioRegex);
-usernameInput.addEventListener('input', function () {
-    const valido = this.value.length >= 3 && usuarioRegex.test(this.value);
-    if (this.value.length === 0) {
-        this.classList.remove('input-valid', 'input-invalid');
-        usernameError.classList.remove('show');
-    } else if (valido) {
-        this.classList.add('input-valid');
-        this.classList.remove('input-invalid');
-        usernameError.classList.remove('show');
-    } else {
-        this.classList.add('input-invalid');
-        this.classList.remove('input-valid');
-        usernameError.classList.add('show');
+
+function validarUsuarioCampo(mostrarVacio = false) {
+    const valor = usernameInput.value.trim();
+    if (valor.length === 0) {
+        usernameInput.classList.toggle('input-invalid', mostrarVacio);
+        usernameInput.classList.remove('input-valid');
+        usernameErrorText.textContent = 'El usuario es obligatorio';
+        usernameError.classList.toggle('show', mostrarVacio);
+        return false;
     }
+    if (valor.length < 3) {
+        usernameInput.classList.add('input-invalid');
+        usernameInput.classList.remove('input-valid');
+        usernameErrorText.textContent = 'El usuario debe tener al menos 3 caracteres';
+        usernameError.classList.add('show');
+        return false;
+    }
+    if (!usuarioRegex.test(valor)) {
+        usernameInput.classList.add('input-invalid');
+        usernameInput.classList.remove('input-valid');
+        usernameErrorText.textContent = 'Solo letras, números, puntos y guion bajo, sin espacios';
+        usernameError.classList.add('show');
+        return false;
+    }
+    usernameInput.classList.add('input-valid');
+    usernameInput.classList.remove('input-invalid');
+    usernameError.classList.remove('show');
+    return true;
+}
+
+usernameInput.addEventListener('input', function () {
+    validarUsuarioCampo();
+    validarFormulario();
+});
+usernameInput.addEventListener('blur', function () {
+    validarUsuarioCampo(true);
     validarFormulario();
 });
 
 // Email
 const emailInput = document.getElementById('emailInput');
 const emailError = document.getElementById('emailError');
-emailInput.addEventListener('input', function () {
-    if (this.value.length === 0) {
-        this.classList.remove('input-valid', 'input-invalid');
+const emailErrorText = emailError.querySelector('span');
+
+function validarEmailCampo() {
+    const valor = emailInput.value.trim();
+    if (valor.length === 0) {
+        emailInput.classList.remove('input-valid', 'input-invalid');
         emailError.classList.remove('show');
-    } else if (emailPermitido(this.value.trim())) {
-        this.classList.add('input-valid');
-        this.classList.remove('input-invalid');
-        emailError.classList.remove('show');
-    } else {
-        this.classList.add('input-invalid');
-        this.classList.remove('input-valid');
-        emailError.classList.add('show');
+        return true;
     }
+    if (!emailRegex.test(valor)) {
+        emailInput.classList.add('input-invalid');
+        emailInput.classList.remove('input-valid');
+        emailErrorText.textContent = 'Formato inválido. Ejemplo: nombre@gmail.com';
+        emailError.classList.add('show');
+        return false;
+    }
+    const dominio = valor.split('@').pop().toLowerCase();
+    if (!dominiosEmailPermitidos.has(dominio)) {
+        emailInput.classList.add('input-invalid');
+        emailInput.classList.remove('input-valid');
+        emailErrorText.textContent = 'Dominio no permitido. Usa gmail.com, outlook.com, hotmail.com, yahoo.com u otro dominio autorizado.';
+        emailError.classList.add('show');
+        return false;
+    }
+    emailInput.classList.add('input-valid');
+    emailInput.classList.remove('input-invalid');
+    emailError.classList.remove('show');
+    return true;
+}
+
+emailInput.addEventListener('input', function () {
+    validarEmailCampo();
     validarFormulario();
 });
 
@@ -459,14 +535,28 @@ passwordInput.addEventListener('input', function () {
         this.classList.add('input-invalid');
         this.classList.remove('input-valid');
     }
+    if (passwordConfirmInput.value.length > 0) {
+        validarConfirmacionPassword();
+    }
     validarFormulario();
 });
 
+function validarConfirmacionPassword(mostrarVacia = false) {
+    const vacia = passwordConfirmInput.value.length === 0;
+    const coincide = !vacia && passwordConfirmInput.value === passwordInput.value;
+    passwordConfirmInput.classList.toggle('input-valid', coincide);
+    passwordConfirmInput.classList.toggle('input-invalid', (!vacia && !coincide) || (mostrarVacia && vacia));
+    passwordConfirmError.querySelector('span').textContent = vacia ? 'Confirma la contraseña' : 'Las contraseñas no coinciden';
+    passwordConfirmError.classList.toggle('show', (!vacia && !coincide) || (mostrarVacia && vacia));
+    return coincide;
+}
+
 passwordConfirmInput.addEventListener('input', function () {
-    const coincide = this.value.length > 0 && this.value === passwordInput.value;
-    this.classList.toggle('input-valid', coincide);
-    this.classList.toggle('input-invalid', this.value.length > 0 && !coincide);
-    passwordConfirmError.classList.toggle('show', this.value.length > 0 && !coincide);
+    validarConfirmacionPassword();
+    validarFormulario();
+});
+passwordConfirmInput.addEventListener('blur', function () {
+    validarConfirmacionPassword(true);
     validarFormulario();
 });
 
@@ -494,6 +584,24 @@ function validarFormulario() {
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = !(nombreOk && apellidoOk && emailOk && usuarioOk && pwdOk && pwdConfirmOk && medicoOk);
 }
+
+if (document.getElementById('firstName').value.trim()) validarLetrasObligatorio('firstName', 'firstNameError', 'El nombre');
+if (document.getElementById('lastName').value.trim()) validarLetrasObligatorio('lastName', 'lastNameError', 'El apellido');
+if (usernameInput.value.trim()) validarUsuarioCampo();
+if (emailInput.value.trim()) validarEmailCampo();
+if (passwordConfirmInput.value.length > 0) validarConfirmacionPassword();
 validarFormulario();
+
+document.querySelector('form').addEventListener('submit', function (event) {
+    validarLetrasObligatorio('firstName', 'firstNameError', 'El nombre', true);
+    validarLetrasObligatorio('lastName', 'lastNameError', 'El apellido', true);
+    validarUsuarioCampo(true);
+    validarEmailCampo();
+    validarConfirmacionPassword(true);
+    validarFormulario();
+    if (document.getElementById('submitBtn').disabled) {
+        event.preventDefault();
+    }
+});
 </script>
 </body></html>

@@ -2043,7 +2043,16 @@ def controles_admin(request):
     })
 
 
-def _validar_usuario_admin(first_name, last_name, username, email, password, rol=None, roles_validos=None):
+DOMINIOS_EMAIL_PERMITIDOS = {
+    'gmail.com', 'googlemail.com', 'outlook.com', 'hotmail.com', 'live.com',
+    'msn.com', 'yahoo.com', 'yahoo.es', 'icloud.com', 'me.com', 'mac.com',
+    'proton.me', 'protonmail.com', 'aol.com', 'zoho.com', 'gmx.com',
+    'gmx.net', 'mail.com', 'yandex.com', 'yandex.ru', 'fastmail.com',
+    'tutanota.com', 'tuta.com', 'hey.com', 'inbox.com',
+}
+
+
+def _validar_usuario_admin(first_name, last_name, username, email, password, rol=None, roles_validos=None, password_confirm=None):
     import re
     from django.core.exceptions import ValidationError
     from django.core.validators import validate_email
@@ -2063,10 +2072,16 @@ def _validar_usuario_admin(first_name, last_name, username, email, password, rol
             validate_email(email)
         except ValidationError:
             errores.append("Ingresa un correo electrónico válido.")
+        else:
+            dominio = email.rsplit('@', 1)[-1].lower()
+            if dominio not in DOMINIOS_EMAIL_PERMITIDOS:
+                errores.append("El correo debe usar un dominio permitido como gmail.com, outlook.com, hotmail.com o yahoo.com.")
     if roles_validos is not None and rol not in roles_validos:
         errores.append("Selecciona un rol válido.")
     if len(password or "") < 8 or not re.search(r"[A-ZÁÉÍÓÚÑ]", password or "") or not re.search(r"\d", password or "") or not re.search(r"[^A-Za-z0-9ÁÉÍÓÚÑáéíóúñ]", password or ""):
         errores.append("La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.")
+    if password_confirm is not None and password != password_confirm:
+        errores.append("La confirmación de contraseña no coincide.")
 
     return errores
 
@@ -2090,7 +2105,8 @@ def admin_crear_usuario(request):
         email      = request.POST.get('email', '').strip()
         rol        = request.POST.get('rol', '')
         password   = request.POST.get('password', '')
-        errores = _validar_usuario_admin(first_name, last_name, username, email, password, rol, roles)
+        password_confirm = request.POST.get('password_confirm', '')
+        errores = _validar_usuario_admin(first_name, last_name, username, email, password, rol, roles, password_confirm)
         especialidad_obj = None
 
         if rol == 'medico':
@@ -2438,9 +2454,10 @@ def admin_crear_medico(request):
         last_name  = request.POST.get('last_name', '').strip()
         email      = request.POST.get('email', '').strip()
         password   = request.POST.get('password', '')
+        password_confirm = request.POST.get('password_confirm', '')
         telefono   = request.POST.get('telefono', '').strip()
         especialidad_id = request.POST.get('especialidad_id', '').strip()
-        errores = _validar_usuario_admin(first_name, last_name, username, email, password)
+        errores = _validar_usuario_admin(first_name, last_name, username, email, password, password_confirm=password_confirm)
         especialidad_obj = None
 
         if telefono and (not telefono.isdigit() or len(telefono) != 10):
@@ -2477,18 +2494,27 @@ def admin_crear_medico(request):
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
 
-        with transaction.atomic():
-            user = Usuario.objects.create_user(
-                username=username, password=password,
-                first_name=first_name, last_name=last_name,
-                email=email, rol='medico'
-            )
+        try:
+            with transaction.atomic():
+                user = Usuario.objects.create_user(
+                    username=username, password=password,
+                    first_name=first_name, last_name=last_name,
+                    email=email, rol='medico'
+                )
 
-            Medico.objects.create(
-                usuario=user,
-                especialidad=especialidad_obj,
-                telefono=telefono
-            )
+                Medico.objects.create(
+                    usuario=user,
+                    especialidad=especialidad_obj,
+                    telefono=telefono
+                )
+        except Exception as exc:
+            logger.exception("Error al crear médico desde el panel admin")
+            messages.error(request, f'No se pudo crear el médico: {exc}')
+            return render(request, 'admin/crear_medico.html', {
+                'form_data': request.POST,
+                'especialidades': especialidades,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
         messages.success(request, f'Médico "{first_name} {last_name}" creado correctamente.')
         registrar_log(request, 'CREATE', 'Médicos',
             f'Médico "{first_name} {last_name}" (usuario: {username}) registrado', 'INFO')

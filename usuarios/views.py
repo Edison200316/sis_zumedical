@@ -1358,10 +1358,10 @@ def lista_pacientes_enfermera(request):
     # Prenatales = tipo prenatal O general con módulo prenatal activado
     pacientes_prenatales = Paciente.objects.filter(
         estado_embarazo='ACTIVO', usuario__rol='paciente'
-    ).select_related('usuario').distinct()
+    ).select_related('usuario').distinct().order_by('-fecha_registro')
     pacientes_generales = Paciente.objects.exclude(
         estado_embarazo='ACTIVO'
-    ).filter(usuario__rol='paciente').select_related('usuario').distinct()
+    ).filter(usuario__rol='paciente').select_related('usuario').distinct().order_by('-fecha_registro')
 
     return render(request, 'enfermera/lista_pacientes_enfermera.html', {
         'pacientes_prenatales': pacientes_prenatales,
@@ -2442,6 +2442,8 @@ def admin_crear_paciente(request):
                 fecha_pp = request.POST.get('fecha_probable_parto')
                 paciente.fecha_ultima_menstruacion = fecha_um if fecha_um else None
                 paciente.fecha_probable_parto      = fecha_pp if fecha_pp else None
+                paciente.estado_embarazo = 'ACTIVO'
+                paciente.mensaje_prenatal_visto = False
                 paciente.save()
         except Exception:
             logger.exception("Error al crear paciente prenatal desde el panel admin")
@@ -2454,7 +2456,7 @@ def admin_crear_paciente(request):
         messages.success(request, f'Paciente "{first_name} {last_name}" creada correctamente.')
         registrar_log(request, 'CREATE', 'Pacientes',
             f'Paciente "{first_name} {last_name}" (usuario: {username}) registrada', 'INFO')
-        return redirect('lista_pacientes')
+        return redirect(f"{reverse('lista_pacientes')}?tab=prenatal")
 
     return render(request, 'admin/crear_paciente.html', {
         'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
@@ -2507,7 +2509,8 @@ def admin_editar_paciente(request, paciente_id):
         messages.success(request, 'Paciente actualizada correctamente.')
         registrar_log(request, 'UPDATE', 'Pacientes',
             f'Datos de paciente "{paciente.usuario.get_full_name()}" (ID {paciente.id}) actualizados', 'INFO')
-        return redirect('lista_pacientes')
+        tab = 'prenatal' if paciente.estado_embarazo == 'ACTIVO' else 'general'
+        return redirect(f"{reverse('lista_pacientes')}?tab={tab}")
 
     return render(request, 'admin/editar_paciente.html', {
         'paciente': paciente,
@@ -2525,11 +2528,12 @@ def admin_eliminar_paciente(request, paciente_id):
 
     if request.method == 'POST':
         nombre = str(paciente)
+        tab = 'prenatal' if paciente.estado_embarazo == 'ACTIVO' else 'general'
         paciente.usuario.delete()
         messages.success(request, f'Paciente "{nombre}" eliminada correctamente.')
         registrar_log(request, 'DELETE', 'Pacientes',
             f'Paciente "{nombre}" (ID {paciente_id}) eliminada del sistema', 'WARNING')
-        return redirect('lista_pacientes')
+        return redirect(f"{reverse('lista_pacientes')}?tab={tab}")
 
     return render(request, 'admin/confirmar_eliminar.html', {
         'objeto': f'{paciente.usuario.first_name} {paciente.usuario.last_name}',
@@ -2868,7 +2872,7 @@ def admin_crear_paciente_general(request):
         registrar_log(request, 'CREATE', 'Pacientes',
             f'Paciente general "{first_name} {last_name}" registrado', 'INFO')
         messages.success(request, f'Paciente general "{first_name} {last_name}" creado correctamente.')
-        return redirect('lista_pacientes')
+        return redirect(f"{reverse('lista_pacientes')}?tab=general")
 
     return render(request, 'admin/crear_paciente_general.html', {
         'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),

@@ -70,6 +70,10 @@
         .btn-back{display:inline-flex;align-items:center;gap:0.4rem;padding:0.6rem 1.1rem;background:var(--white);color:var(--mg);border:1.5px solid var(--mg-border);border-radius:9px;text-decoration:none;font-size:0.85rem;font-weight:500;transition:all 0.2s;white-space:nowrap}
         .btn-back:hover{background:var(--mg-bg);border-color:var(--mg)}
         .btn-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
+        .mensaje{display:flex;align-items:center;gap:.6rem;margin:0 0 1.25rem;padding:.85rem 1rem;border-radius:12px;font-size:.88rem;max-width:900px}
+        .mensaje svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
+        .msg-success{background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9}
+        .msg-error{background:#FFEBEE;color:#C0392B;border:1px solid #FFCDD2}
 
         /* ── TABLE CARD ── */
         .table-card{background:var(--white);border-radius:16px;border:1px solid var(--mg-border);overflow:hidden;position:relative}
@@ -214,6 +218,19 @@
             </a>
         </div>
     </div>
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="mensaje {% if message.tags == 'error' %}msg-error{% else %}msg-success{% endif %}">
+            {% if message.tags == 'error' %}
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            {% else %}
+            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            {% endif %}
+            <span>{{ message }}</span>
+        </div>
+        {% endfor %}
+    {% endif %}
 
     <!-- TABS -->
     <div style="display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap;">
@@ -478,6 +495,9 @@ function filtrarTabla(tipo) {
 
 // ── Modal detalle (solo prenatales tienen datos clínicos) ──
 document.addEventListener('DOMContentLoaded', function() {
+    const tabInicial = new URLSearchParams(window.location.search).get('tab');
+    showTab(tabInicial === 'general' ? 'general' : 'prenatal');
+
     const overlay = document.getElementById('modal-overlay');
 
     document.querySelectorAll('.fila-paciente').forEach(function(fila) {

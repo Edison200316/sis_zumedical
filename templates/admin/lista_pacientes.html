@@ -70,7 +70,8 @@
         .btn-back{display:inline-flex;align-items:center;gap:0.4rem;padding:0.6rem 1.1rem;background:var(--white);color:var(--mg);border:1.5px solid var(--mg-border);border-radius:9px;text-decoration:none;font-size:0.85rem;font-weight:500;transition:all 0.2s;white-space:nowrap}
         .btn-back:hover{background:var(--mg-bg);border-color:var(--mg)}
         .btn-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:2}
-        .mensaje{display:flex;align-items:center;gap:.6rem;margin:0 0 1.25rem;padding:.85rem 1rem;border-radius:12px;font-size:.88rem;max-width:900px}
+        .mensaje{display:flex;align-items:center;gap:.6rem;margin:0 0 1.25rem;padding:.85rem 1rem;border-radius:12px;font-size:.88rem;max-width:900px;transition:opacity .35s ease,transform .35s ease,max-height .35s ease,margin .35s ease,padding .35s ease;overflow:hidden}
+        .mensaje.is-hiding{opacity:0;transform:translateY(-6px);max-height:0;margin:0;padding-top:0;padding-bottom:0;border-width:0}
         .mensaje svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
         .msg-success{background:#E8F5E9;color:#2E7D32;border:1px solid #C8E6C9}
         .msg-error{background:#FFEBEE;color:#C0392B;border:1px solid #FFCDD2}
@@ -497,6 +498,13 @@ function filtrarTabla(tipo) {
 document.addEventListener('DOMContentLoaded', function() {
     const tabInicial = new URLSearchParams(window.location.search).get('tab');
     showTab(tabInicial === 'general' ? 'general' : 'prenatal');
+
+    document.querySelectorAll('.mensaje').forEach(function(alerta) {
+        setTimeout(function() {
+            alerta.classList.add('is-hiding');
+            setTimeout(function() { alerta.remove(); }, 400);
+        }, 10000);
+    });
 
     const overlay = document.getElementById('modal-overlay');
 

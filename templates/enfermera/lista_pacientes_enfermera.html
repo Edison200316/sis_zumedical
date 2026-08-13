@@ -161,7 +161,8 @@
             .table-search{flex-direction:column;align-items:stretch}.table-count{align-self:flex-start}
             .table-wrapper{overflow:visible}table{min-width:0}thead{display:none}tbody{display:block;padding:.75rem}tbody tr.fila-paciente,tbody tr.fila-pac{display:block;background:#fff;border:1px solid var(--mg-border);border-radius:12px;margin-bottom:.85rem;box-shadow:0 8px 18px rgba(138,37,99,.06);overflow:hidden}tbody tr.fila-paciente:hover,tbody tr.fila-pac:hover{background:#fff}tbody td{display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;padding:.75rem 1rem;border-bottom:1px solid #F3E0EE;text-align:right;min-width:0;overflow-wrap:anywhere}tbody td:first-child{padding-left:1rem;text-align:left}tbody td::before{content:attr(data-label);font-size:.68rem;font-weight:700;color:var(--mg-d);text-transform:uppercase;letter-spacing:.07em;flex:0 0 38%;text-align:left}.pac-cell{min-width:0}.pac-cell>div:last-child{min-width:0;overflow-wrap:anywhere}.td-paciente{width:100%}.td-actions{justify-content:flex-end;width:100%;gap:.45rem}.btn-sm{justify-content:center;flex:1 1 96px}.empty-state{padding:2rem 1rem}
         }
-        .msg-alert{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.1rem;border-radius:12px;font-size:.88rem;margin-bottom:1.25rem;}
+        .msg-alert{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.1rem;border-radius:12px;font-size:.88rem;margin-bottom:1.25rem;transition:opacity .35s ease,transform .35s ease,max-height .35s ease,margin .35s ease,padding .35s ease;overflow:hidden}
+        .msg-alert.is-hiding{opacity:0;transform:translateY(-6px);max-height:0;margin:0;padding-top:0;padding-bottom:0;border-width:0}
         .msg-ok{background:#edfaf3;color:#1a7a4a;border:1px solid #a8dfc0;}
         .msg-err{background:#fdf0f0;color:#b03030;border:1px solid #f0b8b8;}
     </style>
@@ -528,6 +529,13 @@ function filtrarTabla(tipo) {
 document.addEventListener('DOMContentLoaded', function() {
     const tabInicial = new URLSearchParams(window.location.search).get('tab');
     showTab(tabInicial === 'general' ? 'general' : 'prenatal');
+
+    document.querySelectorAll('.msg-alert').forEach(function(alerta) {
+        setTimeout(function() {
+            alerta.classList.add('is-hiding');
+            setTimeout(function() { alerta.remove(); }, 400);
+        }, 10000);
+    });
 
     const overlay = document.getElementById('modal-overlay');
 

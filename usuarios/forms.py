@@ -8,7 +8,12 @@ from pacientes.models import Paciente
 from citas.models import Cita
 from control_prenatal.models import ControlPrenatal
 from control_prenatal.forms import _validar_rango
-from .validators import MENSAJE_CEDULA_INVALIDA, validar_cedula_ecuatoriana
+from .validators import (
+    MENSAJE_CEDULA_INVALIDA,
+    MENSAJE_EMAIL_INVALIDO,
+    validar_cedula_ecuatoriana,
+    validar_email_permitido,
+)
 
 Usuario = get_user_model()
 
@@ -32,6 +37,8 @@ class VerificarEmailForm(forms.Form):
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if email:
+            if not validar_email_permitido(email):
+                raise forms.ValidationError(MENSAJE_EMAIL_INVALIDO)
             # Buscar usuario por email (case-insensitive)
             usuario = Usuario.objects.filter(email__iexact=email).first()
             if not usuario:
@@ -234,6 +241,8 @@ class RegistroPacienteForm(forms.ModelForm):
 
     def clean_email(self):
         email = (self.cleaned_data.get('email') or '').strip()
+        if email and not validar_email_permitido(email):
+            raise forms.ValidationError(MENSAJE_EMAIL_INVALIDO)
         if email and Usuario.objects.filter(email__iexact=email).exists():
             raise forms.ValidationError('Este correo ya está registrado.')
         return email
@@ -538,6 +547,8 @@ class EditarPacienteEnfermeraForm(forms.ModelForm):
 
     def clean_email(self):
         email = (self.cleaned_data.get('email') or '').strip()
+        if email and not validar_email_permitido(email):
+            raise forms.ValidationError(MENSAJE_EMAIL_INVALIDO)
         if email:
             qs = Usuario.objects.filter(email__iexact=email)
             if self.usuario:

@@ -586,7 +586,8 @@ function updateAvatarPreview(){
 // ── EMAIL VALIDATION ──
 function validarEmail(input){
     var val = input.value.trim();
-    var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    var dominioMsg = window.mensajeEmailDominioPermitido ? window.mensajeEmailDominioPermitido(val) : '';
+    var ok = val.length > 0 && !dominioMsg;
     var errEl = document.getElementById('email-error');
     input.classList.toggle('valid', ok && val.length > 0);
     input.classList.toggle('invalid', !ok && val.length > 0);
@@ -605,8 +606,9 @@ function datosFormIsValid(){
     var ln = document.getElementById('id_last_name');
     var em = document.getElementById('email-input');
     var nameRe = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ' -]{2,20}$/;
-    var mailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return !!(fn && ln && em && nameRe.test(fn.value.trim()) && nameRe.test(ln.value.trim()) && (!em.value.trim() || mailRe.test(em.value.trim())));
+    var emailVal = em ? em.value.trim() : '';
+    var emailOk = !emailVal || (window.validarEmailDominioPermitido ? window.validarEmailDominioPermitido(emailVal) : /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal));
+    return !!(fn && ln && em && nameRe.test(fn.value.trim()) && nameRe.test(ln.value.trim()) && emailOk);
 }
 
 function updateDatosSubmitState(){
@@ -864,5 +866,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.classList.remove('sidebar-open');
     }
 </script>
+<script src="{% static 'js/email-dominios.js' %}"></script>
 </body>
 </html>

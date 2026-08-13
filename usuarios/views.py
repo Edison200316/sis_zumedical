@@ -16,7 +16,12 @@ from django.utils import timezone
 from django.contrib.auth import update_session_auth_hash
 from django.urls import reverse
 from django.core.paginator import Paginator
-from .validators import MENSAJE_CEDULA_INVALIDA, validar_cedula_ecuatoriana
+from .validators import (
+    MENSAJE_CEDULA_INVALIDA,
+    MENSAJE_EMAIL_INVALIDO,
+    validar_cedula_ecuatoriana,
+    validar_email_permitido,
+)
 import csv
 import json
 import logging
@@ -560,6 +565,8 @@ def verificar_disponibilidad(request):
         return JsonResponse({'disponible': True, 'mensaje': 'Cédula disponible.'})
 
     if campo == 'email':
+        if not validar_email_permitido(valor):
+            return JsonResponse({'disponible': False, 'mensaje': MENSAJE_EMAIL_INVALIDO})
         existe = Usuario.objects.filter(email__iexact=valor).exists()
         if existe:
             return JsonResponse({'disponible': False, 'mensaje': 'Este correo ya está registrado.'})
@@ -578,6 +585,9 @@ def mi_perfil(request):
 
         if action == 'perfil':
             email = request.POST.get('email', '').strip()
+            if email and not validar_email_permitido(email):
+                messages.error(request, MENSAJE_EMAIL_INVALIDO)
+                return redirect('mi_perfil')
             if email and Usuario.objects.filter(email__iexact=email).exclude(id=request.user.id).exists():
                 messages.error(request, 'Este correo ya está registrado.')
                 return redirect('mi_perfil')
@@ -2051,15 +2061,6 @@ def controles_admin(request):
     })
 
 
-DOMINIOS_EMAIL_PERMITIDOS = {
-    'gmail.com', 'googlemail.com', 'outlook.com', 'hotmail.com', 'live.com',
-    'msn.com', 'yahoo.com', 'yahoo.es', 'icloud.com', 'me.com', 'mac.com',
-    'proton.me', 'protonmail.com', 'aol.com', 'zoho.com', 'gmx.com',
-    'gmx.net', 'mail.com', 'yandex.com', 'yandex.ru', 'fastmail.com',
-    'tutanota.com', 'tuta.com', 'hey.com', 'inbox.com',
-}
-
-
 def _admin_citas_pendientes_count():
     try:
         return Cita.objects.filter(estado='pendiente').count()
@@ -2089,9 +2090,8 @@ def _validar_usuario_admin(first_name, last_name, username, email, password, rol
         except ValidationError:
             errores.append("Ingresa un correo electrónico válido.")
         else:
-            dominio = email.rsplit('@', 1)[-1].lower()
-            if dominio not in DOMINIOS_EMAIL_PERMITIDOS:
-                errores.append("El correo debe usar un dominio permitido como gmail.com, outlook.com, hotmail.com o yahoo.com.")
+            if not validar_email_permitido(email):
+                errores.append(MENSAJE_EMAIL_INVALIDO)
     if roles_validos is not None and rol not in roles_validos:
         errores.append("Selecciona un rol válido.")
     if len(password or "") < 8 or not re.search(r"[A-ZÁÉÍÓÚÑ]", password or "") or not re.search(r"\d", password or "") or not re.search(r"[^A-Za-z0-9ÁÉÍÓÚÑáéíóúñ]", password or ""):
@@ -2282,6 +2282,15 @@ def admin_editar_usuario(request, usuario_id):
 
     if request.method == 'POST':
         email = request.POST.get('email', '').strip()
+        if email and not validar_email_permitido(email):
+            messages.error(request, MENSAJE_EMAIL_INVALIDO)
+            return render(request, 'admin/editar_usuario.html', {
+                'usuario': usuario,
+                'roles': ['admin', 'medico', 'enfermera', 'paciente'],
+                'especialidades': especialidades,
+                'medico_perfil': getattr(usuario, 'medico', None) if usuario.rol == 'medico' else None,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
         if email and User.objects.filter(email__iexact=email).exclude(id=usuario.id).exists():
             messages.error(request, f'El correo "{email}" ya está registrado.')
             return render(request, 'admin/editar_usuario.html', {
@@ -2503,6 +2512,12 @@ def admin_editar_paciente(request, paciente_id):
         if username:
             paciente.usuario.username = username
         email = request.POST.get('email', '').strip()
+        if email and not validar_email_permitido(email):
+            messages.error(request, MENSAJE_EMAIL_INVALIDO)
+            return render(request, 'admin/editar_paciente.html', {
+                'paciente': paciente,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
         if email and Usuario.objects.filter(email__iexact=email).exclude(id=paciente.usuario.id).exists():
             messages.error(request, f'El correo "{email}" ya está registrado.')
             return render(request, 'admin/editar_paciente.html', {
@@ -2925,9 +2940,16 @@ def perfil_enfermera(request):
         action = request.POST.get('action')
  
         if action == 'perfil':
+            email = request.POST.get('email', '').strip()
+            if email and not validar_email_permitido(email):
+                messages.error(request, MENSAJE_EMAIL_INVALIDO)
+                return redirect('perfil_enfermera')
+            if email and Usuario.objects.filter(email__iexact=email).exclude(id=request.user.id).exists():
+                messages.error(request, 'Este correo ya está registrado.')
+                return redirect('perfil_enfermera')
             request.user.first_name = request.POST.get('first_name', '')
             request.user.last_name  = request.POST.get('last_name', '')
-            request.user.email      = request.POST.get('email', '')
+            request.user.email      = email
             request.user.save()
             messages.success(request, 'Datos actualizados correctamente.')
  
@@ -3524,9 +3546,16 @@ def perfil_medico(request):
         action = request.POST.get('action')
 
         if action == 'perfil':
+            email = request.POST.get('email', '').strip()
+            if email and not validar_email_permitido(email):
+                messages.error(request, MENSAJE_EMAIL_INVALIDO)
+                return redirect('perfil_medico')
+            if email and Usuario.objects.filter(email__iexact=email).exclude(id=request.user.id).exists():
+                messages.error(request, 'Este correo ya está registrado.')
+                return redirect('perfil_medico')
             request.user.first_name = request.POST.get('first_name', '')
             request.user.last_name  = request.POST.get('last_name', '')
-            request.user.email      = request.POST.get('email', '')
+            request.user.email      = email
             request.user.save()
             messages.success(request, 'Datos actualizados correctamente.')
 

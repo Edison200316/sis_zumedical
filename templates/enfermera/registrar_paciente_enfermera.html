@@ -607,13 +607,31 @@ function validarLetras(input, key, ccId){
 }
 
 // -- SOLO DÍGITOS (cédula / tel) --
+function esCedulaLocalValida(cedula){
+    if(!/^\d{10}$/.test(cedula)) return false;
+    if(/^(\d)\1{9}$/.test(cedula)) return false;
+    var codigo = parseInt(cedula.substring(0, 2), 10);
+    if(!(codigo >= 1 && codigo <= 24)) return false;
+    if(parseInt(cedula[2], 10) >= 6) return false;
+    var coefs = [2,1,2,1,2,1,2,1,2];
+    var suma = 0;
+    for(var i = 0; i < 9; i++){
+        var r = parseInt(cedula[i], 10) * coefs[i];
+        if(r >= 10) r -= 9;
+        suma += r;
+    }
+    var residuo = suma % 10;
+    var verificador = residuo === 0 ? 0 : 10 - residuo;
+    return verificador === parseInt(cedula[9], 10);
+}
+
 function validarDigitos(input, key, ccId, exactLen, label){
     var clean = input.value.replace(/\D/g, '').slice(0, exactLen);
     if(input.value !== clean) input.value = clean;
     updateCC(ccId, clean.length, exactLen);
     var ok = clean.length === exactLen;
-    if(key === 'ced' && ok && window.esCedulaEcuatorianaValida){
-        ok = window.esCedulaEcuatorianaValida(clean);
+    if(key === 'ced' && ok){
+        ok = window.esCedulaEcuatorianaValida ? window.esCedulaEcuatorianaValida(clean) : esCedulaLocalValida(clean);
     }
     setInputState(input, clean.length > 0 ? (ok ? 'ok' : 'err') : '');
     setStatus(key, clean.length > 0 ? (ok ? 'ok' : 'err') : '');
@@ -641,10 +659,11 @@ function validarUsuario(input){
 // -- EMAIL --
 function validarEmail(input){
     var val = input.value.trim();
-    var ok = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    var msgDominio = window.mensajeEmailDominioPermitido ? window.mensajeEmailDominioPermitido(val) : '';
+    var ok = val.length === 0 || !msgDominio;
     setInputState(input, val.length > 0 ? (ok ? 'ok' : 'err') : '');
     setStatus('email', val.length > 0 ? (ok ? 'ok' : 'err') : '');
-    setMsg('email', val.length === 0 ? 'ejemplo@dominio.com' : ok ? 'Correo válido' : 'Formato incorrecto (ej: nombre@correo.com)', val.length === 0 ? 'hint' : ok ? 'ok' : 'err');
+    setMsg('email', val.length === 0 ? 'ejemplo@dominio.com' : ok ? 'Correo válido' : msgDominio, val.length === 0 ? 'hint' : ok ? 'ok' : 'err');
     setValid('email', val.length === 0 || ok);
 }
 
@@ -800,6 +819,7 @@ document.addEventListener('DOMContentLoaded', function(){
 });
 </script>
 <script src="{% static 'js/cedula-ecuatoriana.js' %}"></script>
+<script src="{% static 'js/email-dominios.js' %}"></script>
 
 <script>
     function toggleSidebar() {

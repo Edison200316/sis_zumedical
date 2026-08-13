@@ -797,9 +797,10 @@
                 if (group) group.classList.add('has-error');
                 return false;
             }
-            if (!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(val)) {
+            var dominioMsg = window.mensajeEmailDominioPermitido ? window.mensajeEmailDominioPermitido(val) : '';
+            if (dominioMsg) {
                 emailMsg.className = 'field-msg error';
-                emailMsg.innerHTML = SVG_ERR_S + ' Ingresa un correo válido. Ej: nombre@correo.com';
+                emailMsg.innerHTML = SVG_ERR_S + ' ' + dominioMsg;
                 if (group) group.classList.add('has-error');
                 return false;
             }
@@ -991,6 +992,7 @@
         });
     });
     </script>
+    <script src="{% static 'js/email-dominios.js' %}"></script>
     <style>@keyframes spin { to { transform: rotate(360deg); } }</style>
 </body>
 </html>

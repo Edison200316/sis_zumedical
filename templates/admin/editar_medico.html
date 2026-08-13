@@ -266,6 +266,10 @@ const soloLetras = /^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ\s]*$/;
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const soloNumeros = /^[0-9]*$/;
 
+function emailDominioOk(valor) {
+    return window.validarEmailDominioPermitido ? window.validarEmailDominioPermitido(valor) : emailRegex.test(valor);
+}
+
 function bloquearCaracterInvalido(input, regex) {
     input.addEventListener('input', function () {
         let valor = this.value;
@@ -330,7 +334,7 @@ emailInput.addEventListener('input', function () {
     if (this.value.length === 0) {
         this.classList.remove('input-valid', 'input-invalid');
         emailError.classList.remove('show');
-    } else if (emailRegex.test(this.value)) {
+    } else if (emailDominioOk(this.value.trim())) {
         this.classList.add('input-valid');
         this.classList.remove('input-invalid');
         emailError.classList.remove('show');
@@ -422,7 +426,7 @@ function validarFormulario() {
 
     const nombreOk   = firstName.length > 0 && soloLetras.test(firstName);
     const apellidoOk = lastName.length > 0 && soloLetras.test(lastName);
-    const emailOk    = email.length === 0 || emailRegex.test(email);
+    const emailOk    = email.length === 0 || emailDominioOk(email);
     const telefonoOk = telefono.length === 0 || telefono.length === 10;
     const especialidadOk = especialidad !== '';
     let pwdOk = true;
@@ -436,4 +440,5 @@ function validarFormulario() {
 }
 validarFormulario();
 </script>
+<script src="{% static 'js/email-dominios.js' %}"></script>
 </body></html>

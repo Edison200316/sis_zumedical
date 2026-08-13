@@ -7,6 +7,7 @@ from citas.models import Cita
 from medicos.models import Medico
 from landing.models import Especialidad
 from usuarios.models import Usuario, LogAuditoria
+from usuarios.validators import MENSAJE_EMAIL_INVALIDO, validar_email_permitido
 from django.contrib.auth import authenticate, login as auth_login
 from functools import wraps
 from .models import ConsultaGeneral
@@ -293,6 +294,9 @@ def mi_perfil(request):
 
         if form_type == 'datos':
             email = request.POST.get('email', user.email).strip()
+            if email and not validar_email_permitido(email):
+                messages.error(request, MENSAJE_EMAIL_INVALIDO)
+                return redirect('paciente_general_perfil')
             if email and Usuario.objects.filter(email__iexact=email).exclude(id=user.id).exists():
                 messages.error(request, 'Este correo ya está registrado.')
                 return redirect('paciente_general_perfil')

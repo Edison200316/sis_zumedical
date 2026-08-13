@@ -478,9 +478,9 @@ function validarEmail(){
     var input = document.getElementById('f-email');
     var val = input.value.trim();
     if(val.length === 0){ setField(input,'st-email','msg-email','','',''); return false; }
-    var re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if(!re.test(val)){
-        setField(input,'st-email','msg-email','invalid','err','<i class="fa-solid fa-xmark"></i> Correo no válido');
+    var dominioMsg = window.mensajeEmailDominioPermitido ? window.mensajeEmailDominioPermitido(val) : '';
+    if(dominioMsg){
+        setField(input,'st-email','msg-email','invalid','err','<i class="fa-solid fa-xmark"></i> '+dominioMsg);
         return false;
     }
     setField(input,'st-email','msg-email','valid','ok','<i class="fa-solid fa-check"></i> Correo válido');
@@ -586,5 +586,6 @@ document.getElementById('form-datos').addEventListener('submit', function(e){
     if(!ok) e.preventDefault();
 });
 </script>
+<script src="{% static 'js/email-dominios.js' %}"></script>
 </body>
 </html>

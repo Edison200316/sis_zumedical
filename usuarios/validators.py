@@ -4,9 +4,12 @@ def validar_cedula_ecuatoriana(cedula):
 
     if len(cedula) != 10 or not cedula.isdigit():
         return False
+    if cedula == cedula[0] * 10:
+        return False
 
-    provincia = int(cedula[:2])
-    if provincia < 1 or provincia > 24:
+    codigo_provincia = int(cedula[:2])
+    codigo_valido = 1 <= codigo_provincia <= 24
+    if not codigo_valido:
         return False
 
     if int(cedula[2]) >= 6:
@@ -28,3 +31,32 @@ def validar_cedula_ecuatoriana(cedula):
 MENSAJE_CEDULA_INVALIDA = (
     'Ingresa una cedula ecuatoriana real de 10 digitos.'
 )
+
+
+DOMINIOS_EMAIL_PERMITIDOS = {
+    'gmail.com', 'googlemail.com', 'outlook.com', 'hotmail.com', 'live.com',
+    'msn.com', 'yahoo.com', 'yahoo.es', 'icloud.com', 'me.com', 'mac.com',
+    'proton.me', 'protonmail.com', 'aol.com', 'zoho.com', 'gmx.com',
+    'gmx.net', 'mail.com', 'yandex.com', 'yandex.ru', 'fastmail.com',
+    'tutanota.com', 'tuta.com', 'hey.com', 'inbox.com',
+}
+
+MENSAJE_EMAIL_INVALIDO = (
+    'Ingresa un correo real con un dominio permitido.'
+)
+
+
+def validar_email_permitido(email):
+    email = (email or '').strip()
+    if not email:
+        return True
+
+    if email.count('@') != 1:
+        return False
+
+    local, dominio = email.rsplit('@', 1)
+    dominio = dominio.lower()
+    if not local or not dominio or '..' in email:
+        return False
+
+    return dominio in DOMINIOS_EMAIL_PERMITIDOS

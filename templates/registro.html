@@ -753,6 +753,7 @@
             const val = input.value.trim();
             if (!val) { setInvalid(input, status, msg, 'La cédula es obligatoria.'); return false; }
             if (!/^\d{10}$/.test(val)) { setInvalid(input, status, msg, 'Debe tener exactamente 10 dígitos.'); return false; }
+            if (/^(\d)\1{9}$/.test(val)) { setInvalid(input, status, msg, 'Ingresa una cédula ecuatoriana real.'); return false; }
 
             // Algoritmo de validación de cédula ecuatoriana
             const digits = val.split('').map(Number);
@@ -804,6 +805,11 @@
             const { input, status, msg } = getEls('id_email');
             const val = input.value.trim();
             if (!val) { clearStatus(input, status, msg); return true; }
+            const dominioMsg = window.mensajeEmailDominioPermitido ? window.mensajeEmailDominioPermitido(val) : '';
+            if (dominioMsg) {
+                setInvalid(input, status, msg, dominioMsg);
+                return false;
+            }
             // Regex más estricto: usuario@dominio.extensión (extensión mínimo 2 letras)
             if (!/^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$/.test(val)) {
                 setInvalid(input, status, msg, 'Ingresa un correo válido. Ej: nombre@correo.com');
@@ -1074,5 +1080,6 @@
     })();
     </script>
     <script src="{% static 'js/cedula-ecuatoriana.js' %}"></script>
+    <script src="{% static 'js/email-dominios.js' %}"></script>
 </body>
 </html>

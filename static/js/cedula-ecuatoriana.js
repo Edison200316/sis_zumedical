@@ -3,9 +3,10 @@
     cedula = String(cedula || '').trim();
 
     if (!/^\d{10}$/.test(cedula)) return false;
+    if (/^(\d)\1{9}$/.test(cedula)) return false;
 
-    var provincia = parseInt(cedula.substring(0, 2), 10);
-    if (provincia < 1 || provincia > 24) return false;
+    var codigoProvincia = parseInt(cedula.substring(0, 2), 10);
+    if (!(codigoProvincia >= 1 && codigoProvincia <= 24)) return false;
 
     var tercerDigito = parseInt(cedula.charAt(2), 10);
     if (tercerDigito >= 6) return false;

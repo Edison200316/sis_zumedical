@@ -728,13 +728,13 @@ document.addEventListener('DOMContentLoaded', function () {
     if (inpEmail) {
         inpEmail.addEventListener('input', function() {
             var val = this.value.trim();
-            var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+            var dominioMsg = window.mensajeEmailDominioPermitido ? window.mensajeEmailDominioPermitido(val) : '';
             var wrap = this.closest('.input-wrap');
             if (val.length === 0) {
                 this.className = '';
                 if (wrap) wrap.classList.remove('valid','invalid');
                 msgEmail.className = 'field-msg';
-            } else if (emailRe.test(val)) {
+            } else if (!dominioMsg) {
                 this.className = 'input-ok';
                 if (wrap) { wrap.classList.remove('invalid'); wrap.classList.add('valid'); }
                 msgEmail.className = 'field-msg visible ok';
@@ -743,7 +743,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 this.className = 'input-error';
                 if (wrap) { wrap.classList.remove('valid'); wrap.classList.add('invalid'); }
                 msgEmail.className = 'field-msg visible error';
-                msgEmail.textContent = 'Ingresa un correo válido (ej: nombre@dominio.com)';
+                msgEmail.textContent = dominioMsg;
             }
             marcarUnsaved();
         });
@@ -761,12 +761,14 @@ document.addEventListener('DOMContentLoaded', function () {
             var nombre  = document.getElementById('inp-nombre');
             var apellido= document.getElementById('inp-apellido');
             var email   = document.getElementById('inp-email');
-            var emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
             var errors  = [];
 
             if (nombre && /[0-9]/.test(nombre.value))   errors.push('El nombre no puede contener números');
             if (apellido && /[0-9]/.test(apellido.value)) errors.push('El apellido no puede contener números');
-            if (email && email.value && !emailRe.test(email.value.trim())) errors.push('El correo electrónico no es válido');
+            if (email && email.value) {
+                var dominioMsg = window.mensajeEmailDominioPermitido ? window.mensajeEmailDominioPermitido(email.value.trim()) : '';
+                if (dominioMsg) errors.push(dominioMsg);
+            }
 
             if (errors.length > 0) {
                 e.preventDefault();
@@ -857,6 +859,7 @@ function closeSidebar() {
     document.body.classList.remove('sidebar-open');
 }
 </script>
+<script src="{% static 'js/email-dominios.js' %}"></script>
 </body>
 </html>
 

@@ -317,7 +317,7 @@ function closeSidebar() {
             input.value = input.value.replace(/\D/g, '').slice(0, 10);
             const v = input.value;
             if (v === '') { fields.cedula = true; setInputState(input, null); setMsg('cedula', ''); updateSubmit(); return; }
-            const valid = window.esCedulaEcuatorianaValida ? window.esCedulaEcuatorianaValida(v) : v.length === 10;
+            const valid = window.esCedulaEcuatorianaValida ? window.esCedulaEcuatorianaValida(v) : false;
             fields.cedula = valid;
             setInputState(input, valid ? 'valid' : 'invalid');
             setMsg('cedula', valid ? '' : (v.length < 10 ? 'Debe tener 10 dígitos' : 'Ingresa una cédula ecuatoriana real'), 'error');
@@ -407,4 +407,5 @@ function closeSidebar() {
 })();
 </script>
 <script src="{% static 'js/cedula-ecuatoriana.js' %}"></script>
+<script src="{% static 'js/email-dominios.js' %}"></script>
 </body></html>

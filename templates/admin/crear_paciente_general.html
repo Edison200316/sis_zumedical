@@ -63,6 +63,10 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 .alert svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
 .alert-success{background:var(--success-bg);color:var(--success);border:1px solid #C8E6C9}
 .alert-error{background:var(--error-bg);color:var(--error);border:1px solid #FFCDD2}
+.validation-summary{display:none;max-width:700px;margin-bottom:1.25rem;padding:.9rem 1.1rem;border-radius:12px;background:var(--error-bg);border:1px solid #FFCDD2;color:var(--error);font-size:.84rem}
+.validation-summary.show{display:block}
+.validation-summary strong{display:block;margin-bottom:.35rem}
+.validation-summary ul{margin-left:1.1rem;display:flex;flex-direction:column;gap:.2rem}
 .form-card{background:var(--white);border-radius:16px;border:1px solid var(--purple-border);padding:2rem;max-width:700px;position:relative;overflow:hidden}
 .form-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--purple),var(--purple-l))}
 .form-card-title{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.15rem;font-weight:600;color:var(--text);margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:1px solid var(--purple-border);display:flex;align-items:center;gap:.5rem}
@@ -89,7 +93,8 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 .pwd-meter-bar{height:100%;width:0%;border-radius:4px;background:#C0392B;transition:width .25s ease,background .25s ease}
 .pwd-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0.3rem;color:var(--purple-l);transition:color 0.2s}
 .pwd-toggle:hover{color:var(--purple)}
-.pwd-toggle i{font-size:16px}
+.pwd-toggle i{position:static;left:auto;top:auto;transform:none;font-size:16px;pointer-events:none}
+.credentials-stack-layout{grid-template-columns:minmax(260px,388px);max-width:388px}
 .pwd-checklist{list-style:none;margin-top:.5rem;display:flex;flex-direction:column;gap:.25rem}
 .pwd-checklist li{font-size:.74rem;color:var(--muted);display:flex;align-items:center;gap:.4rem}
 .pwd-checklist li i{font-size:.7rem;color:#C0392B}
@@ -185,7 +190,8 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
         <p class="form-card-title">
             <i class="fa-solid fa-user-plus"></i> Datos del paciente
         </p>
-        <form method="POST">
+        <div class="validation-summary" id="validationSummary"><strong>Corrige estos campos antes de registrar:</strong><ul id="validationSummaryList"></ul></div>
+        <form method="POST" id="adminPacienteGeneralForm" novalidate>
             {% csrf_token %}
 
             <!-- INFORMACIÓN PERSONAL -->
@@ -222,7 +228,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                         <label>Cédula</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-id-card"></i>
-                            <input type="text" id="id_cedula" name="cedula" placeholder="1234567890" maxlength="10" inputmode="numeric">
+                            <input type="text" id="id_cedula" name="cedula" placeholder="1234567890" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
                         </div>
                         <div class="field-msg" id="msg_cedula"></div>
                     </div>
@@ -232,7 +238,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                         <label>Teléfono</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-phone"></i>
-                            <input type="text" id="id_telefono" name="telefono" placeholder="0999999999" maxlength="10" inputmode="numeric">
+                            <input type="text" id="id_telefono" name="telefono" placeholder="0999999999" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
                         </div>
                         <div class="field-msg" id="msg_telefono"></div>
                     </div>
@@ -256,7 +262,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                         <label>Género</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-venus-mars"></i>
-                            <select name="genero" required>
+                            <select name="genero" id="id_genero" required>
                                 <option value="">Seleccionar...</option>
                                 <option value="masculino" {% if form_data.genero == 'masculino' %}selected{% endif %}>Masculino</option>
                                 <option value="femenino" {% if form_data.genero == 'femenino' %}selected{% endif %}>Femenino</option>
@@ -270,7 +276,7 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
             <!-- CREDENCIALES -->
             <div class="form-section">
                 <div class="form-section-title">Credenciales de acceso</div>
-                <div class="form-row">
+                <div class="form-row credentials-stack-layout">
                     <div class="form-group">
                         <label>Usuario</label>
                         <div class="input-wrap">
@@ -297,6 +303,18 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
                             <li id="chk_sym"><i class="fa-solid fa-circle-xmark"></i> Un símbolo</li>
                         </ul>
                     </div>
+                    <div class="form-group">
+                        <label>Confirmar contraseña</label>
+                        <div class="input-wrap">
+                            <i class="fa-solid fa-lock"></i>
+                            <input type="password" id="id_password_confirm" name="password_confirm" placeholder="Repite la contraseña" required style="padding-right:2.8rem">
+                            <button type="button" class="pwd-toggle" onclick="togglePassword('id_password_confirm','eyeConfirmOpen','eyeConfirmClosed')">
+                                <i class="fa-solid fa-eye" id="eyeConfirmOpen"></i>
+                                <i class="fa-solid fa-eye-slash" id="eyeConfirmClosed" style="display:none"></i>
+                            </button>
+                        </div>
+                        <div class="field-msg" id="msg_password_confirm"></div>
+                    </div>
                 </div>
             </div>
 
@@ -311,10 +329,10 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 </main>
 
 <script>
-function togglePassword() {
-    const pwdInput = document.getElementById('id_password');
-    const eyeOpen = document.getElementById('eyeOpen');
-    const eyeClosed = document.getElementById('eyeClosed');
+function togglePassword(inputId, openId, closedId) {
+    const pwdInput = document.getElementById(inputId || 'id_password');
+    const eyeOpen = document.getElementById(openId || 'eyeOpen');
+    const eyeClosed = document.getElementById(closedId || 'eyeClosed');
     if (pwdInput.type === 'password') {
         pwdInput.type = 'text';
         eyeOpen.style.display = 'none';
@@ -490,6 +508,129 @@ function closeSidebar() {
         const optionalOk = (fields.email !== false) && (fields.cedula !== false) && (fields.telefono !== false);
         btn.disabled = !(requiredOk && optionalOk);
     }
+})();
+</script>
+<script>
+(function() {
+    const allowedDomains = new Set([
+        'gmail.com','googlemail.com','outlook.com','hotmail.com','live.com','msn.com','yahoo.com','yahoo.es',
+        'icloud.com','me.com','mac.com','proton.me','protonmail.com','aol.com','zoho.com','gmx.com','gmx.net',
+        'mail.com','yandex.com','yandex.ru','fastmail.com','tutanota.com','tuta.com','hey.com','inbox.com'
+    ]);
+    const form = document.getElementById('adminPacienteGeneralForm');
+    if (!form) return;
+    const $ = function(id) { return document.getElementById(id); };
+    const submitBtn = $('submitBtn');
+    const summary = $('validationSummary');
+    const summaryList = $('validationSummaryList');
+
+    function msg(id, text, ok) {
+        const el = $('msg_' + id);
+        if (!el) return;
+        el.textContent = text || '';
+        el.className = 'field-msg' + (text ? (ok ? ' ok' : ' error') : '');
+    }
+    function state(input, valid, touched) {
+        if (!input) return;
+        input.classList.remove('valid', 'invalid');
+        if (touched) input.classList.add(valid ? 'valid' : 'invalid');
+    }
+    function value(id) {
+        const el = $('id_' + id);
+        return el ? el.value.trim() : '';
+    }
+    function emailError(email) {
+        if (!email) return '';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'El correo tiene un formato inválido.';
+        const domain = email.split('@').pop().toLowerCase();
+        if (!allowedDomains.has(domain)) return 'El dominio "' + domain + '" no está permitido. Usa un correo real permitido.';
+        return '';
+    }
+    function passwordRules(password) {
+        return {
+            len: password.length >= 8,
+            upper: /[A-Z]/.test(password),
+            num: /[0-9]/.test(password),
+            sym: /[^A-Za-z0-9]/.test(password)
+        };
+    }
+    function validate(show) {
+        const errors = [];
+        [['first_name', 'Nombre'], ['last_name', 'Apellidos']].forEach(function(item) {
+            const id = item[0], label = item[1], input = $('id_' + id), v = value(id);
+            let error = '';
+            if (!v) error = label + ' es obligatorio.';
+            else if (!/^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]+$/.test(v)) error = label + ' solo debe tener letras y espacios.';
+            if (error) errors.push(error);
+            msg(id, show || v ? error : '', !error);
+            state(input, !error, show || v);
+        });
+
+        const email = value('email');
+        const emailMsg = emailError(email);
+        if (emailMsg) errors.push(emailMsg);
+        msg('email', show || email ? emailMsg : '', !emailMsg);
+        state($('id_email'), !emailMsg, show || email);
+
+        [['cedula', 'La cédula'], ['telefono', 'El teléfono']].forEach(function(item) {
+            const id = item[0], label = item[1], input = $('id_' + id);
+            if (input) input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
+            const v = value(id);
+            const error = v && v.length !== 10 ? label + ' debe tener exactamente 10 números.' : '';
+            if (error) errors.push(error);
+            msg(id, show || v ? error : '', !error);
+            state(input, !error, show || v);
+        });
+
+        const genero = value('genero');
+        if (!genero) errors.push('Selecciona un género válido.');
+
+        const username = value('username');
+        let usernameError = '';
+        if (!username) usernameError = 'El usuario es obligatorio.';
+        else if (username.length < 3) usernameError = 'El usuario debe tener mínimo 3 caracteres.';
+        if (usernameError) errors.push(usernameError);
+        msg('username', show || username ? usernameError : '', !usernameError);
+        state($('id_username'), !usernameError, show || username);
+
+        const password = $('id_password') ? $('id_password').value : '';
+        const rules = passwordRules(password);
+        const passwordError = rules.len && rules.upper && rules.num && rules.sym ? '' : 'La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.';
+        if (passwordError) errors.push(passwordError);
+        state($('id_password'), !passwordError, show || password);
+
+        const confirm = $('id_password_confirm') ? $('id_password_confirm').value : '';
+        let confirmError = '';
+        if (!confirm) confirmError = 'Debes confirmar la contraseña.';
+        else if (confirm !== password) confirmError = 'Las contraseñas no coinciden.';
+        if (confirmError) errors.push(confirmError);
+        msg('password_confirm', show || confirm ? confirmError : '', !confirmError);
+        state($('id_password_confirm'), !confirmError, show || confirm);
+
+        if (summary && summaryList) {
+            summaryList.innerHTML = '';
+            errors.forEach(function(error) {
+                const item = document.createElement('li');
+                item.textContent = error;
+                summaryList.appendChild(item);
+            });
+            summary.classList.toggle('show', show && errors.length > 0);
+        }
+        if (submitBtn) submitBtn.disabled = errors.length > 0;
+        return errors.length === 0;
+    }
+
+    ['id_first_name','id_last_name','id_email','id_cedula','id_telefono','id_genero','id_username','id_password','id_password_confirm'].forEach(function(id) {
+        const input = $(id);
+        if (!input) return;
+        input.addEventListener('input', function() { validate(true); });
+        input.addEventListener('change', function() { validate(true); });
+        input.addEventListener('blur', function() { validate(true); });
+    });
+    form.addEventListener('submit', function(e) {
+        if (!validate(true)) e.preventDefault();
+    });
+    validate(false);
 })();
 </script>
 </body>

@@ -63,6 +63,10 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 .alert svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
 .alert-success{background:var(--success-bg);color:var(--success);border:1px solid #C8E6C9}
 .alert-error{background:var(--error-bg);color:var(--error);border:1px solid #FFCDD2}
+.validation-summary{display:none;max-width:700px;margin-bottom:1.25rem;padding:.9rem 1.1rem;border-radius:12px;background:var(--error-bg);border:1px solid #FFCDD2;color:var(--error);font-size:.84rem}
+.validation-summary.show{display:block}
+.validation-summary strong{display:block;margin-bottom:.35rem}
+.validation-summary ul{margin-left:1.1rem;display:flex;flex-direction:column;gap:.2rem}
 .form-card{background:var(--white);border-radius:16px;border:1px solid var(--mg-border);padding:2rem;max-width:700px;position:relative;overflow:hidden}
 .form-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--mg-d),var(--mg-l))}
 .form-card-title{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.15rem;font-weight:600;color:var(--text);margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--mg-border);display:flex;align-items:center;gap:0.5rem}
@@ -89,7 +93,8 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 .pwd-meter-bar{height:100%;width:0%;border-radius:4px;background:#C0392B;transition:width 0.25s ease,background 0.25s ease}
 .pwd-toggle{position:absolute;right:13px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;padding:0.3rem;color:var(--mg-l);transition:color 0.2s}
 .pwd-toggle:hover{color:var(--mg)}
-.pwd-toggle svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8}
+.pwd-toggle svg{position:static;left:auto;top:auto;transform:none;width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;pointer-events:none}
+.credentials-stack-layout{grid-template-columns:minmax(260px,388px);max-width:388px}
 .pwd-checklist{list-style:none;margin-top:0.5rem;display:flex;flex-direction:column;gap:0.25rem}
 .pwd-checklist li{font-size:0.74rem;color:var(--muted);display:flex;align-items:center;gap:0.4rem}
 .pwd-checklist li i{font-size:0.7rem;color:#C0392B}
@@ -194,7 +199,8 @@ tbody tr:hover{background:var(--mg-bg)}
 {% endfor %}{% endif %}
 <div class="form-card">
 <p class="form-card-title"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>Datos de la paciente</p>
-<form method="POST">
+<div class="validation-summary" id="validationSummary"><strong>Corrige estos campos antes de registrar:</strong><ul id="validationSummaryList"></ul></div>
+<form method="POST" id="adminPacientePrenatalForm" novalidate>
 {% csrf_token %}
 <input type="hidden" name="genero" value="femenino">
 <div class="form-section">
@@ -205,10 +211,10 @@ tbody tr:hover{background:var(--mg-bg)}
 </div>
 <div class="form-row">
 <div class="form-group"><label>Email</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><input type="email" id="id_email" name="email" placeholder="correo@email.com"></div><div class="field-msg" id="msg_email"></div></div>
-<div class="form-group"><label>Cédula</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><input type="text" id="id_cedula" name="cedula" placeholder="1234567890" maxlength="10" inputmode="numeric"></div><div class="field-msg" id="msg_cedula"></div></div>
+<div class="form-group"><label>Cédula</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><input type="text" id="id_cedula" name="cedula" placeholder="1234567890" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"></div><div class="field-msg" id="msg_cedula"></div></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" id="id_telefono" name="telefono" placeholder="0999999999" maxlength="10" inputmode="numeric"></div><div class="field-msg" id="msg_telefono"></div></div>
+<div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" id="id_telefono" name="telefono" placeholder="0999999999" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"></div><div class="field-msg" id="msg_telefono"></div></div>
 <div class="form-group"><label>Edad</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><input type="number" name="edad" placeholder="25" min="1" max="99" maxlength="3" oninput="this.value=this.value.slice(0,3)"></div></div>
 </div>
 <div class="form-group"><label>Dirección</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><input type="text" name="direccion" placeholder="Dirección completa" maxlength="60"></div></div>
@@ -222,7 +228,7 @@ tbody tr:hover{background:var(--mg-bg)}
 </div>
 <div class="form-section">
 <div class="form-section-title">Credenciales de acceso</div>
-<div class="form-row">
+<div class="form-row credentials-stack-layout">
 <div class="form-group"><label>Usuario</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><input type="text" id="id_username" name="username" placeholder="nombre_paciente" required></div><div class="field-msg" id="msg_username"></div></div>
 <div class="form-group"><label>Contraseña</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" id="id_password" name="password" placeholder="Mínimo 8 caracteres" required style="padding-right:2.8rem"><button type="button" class="pwd-toggle" onclick="togglePassword()"><svg id="eyeOpen" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg id="eyeClosed" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
 <div class="pwd-meter" id="pwd_meter"><div class="pwd-meter-bar" id="pwd_meter_bar"></div></div>
@@ -233,6 +239,7 @@ tbody tr:hover{background:var(--mg-bg)}
 <li id="chk_sym"><i class="fa-solid fa-circle-xmark"></i> Un símbolo</li>
 </ul>
 </div>
+<div class="form-group"><label>Confirmar contraseña</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" id="id_password_confirm" name="password_confirm" placeholder="Repite la contraseña" required style="padding-right:2.8rem"><button type="button" class="pwd-toggle" onclick="togglePassword('id_password_confirm','eyeConfirmOpen','eyeConfirmClosed')"><svg id="eyeConfirmOpen" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg id="eyeConfirmClosed" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div><div class="field-msg" id="msg_password_confirm"></div></div>
 </div>
 </div>
 <div class="form-actions">
@@ -243,10 +250,10 @@ tbody tr:hover{background:var(--mg-bg)}
 </div>
 </main>
 <script>
-function togglePassword() {
-    const pwdInput = document.getElementById('id_password');
-    const eyeOpen = document.getElementById('eyeOpen');
-    const eyeClosed = document.getElementById('eyeClosed');
+function togglePassword(inputId, openId, closedId) {
+    const pwdInput = document.getElementById(inputId || 'id_password');
+    const eyeOpen = document.getElementById(openId || 'eyeOpen');
+    const eyeClosed = document.getElementById(closedId || 'eyeClosed');
     if (pwdInput.type === 'password') {
         pwdInput.type = 'text';
         eyeOpen.style.display = 'none';
@@ -424,6 +431,129 @@ function closeSidebar() {
         const optionalOk = (fields.email !== false) && (fields.cedula !== false) && (fields.telefono !== false);
         btn.disabled = !(requiredOk && optionalOk);
     }
+})();
+</script>
+<script>
+(function() {
+    const allowedDomains = new Set([
+        'gmail.com','googlemail.com','outlook.com','hotmail.com','live.com','msn.com','yahoo.com','yahoo.es',
+        'icloud.com','me.com','mac.com','proton.me','protonmail.com','aol.com','zoho.com','gmx.com','gmx.net',
+        'mail.com','yandex.com','yandex.ru','fastmail.com','tutanota.com','tuta.com','hey.com','inbox.com'
+    ]);
+    const form = document.getElementById('adminPacientePrenatalForm');
+    if (!form) return;
+    const $ = function(id) { return document.getElementById(id); };
+    const submitBtn = $('submitBtn');
+    const summary = $('validationSummary');
+    const summaryList = $('validationSummaryList');
+
+    function msg(id, text, ok) {
+        const el = $('msg_' + id);
+        if (!el) return;
+        el.textContent = text || '';
+        el.className = 'field-msg' + (text ? (ok ? ' ok' : ' error') : '');
+    }
+    function state(input, valid, touched) {
+        if (!input) return;
+        input.classList.remove('valid', 'invalid');
+        if (touched) input.classList.add(valid ? 'valid' : 'invalid');
+    }
+    function value(id) {
+        const el = $('id_' + id);
+        return el ? el.value.trim() : '';
+    }
+    function passwordRules(password) {
+        return {
+            len: password.length >= 8,
+            upper: /[A-Z]/.test(password),
+            num: /[0-9]/.test(password),
+            sym: /[^A-Za-z0-9]/.test(password)
+        };
+    }
+    function emailError(email) {
+        if (!email) return '';
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return 'El correo tiene un formato inválido.';
+        const domain = email.split('@').pop().toLowerCase();
+        if (!allowedDomains.has(domain)) return 'El dominio "' + domain + '" no está permitido. Usa un correo real permitido.';
+        return '';
+    }
+    function validate(show) {
+        const errors = [];
+        const names = [
+            ['first_name', 'Nombre'],
+            ['last_name', 'Apellidos']
+        ];
+        names.forEach(function(item) {
+            const id = item[0], label = item[1], input = $('id_' + id), v = value(id);
+            let error = '';
+            if (!v) error = label + ' es obligatorio.';
+            else if (!/^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]+$/.test(v)) error = label + ' solo debe tener letras y espacios.';
+            if (error) errors.push(error);
+            msg(id, show || v ? error : '', !error);
+            state(input, !error, show || v);
+        });
+
+        const email = value('email');
+        const emailMsg = emailError(email);
+        if (emailMsg) errors.push(emailMsg);
+        msg('email', show || email ? emailMsg : '', !emailMsg);
+        state($('id_email'), !emailMsg, show || email);
+
+        [['cedula', 'La cédula'], ['telefono', 'El teléfono']].forEach(function(item) {
+            const id = item[0], label = item[1], input = $('id_' + id);
+            if (input) input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
+            const v = value(id);
+            const error = v && v.length !== 10 ? label + ' debe tener exactamente 10 números.' : '';
+            if (error) errors.push(error);
+            msg(id, show || v ? error : '', !error);
+            state(input, !error, show || v);
+        });
+
+        const username = value('username');
+        let usernameError = '';
+        if (!username) usernameError = 'El usuario es obligatorio.';
+        else if (username.length < 3) usernameError = 'El usuario debe tener mínimo 3 caracteres.';
+        if (usernameError) errors.push(usernameError);
+        msg('username', show || username ? usernameError : '', !usernameError);
+        state($('id_username'), !usernameError, show || username);
+
+        const password = $('id_password') ? $('id_password').value : '';
+        const rules = passwordRules(password);
+        const passwordError = rules.len && rules.upper && rules.num && rules.sym ? '' : 'La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.';
+        if (passwordError) errors.push(passwordError);
+        state($('id_password'), !passwordError, show || password);
+
+        const confirm = $('id_password_confirm') ? $('id_password_confirm').value : '';
+        let confirmError = '';
+        if (!confirm) confirmError = 'Debes confirmar la contraseña.';
+        else if (confirm !== password) confirmError = 'Las contraseñas no coinciden.';
+        if (confirmError) errors.push(confirmError);
+        msg('password_confirm', show || confirm ? confirmError : '', !confirmError);
+        state($('id_password_confirm'), !confirmError, show || confirm);
+
+        if (summary && summaryList) {
+            summaryList.innerHTML = '';
+            errors.forEach(function(error) {
+                const item = document.createElement('li');
+                item.textContent = error;
+                summaryList.appendChild(item);
+            });
+            summary.classList.toggle('show', show && errors.length > 0);
+        }
+        if (submitBtn) submitBtn.disabled = errors.length > 0;
+        return errors.length === 0;
+    }
+
+    ['id_first_name','id_last_name','id_email','id_cedula','id_telefono','id_username','id_password','id_password_confirm'].forEach(function(id) {
+        const input = $(id);
+        if (!input) return;
+        input.addEventListener('input', function() { validate(true); });
+        input.addEventListener('blur', function() { validate(true); });
+    });
+    form.addEventListener('submit', function(e) {
+        if (!validate(true)) e.preventDefault();
+    });
+    validate(false);
 })();
 </script>
 </body></html>

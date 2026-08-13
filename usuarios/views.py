@@ -2331,7 +2331,23 @@ def admin_crear_paciente(request):
         last_name  = request.POST.get('last_name', '').strip()
         email      = request.POST.get('email', '').strip()
         password   = request.POST.get('password', '')
+        password_confirm = request.POST.get('password_confirm', '')
         genero     = 'femenino'
+        cedula     = request.POST.get('cedula', '').strip()
+        telefono   = request.POST.get('telefono', '').strip()
+
+        errores = _validar_usuario_admin(first_name, last_name, username, email, password, password_confirm=password_confirm)
+        if cedula and (not cedula.isdigit() or len(cedula) != 10):
+            errores.append('La cédula debe tener exactamente 10 números.')
+        if telefono and (not telefono.isdigit() or len(telefono) != 10):
+            errores.append('El teléfono debe tener exactamente 10 números.')
+        if errores:
+            for error in errores:
+                messages.error(request, error)
+            return render(request, 'admin/crear_paciente.html', {
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
 
         if User.objects.filter(username=username).exists():
             messages.error(request, f'El usuario "{username}" ya existe.')
@@ -2353,8 +2369,8 @@ def admin_crear_paciente(request):
         )
         from pacientes.models import Paciente
         paciente, _ = Paciente.objects.get_or_create(usuario=user)
-        paciente.cedula    = request.POST.get('cedula', '')
-        paciente.telefono  = request.POST.get('telefono', '')
+        paciente.cedula    = cedula
+        paciente.telefono  = telefono
         paciente.edad      = request.POST.get('edad') or None
         paciente.direccion = request.POST.get('direccion', '')
         fecha_um = request.POST.get('fecha_ultima_menstruacion')
@@ -2707,11 +2723,27 @@ def admin_crear_paciente_general(request):
         last_name  = request.POST.get('last_name', '').strip()
         email      = request.POST.get('email', '').strip()
         password   = request.POST.get('password', '')
+        password_confirm = request.POST.get('password_confirm', '')
         cedula     = request.POST.get('cedula', '').strip()
         telefono   = request.POST.get('telefono', '').strip()
         edad       = request.POST.get('edad') or None
         direccion  = request.POST.get('direccion', '').strip()
         genero     = request.POST.get('genero', '').strip()
+
+        errores = _validar_usuario_admin(first_name, last_name, username, email, password, password_confirm=password_confirm)
+        if genero not in ('femenino', 'masculino', 'otro'):
+            errores.append('Selecciona un género válido.')
+        if cedula and (not cedula.isdigit() or len(cedula) != 10):
+            errores.append('La cédula debe tener exactamente 10 números.')
+        if telefono and (not telefono.isdigit() or len(telefono) != 10):
+            errores.append('El teléfono debe tener exactamente 10 números.')
+        if errores:
+            for error in errores:
+                messages.error(request, error)
+            return render(request, 'admin/crear_paciente_general.html', {
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
 
         if genero not in ('femenino', 'masculino', 'otro'):
             messages.error(request, 'Selecciona un género válido.')

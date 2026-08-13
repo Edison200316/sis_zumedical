@@ -526,6 +526,9 @@ function filtrarTabla(tipo) {
 
 // ── Modal detalle (solo prenatales tienen datos clínicos) ──
 document.addEventListener('DOMContentLoaded', function() {
+    const tabInicial = new URLSearchParams(window.location.search).get('tab');
+    showTab(tabInicial === 'general' ? 'general' : 'prenatal');
+
     const overlay = document.getElementById('modal-overlay');
 
     document.querySelectorAll('.fila-paciente').forEach(function(fila) {

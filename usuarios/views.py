@@ -505,6 +505,10 @@ def registro_paciente(request):
         if form.is_valid():
             try:
                 user = form.save(commit=True)
+                if tipo == 'prenatal':
+                    from pacientes.models import Paciente
+                    paciente = Paciente.objects.get(usuario=user)
+                    _aplicar_tipo_paciente(paciente, 'prenatal', user)
                 login(request, user)
                 request.session['mensaje_bienvenida_registro'] = f'¡Cuenta creada con éxito! Bienvenido/a, {user.first_name}.'
                 return redirect('paciente_general_dashboard')
@@ -1317,19 +1321,16 @@ def registrar_paciente(request, tipo='prenatal'):
                 # El formulario ya crea el usuario y el perfil de paciente
                 user = form.save(commit=True)
                 
-                # Si es prenatal, actualizar el estado del embarazo
-                if tipo == 'prenatal':
-                    from pacientes.models import Paciente
-                    paciente = Paciente.objects.get(usuario=user)
-                    paciente.estado_embarazo = 'ACTIVO'
-                    paciente.save()
+                from pacientes.models import Paciente
+                paciente = Paciente.objects.get(usuario=user)
+                _aplicar_tipo_paciente(paciente, tipo, user)
                 
                 # Registrar en log de auditoría
                 registrar_log(request, 'CREATE', 'Pacientes',
                     f'{request.user.rol.title()} registró nueva paciente: {user.get_full_name()} (tipo: {tipo})', 'INFO')
                 
                 messages.success(request, f'Paciente {user.get_full_name()} registrada correctamente como paciente {tipo}.')
-                return redirect('lista_pacientes_enfermera')
+                return redirect(f"{reverse('lista_pacientes_enfermera')}?tab={tipo}")
             except Exception as e:
                 messages.error(request, f'Error al registrar paciente: {str(e)}')
         else:
@@ -2138,6 +2139,21 @@ def _validar_entero_opcional(valor, etiqueta, minimo=1, maximo=120):
     return numero, None
 
 
+def _aplicar_tipo_paciente(paciente, tipo, usuario=None):
+    """Mantiene consistente la clasificación usada por los listados."""
+    if tipo == 'prenatal':
+        paciente.estado_embarazo = 'ACTIVO'
+        paciente.mensaje_prenatal_visto = False
+        if usuario and usuario.genero != 'femenino':
+            usuario.genero = 'femenino'
+            usuario.save(update_fields=['genero'])
+    else:
+        paciente.estado_embarazo = 'NINGUNO'
+        paciente.medico_prenatal = None
+        paciente.mensaje_prenatal_visto = False
+    paciente.save()
+
+
 
 
 @login_required
@@ -2442,9 +2458,7 @@ def admin_crear_paciente(request):
                 fecha_pp = request.POST.get('fecha_probable_parto')
                 paciente.fecha_ultima_menstruacion = fecha_um if fecha_um else None
                 paciente.fecha_probable_parto      = fecha_pp if fecha_pp else None
-                paciente.estado_embarazo = 'ACTIVO'
-                paciente.mensaje_prenatal_visto = False
-                paciente.save()
+                _aplicar_tipo_paciente(paciente, 'prenatal', user)
         except Exception:
             logger.exception("Error al crear paciente prenatal desde el panel admin")
             messages.error(request, 'No se pudo crear la paciente. Revisa los datos e intenta nuevamente.')
@@ -2860,8 +2874,7 @@ def admin_crear_paciente_general(request):
                 paciente.telefono = telefono
                 paciente.edad = edad
                 paciente.direccion = direccion
-                paciente.estado_embarazo = 'NINGUNO'
-                paciente.save()
+                _aplicar_tipo_paciente(paciente, 'general', user)
         except Exception:
             logger.exception("Error al crear paciente general desde el panel admin")
             messages.error(request, 'No se pudo crear el paciente general. Revisa los datos e intenta nuevamente.')

@@ -518,9 +518,12 @@ function validarDigitos(input, key, ccId, exactLen){
     if(input.value !== clean) input.value = clean;
     updateCC(ccId, clean.length, exactLen);
     var ok = clean.length === exactLen;
+    if(key === 'ced' && ok && window.esCedulaEcuatorianaValida){
+        ok = window.esCedulaEcuatorianaValida(clean);
+    }
     setInputState(input, ok ? 'ok' : 'err');
     setStatus(key, ok ? 'ok' : 'err');
-    setMsg(key, ok ? 'Válido' : 'Faltan dígitos', ok ? 'ok' : 'err');
+    setMsg(key, ok ? 'Válido' : (clean.length < exactLen ? 'Faltan dígitos' : (key === 'ced' ? 'Ingresa una cédula ecuatoriana real' : 'Inválido')), ok ? 'ok' : 'err');
     setValid(key, ok);
 }
 
@@ -572,6 +575,7 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 });
 </script>
+<script src="{% static 'js/cedula-ecuatoriana.js' %}"></script>
 
 <script>
     function toggleSidebar() {

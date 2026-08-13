@@ -612,9 +612,12 @@ function validarDigitos(input, key, ccId, exactLen, label){
     if(input.value !== clean) input.value = clean;
     updateCC(ccId, clean.length, exactLen);
     var ok = clean.length === exactLen;
+    if(key === 'ced' && ok && window.esCedulaEcuatorianaValida){
+        ok = window.esCedulaEcuatorianaValida(clean);
+    }
     setInputState(input, clean.length > 0 ? (ok ? 'ok' : 'err') : '');
     setStatus(key, clean.length > 0 ? (ok ? 'ok' : 'err') : '');
-    var msg = clean.length === 0 ? (exactLen + ' dígitos numéricos') : ok ? (label + ' válido') : ('Faltan ' + (exactLen - clean.length) + ' dígito' + (exactLen - clean.length !== 1 ? 's' : ''));
+    var msg = clean.length === 0 ? (exactLen + ' dígitos numéricos') : ok ? (label + ' válido') : (clean.length < exactLen ? ('Faltan ' + (exactLen - clean.length) + ' dígito' + (exactLen - clean.length !== 1 ? 's' : '')) : (key === 'ced' ? 'Ingresa una cédula ecuatoriana real' : (label + ' inválido')));
     setMsg(key, msg, clean.length === 0 ? 'hint' : ok ? 'ok' : 'err');
     setValid(key, ok);
     updatePreview();
@@ -764,7 +767,7 @@ document.addEventListener('DOMContentLoaded', function(){
         var errs = [];
         if(!fieldValid.fn)    errs.push('Nombre inválido');
         if(!fieldValid.ln)    errs.push('Apellidos inválidos');
-        if(!fieldValid.ced)   errs.push('Cédula inválida (10 dígitos)');
+        if(!fieldValid.ced)   errs.push('Cédula ecuatoriana inválida');
         if(!fieldValid.tel)   errs.push('Teléfono inválido (10 dígitos)');
         if(!fieldValid.gen)   errs.push('Selecciona el género');
         if(!fieldValid.usr)   errs.push('Usuario inválido');
@@ -796,6 +799,7 @@ document.addEventListener('DOMContentLoaded', function(){
     });
 });
 </script>
+<script src="{% static 'js/cedula-ecuatoriana.js' %}"></script>
 
 <script>
     function toggleSidebar() {

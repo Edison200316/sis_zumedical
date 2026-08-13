@@ -16,6 +16,7 @@ from django.utils import timezone
 from django.contrib.auth import update_session_auth_hash
 from django.urls import reverse
 from django.core.paginator import Paginator
+from .validators import MENSAJE_CEDULA_INVALIDA, validar_cedula_ecuatoriana
 import csv
 import json
 import logging
@@ -551,6 +552,8 @@ def verificar_disponibilidad(request):
 
     if campo == 'cedula':
         from pacientes.models import Paciente
+        if not validar_cedula_ecuatoriana(valor):
+            return JsonResponse({'disponible': False, 'mensaje': MENSAJE_CEDULA_INVALIDA})
         existe = Paciente.objects.filter(cedula=valor).exists()
         if existe:
             return JsonResponse({'disponible': False, 'mensaje': 'Esta cédula ya está registrada.'})
@@ -1549,7 +1552,11 @@ def editar_perfil_paciente(request, paciente_id):
     paciente = get_object_or_404(Paciente, id=paciente_id)
  
     if request.method == 'POST':
-        paciente.cedula = request.POST.get('cedula', '')
+        cedula = request.POST.get('cedula', '').strip()
+        if cedula and not validar_cedula_ecuatoriana(cedula):
+            messages.error(request, MENSAJE_CEDULA_INVALIDA)
+            return render(request, 'medico/editar_paciente.html', {'paciente': paciente})
+        paciente.cedula = cedula
         paciente.edad = request.POST.get('edad')
         paciente.direccion = request.POST.get('direccion', '')
         paciente.telefono = request.POST.get('telefono', '')
@@ -2407,8 +2414,8 @@ def admin_crear_paciente(request):
         edad, edad_error = _validar_entero_opcional(request.POST.get('edad'), 'La edad', 1, 99)
 
         errores = _validar_usuario_admin(first_name, last_name, username, email, password, password_confirm=password_confirm)
-        if cedula and (not cedula.isdigit() or len(cedula) != 10):
-            errores.append('La cédula debe tener exactamente 10 números.')
+        if cedula and not validar_cedula_ecuatoriana(cedula):
+            errores.append(MENSAJE_CEDULA_INVALIDA)
         if telefono and (not telefono.isdigit() or len(telefono) != 10):
             errores.append('El teléfono debe tener exactamente 10 números.')
         if edad_error:
@@ -2510,7 +2517,22 @@ def admin_editar_paciente(request, paciente_id):
             paciente.usuario.set_password(password)
         paciente.usuario.save()
 
-        paciente.cedula    = request.POST.get('cedula', '')
+        cedula = request.POST.get('cedula', '').strip()
+        if cedula and not validar_cedula_ecuatoriana(cedula):
+            messages.error(request, MENSAJE_CEDULA_INVALIDA)
+            return render(request, 'admin/editar_paciente.html', {
+                'paciente': paciente,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
+        duplicado = Paciente.objects.filter(cedula=cedula).exclude(id=paciente.id).first() if cedula else None
+        if duplicado:
+            messages.error(request, f'La cédula "{cedula}" ya está registrada.')
+            return render(request, 'admin/editar_paciente.html', {
+                'paciente': paciente,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
+
+        paciente.cedula    = cedula
         paciente.telefono  = request.POST.get('telefono', '')
         paciente.edad      = request.POST.get('edad') or None
         paciente.direccion = request.POST.get('direccion', '')
@@ -2820,8 +2842,8 @@ def admin_crear_paciente_general(request):
         errores = _validar_usuario_admin(first_name, last_name, username, email, password, password_confirm=password_confirm)
         if genero not in ('femenino', 'masculino', 'otro'):
             errores.append('Selecciona un género válido.')
-        if cedula and (not cedula.isdigit() or len(cedula) != 10):
-            errores.append('La cédula debe tener exactamente 10 números.')
+        if cedula and not validar_cedula_ecuatoriana(cedula):
+            errores.append(MENSAJE_CEDULA_INVALIDA)
         if telefono and (not telefono.isdigit() or len(telefono) != 10):
             errores.append('El teléfono debe tener exactamente 10 números.')
         if edad_error:
@@ -4046,10 +4068,13 @@ def buscar_paciente(request):
 
     if cédula:
         from pacientes.models import Paciente
-        try:
-            paciente = Paciente.objects.get(cedula=cédula)
-        except Paciente.DoesNotExist:
-            error_msg = f"Paciente con cédula {cédula} no encontrado"
+        if not validar_cedula_ecuatoriana(cédula):
+            error_msg = MENSAJE_CEDULA_INVALIDA
+        else:
+            try:
+                paciente = Paciente.objects.get(cedula=cédula)
+            except Paciente.DoesNotExist:
+                error_msg = f"Paciente con cédula {cédula} no encontrado"
 
     context = {
         'paciente': paciente,

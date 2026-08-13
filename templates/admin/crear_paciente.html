@@ -343,10 +343,10 @@ function closeSidebar() {
             input.value = input.value.replace(/\D/g, '').slice(0, 10);
             const v = input.value;
             if (v === '') { fields.cedula = true; setInputState(input, null); setMsg('cedula', ''); updateSubmit(); return; }
-            const valid = v.length === 10;
+            const valid = window.esCedulaEcuatorianaValida ? window.esCedulaEcuatorianaValida(v) : v.length === 10;
             fields.cedula = valid;
             setInputState(input, valid ? 'valid' : 'invalid');
-            setMsg('cedula', valid ? '' : 'Debe tener 10 dígitos', 'error');
+            setMsg('cedula', valid ? '' : (v.length < 10 ? 'Debe tener 10 dígitos' : 'Ingresa una cédula ecuatoriana real'), 'error');
             updateSubmit();
         });
     })();
@@ -613,7 +613,7 @@ function closeSidebar() {
     if (cedulaInput) {
         cedulaInput.addEventListener('input', function() {
             verificarDisponibilidad('cedula', value('cedula'), function() {
-                return value('cedula').length === 10;
+                return window.esCedulaEcuatorianaValida ? window.esCedulaEcuatorianaValida(value('cedula')) : value('cedula').length === 10;
             });
         });
     }
@@ -624,4 +624,5 @@ function closeSidebar() {
     validate(false);
 })();
 </script>
+<script src="{% static 'js/cedula-ecuatoriana.js' %}"></script>
 </body></html>

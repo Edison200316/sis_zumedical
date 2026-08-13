@@ -273,7 +273,7 @@
     </div>
 
     <form method="GET" class="search-form">
-        <input type="text" name="cedula" placeholder="Cédula (ej: 1712345678)" value="{{ cedula_buscada }}" required>
+        <input type="text" id="cedula" name="cedula" placeholder="Cédula (ej: 1712345678)" value="{{ cedula_buscada }}" maxlength="10" minlength="10" inputmode="numeric" autocomplete="off" required>
         <button type="submit" class="btn"><i class="fa-solid fa-search"></i> Buscar</button>
     </form>
 
@@ -348,5 +348,6 @@
     </a>
 </div>
 
+<script src="{% static 'js/cedula-ecuatoriana.js' %}"></script>
 </body>
 </html>

@@ -8,6 +8,7 @@ from pacientes.models import Paciente
 from citas.models import Cita
 from control_prenatal.models import ControlPrenatal
 from control_prenatal.forms import _validar_rango
+from .validators import MENSAJE_CEDULA_INVALIDA, validar_cedula_ecuatoriana
 
 Usuario = get_user_model()
 
@@ -224,7 +225,9 @@ class RegistroPacienteForm(forms.ModelForm):
 
     def clean_cedula(self):
         from pacientes.models import Paciente
-        cedula = self.cleaned_data.get('cedula')
+        cedula = (self.cleaned_data.get('cedula') or '').strip()
+        if not validar_cedula_ecuatoriana(cedula):
+            raise forms.ValidationError(MENSAJE_CEDULA_INVALIDA)
         if Paciente.objects.filter(cedula=cedula).exists():
             raise forms.ValidationError('Esta cédula ya está registrada.')
         return cedula
@@ -542,6 +545,12 @@ class EditarPacienteEnfermeraForm(forms.ModelForm):
             if qs.exists():
                 raise forms.ValidationError('Este correo ya está registrado.')
         return email
+
+    def clean_cedula(self):
+        cedula = (self.cleaned_data.get('cedula') or '').strip()
+        if cedula and not validar_cedula_ecuatoriana(cedula):
+            raise forms.ValidationError(MENSAJE_CEDULA_INVALIDA)
+        return cedula
 
     def save(self, commit=True, usuario=None):
         paciente = super().save(commit=False)

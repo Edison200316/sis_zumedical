@@ -7,7 +7,7 @@ from .forms import RegistroPacienteForm, CitaForm, CitaEnfermeraForm, ControlPre
 from .models import Usuario, LogAuditoria
 from citas.models import Cita
 from datetime import time, timedelta
-from django.db import transaction
+from django.db import transaction, connection
 from django.db.models import Q, Count
 from control_prenatal.models import ControlPrenatal
 from django.http import JsonResponse, HttpResponse
@@ -2094,6 +2094,50 @@ def _validar_usuario_admin(first_name, last_name, username, email, password, rol
     return errores
 
 
+def _tabla_tiene_columna(tabla, columna):
+    try:
+        with connection.cursor() as cursor:
+            columnas = connection.introspection.get_table_description(cursor, tabla)
+        return any(col.name == columna for col in columnas)
+    except Exception:
+        logger.exception("No se pudo inspeccionar la tabla %s", tabla)
+        return False
+
+
+def _crear_perfil_medico_compatible(usuario, especialidad_obj, telefono):
+    from medicos.models import Medico
+
+    especialidad_nombre = getattr(especialidad_obj, 'nombre', '') or ''
+    tiene_columna_legacy = _tabla_tiene_columna('medicos_medico', 'especialidad')
+    tiene_columna_fk = _tabla_tiene_columna('medicos_medico', 'especialidad_id')
+
+    if tiene_columna_legacy and tiene_columna_fk:
+        with connection.cursor() as cursor:
+            cursor.execute(
+                "INSERT INTO medicos_medico (usuario_id, especialidad_id, telefono, especialidad) VALUES (%s, %s, %s, %s)",
+                [usuario.id, especialidad_obj.id if especialidad_obj else None, telefono, especialidad_nombre[:100]],
+            )
+        return Medico.objects.get(usuario=usuario)
+
+    return Medico.objects.create(
+        usuario=usuario,
+        especialidad=especialidad_obj,
+        telefono=telefono,
+    )
+
+
+def _validar_entero_opcional(valor, etiqueta, minimo=1, maximo=120):
+    if valor in (None, ''):
+        return None, None
+    valor = str(valor).strip()
+    if not valor.isdigit():
+        return None, f'{etiqueta} debe ser un número válido.'
+    numero = int(valor)
+    if numero < minimo or numero > maximo:
+        return None, f'{etiqueta} debe estar entre {minimo} y {maximo}.'
+    return numero, None
+
+
 
 
 @login_required
@@ -2163,24 +2207,33 @@ def admin_crear_usuario(request):
                 'citas_pendientes': _admin_citas_pendientes_count(),
             })
 
-        with transaction.atomic():
-            user = User.objects.create_user(
-                username=username, password=password,
-                first_name=first_name, last_name=last_name,
-                email=email, rol=rol
-            )
-
-            # Crear perfiles según rol
-            if rol == 'medico':
-                from medicos.models import Medico
-                Medico.objects.create(
-                    usuario=user,
-                    especialidad=especialidad_obj,
-                    telefono=request.POST.get('telefono_med', '').strip()
+        try:
+            with transaction.atomic():
+                user = User.objects.create_user(
+                    username=username, password=password,
+                    first_name=first_name, last_name=last_name,
+                    email=email, rol=rol
                 )
-            elif rol == 'paciente':
-                from pacientes.models import Paciente
-                Paciente.objects.get_or_create(usuario=user)
+
+                # Crear perfiles según rol
+                if rol == 'medico':
+                    _crear_perfil_medico_compatible(
+                        user,
+                        especialidad_obj,
+                        request.POST.get('telefono_med', '').strip()
+                    )
+                elif rol == 'paciente':
+                    from pacientes.models import Paciente
+                    Paciente.objects.get_or_create(usuario=user)
+        except Exception:
+            logger.exception("Error al crear usuario desde el panel admin")
+            messages.error(request, 'No se pudo crear el usuario. Revisa los datos e intenta nuevamente.')
+            return render(request, 'admin/crear_usuario.html', {
+                'roles': roles,
+                'especialidades': especialidades,
+                'form_data': request.POST,
+                'citas_pendientes': _admin_citas_pendientes_count(),
+            })
 
         messages.success(request, f'Usuario "{username}" creado correctamente.')
         registrar_log(request, 'CREATE', 'Usuarios',
@@ -2335,12 +2388,15 @@ def admin_crear_paciente(request):
         genero     = 'femenino'
         cedula     = request.POST.get('cedula', '').strip()
         telefono   = request.POST.get('telefono', '').strip()
+        edad, edad_error = _validar_entero_opcional(request.POST.get('edad'), 'La edad', 1, 99)
 
         errores = _validar_usuario_admin(first_name, last_name, username, email, password, password_confirm=password_confirm)
         if cedula and (not cedula.isdigit() or len(cedula) != 10):
             errores.append('La cédula debe tener exactamente 10 números.')
         if telefono and (not telefono.isdigit() or len(telefono) != 10):
             errores.append('El teléfono debe tener exactamente 10 números.')
+        if edad_error:
+            errores.append(edad_error)
         if errores:
             for error in errores:
                 messages.error(request, error)
@@ -2362,22 +2418,31 @@ def admin_crear_paciente(request):
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
 
-        user = User.objects.create_user(
-            username=username, password=password,
-            first_name=first_name, last_name=last_name,
-            email=email, rol='paciente', genero=genero
-        )
-        from pacientes.models import Paciente
-        paciente, _ = Paciente.objects.get_or_create(usuario=user)
-        paciente.cedula    = cedula
-        paciente.telefono  = telefono
-        paciente.edad      = request.POST.get('edad') or None
-        paciente.direccion = request.POST.get('direccion', '')
-        fecha_um = request.POST.get('fecha_ultima_menstruacion')
-        fecha_pp = request.POST.get('fecha_probable_parto')
-        paciente.fecha_ultima_menstruacion = fecha_um if fecha_um else None
-        paciente.fecha_probable_parto      = fecha_pp if fecha_pp else None
-        paciente.save()
+        try:
+            with transaction.atomic():
+                user = User.objects.create_user(
+                    username=username, password=password,
+                    first_name=first_name, last_name=last_name,
+                    email=email, rol='paciente', genero=genero
+                )
+                from pacientes.models import Paciente
+                paciente, _ = Paciente.objects.get_or_create(usuario=user)
+                paciente.cedula    = cedula
+                paciente.telefono  = telefono
+                paciente.edad      = edad
+                paciente.direccion = request.POST.get('direccion', '')
+                fecha_um = request.POST.get('fecha_ultima_menstruacion')
+                fecha_pp = request.POST.get('fecha_probable_parto')
+                paciente.fecha_ultima_menstruacion = fecha_um if fecha_um else None
+                paciente.fecha_probable_parto      = fecha_pp if fecha_pp else None
+                paciente.save()
+        except Exception:
+            logger.exception("Error al crear paciente prenatal desde el panel admin")
+            messages.error(request, 'No se pudo crear la paciente. Revisa los datos e intenta nuevamente.')
+            return render(request, 'admin/crear_paciente.html', {
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
 
         messages.success(request, f'Paciente "{first_name} {last_name}" creada correctamente.')
         registrar_log(request, 'CREATE', 'Pacientes',
@@ -2538,11 +2603,7 @@ def admin_crear_medico(request):
                     email=email, rol='medico'
                 )
 
-                Medico.objects.create(
-                    usuario=user,
-                    especialidad=especialidad_obj,
-                    telefono=telefono
-                )
+                _crear_perfil_medico_compatible(user, especialidad_obj, telefono)
         except Exception as exc:
             logger.exception("Error al crear médico desde el panel admin")
             messages.error(request, 'No se pudo crear el médico. Revisa los datos e intenta nuevamente.')
@@ -2729,6 +2790,7 @@ def admin_crear_paciente_general(request):
         edad       = request.POST.get('edad') or None
         direccion  = request.POST.get('direccion', '').strip()
         genero     = request.POST.get('genero', '').strip()
+        edad, edad_error = _validar_entero_opcional(edad, 'La edad', 1, 120)
 
         errores = _validar_usuario_admin(first_name, last_name, username, email, password, password_confirm=password_confirm)
         if genero not in ('femenino', 'masculino', 'otro'):
@@ -2737,6 +2799,8 @@ def admin_crear_paciente_general(request):
             errores.append('La cédula debe tener exactamente 10 números.')
         if telefono and (not telefono.isdigit() or len(telefono) != 10):
             errores.append('El teléfono debe tener exactamente 10 números.')
+        if edad_error:
+            errores.append(edad_error)
         if errores:
             for error in errores:
                 messages.error(request, error)
@@ -2765,19 +2829,28 @@ def admin_crear_paciente_general(request):
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
 
-        user = Usuario.objects.create_user(
-            username=username, password=password,
-            first_name=first_name, last_name=last_name,
-            email=email, rol='paciente', genero=genero
-        )
-        from pacientes.models import Paciente
-        paciente, _ = Paciente.objects.get_or_create(usuario=user)
-        paciente.cedula = cedula
-        paciente.telefono = telefono
-        paciente.edad = edad
-        paciente.direccion = direccion
-        paciente.estado_embarazo = 'NINGUNO'
-        paciente.save()
+        try:
+            with transaction.atomic():
+                user = Usuario.objects.create_user(
+                    username=username, password=password,
+                    first_name=first_name, last_name=last_name,
+                    email=email, rol='paciente', genero=genero
+                )
+                from pacientes.models import Paciente
+                paciente, _ = Paciente.objects.get_or_create(usuario=user)
+                paciente.cedula = cedula
+                paciente.telefono = telefono
+                paciente.edad = edad
+                paciente.direccion = direccion
+                paciente.estado_embarazo = 'NINGUNO'
+                paciente.save()
+        except Exception:
+            logger.exception("Error al crear paciente general desde el panel admin")
+            messages.error(request, 'No se pudo crear el paciente general. Revisa los datos e intenta nuevamente.')
+            return render(request, 'admin/crear_paciente_general.html', {
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
         registrar_log(request, 'CREATE', 'Pacientes',
             f'Paciente general "{first_name} {last_name}" registrado', 'INFO')
         messages.success(request, f'Paciente general "{first_name} {last_name}" creado correctamente.')

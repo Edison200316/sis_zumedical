@@ -309,6 +309,14 @@ const dominiosEmailPermitidos = new Set([
     'gmx.net', 'mail.com', 'yandex.com', 'yandex.ru', 'fastmail.com',
     'tutanota.com', 'tuta.com', 'hey.com', 'inbox.com'
 ]);
+let mostrarResumenValidacion = false;
+const adminUserForm = document.getElementById('adminUserForm');
+adminUserForm.addEventListener('input', function () {
+    mostrarResumenValidacion = true;
+}, true);
+adminUserForm.addEventListener('focusout', function () {
+    mostrarResumenValidacion = true;
+}, true);
 
 function emailPermitido(valor) {
     if (!emailRegex.test(valor)) return false;
@@ -333,7 +341,7 @@ function actualizarResumenValidacion(errores) {
         item.textContent = error;
         list.appendChild(item);
     });
-    summary.classList.toggle('show', errores.length > 0);
+    summary.classList.toggle('show', mostrarResumenValidacion && errores.length > 0);
 }
 
 function bloquearCaracterInvalido(input, regex) {
@@ -631,7 +639,8 @@ if (emailInput.value.trim()) validarEmailCampo();
 if (passwordConfirmInput.value.length > 0) validarConfirmacionPassword();
 validarFormulario();
 
-document.getElementById('adminUserForm').addEventListener('submit', function (event) {
+adminUserForm.addEventListener('submit', function (event) {
+    mostrarResumenValidacion = true;
     validarLetrasObligatorio('firstName', 'firstNameError', 'El nombre', true);
     validarLetrasObligatorio('lastName', 'lastNameError', 'El apellido', true);
     validarUsuarioCampo(true);

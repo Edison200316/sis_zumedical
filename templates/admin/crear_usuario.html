@@ -247,7 +247,7 @@ tbody tr:hover{background:var(--mg-bg)}
 <div class="form-section-title">Datos del médico</div>
 <div class="form-row">
 <div class="form-group"><label>Especialidad</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg><select name="especialidad_id" id="especialidadInput"><option value="">Selecciona una especialidad</option>{% for esp in especialidades %}<option value="{{ esp.id }}" {% if form_data.especialidad_id == esp.id|stringformat:"s" %}selected{% endif %}>{{ esp.nombre }} ({{ esp.get_tipo_display }})</option>{% endfor %}</select></div><div class="field-error" id="especialidadError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Selecciona una especialidad médica</span></div></div>
-<div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" name="telefono_med" id="telefonoMedInput" value="{{ form_data.telefono_med|default:'' }}" placeholder="0999999999" maxlength="10" inputmode="numeric"></div><div class="field-error" id="telefonoMedError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Debe tener 10 dígitos numéricos</span></div></div>
+<div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" name="telefono_med" id="telefonoMedInput" value="{{ form_data.telefono_med|default:'' }}" placeholder="0999999999" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"></div><div class="field-error" id="telefonoMedError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Debe tener 10 dígitos numéricos</span></div></div>
 </div>
 </div>
 <div class="form-actions">
@@ -294,7 +294,7 @@ function togglePassword(inputId, openId, closedId) {
 
 function toggleExtra(rol) {
     document.getElementById('extra-medico').style.display = rol === 'medico' ? 'block' : 'none';
-    validarFormulario();
+    if (window.adminValidationReady) validarFormulario();
 }
 toggleExtra(document.getElementById('rolSelect').value);
 
@@ -504,6 +504,7 @@ especialidadInput.addEventListener('change', function () {
 
 const telefonoMedInput = document.getElementById('telefonoMedInput');
 const telefonoMedError = document.getElementById('telefonoMedError');
+telefonoMedInput.value = telefonoMedInput.value.replace(/[^0-9]/g, '').slice(0, 10);
 bloquearCaracterInvalido(telefonoMedInput, soloNumeros);
 telefonoMedInput.addEventListener('input', function () {
     const valido = this.value.length === 0 || this.value.length === 10;
@@ -623,6 +624,7 @@ function validarFormulario() {
     submitBtn.disabled = !(nombreOk && apellidoOk && emailOk && usuarioOk && pwdOk && pwdConfirmOk && medicoOk);
 }
 
+window.adminValidationReady = true;
 if (document.getElementById('firstName').value.trim()) validarLetrasObligatorio('firstName', 'firstNameError', 'El nombre');
 if (document.getElementById('lastName').value.trim()) validarLetrasObligatorio('lastName', 'lastNameError', 'El apellido');
 if (usernameInput.value.trim()) validarUsuarioCampo();

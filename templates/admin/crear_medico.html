@@ -216,7 +216,7 @@ tbody tr:hover{background:var(--mg-bg)}
 </div>
 <div class="form-row">
 <div class="form-group"><label>Email</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><input type="email" name="email" id="emailInput" value="{{ form_data.email|default:'' }}" placeholder="correo@gmail.com" autocomplete="off"></div><div class="field-error" id="emailError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Usa un correo con dominio permitido: gmail.com, outlook.com, hotmail.com, yahoo.com, etc.</span></div></div>
-<div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" name="telefono" id="telefonoInput" value="{{ form_data.telefono|default:'' }}" placeholder="0999999999" maxlength="10" inputmode="numeric" autocomplete="off"></div><div class="field-error" id="telefonoError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Debe tener 10 dígitos numéricos</span></div></div>
+<div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" name="telefono" id="telefonoInput" value="{{ form_data.telefono|default:'' }}" placeholder="0999999999" maxlength="10" inputmode="numeric" pattern="[0-9]*" autocomplete="off" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"></div><div class="field-error" id="telefonoError"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span>Debe tener 10 dígitos numéricos</span></div></div>
 </div>
 <div class="form-group">
     <label>Especialidad</label>
@@ -408,6 +408,7 @@ document.getElementById('lastName').addEventListener('blur', function () {
 // Teléfono: solo números, 10 dígitos
 const telefonoInput = document.getElementById('telefonoInput');
 const telefonoError = document.getElementById('telefonoError');
+telefonoInput.value = telefonoInput.value.replace(/[^0-9]/g, '').slice(0, 10);
 bloquearCaracterInvalido(telefonoInput, soloNumeros);
 telefonoInput.addEventListener('input', function () {
     if (this.value.length === 0) {

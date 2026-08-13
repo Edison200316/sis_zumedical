@@ -207,30 +207,30 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
 <div class="form-section">
 <div class="form-section-title">Información personal</div>
 <div class="form-row">
-<div class="form-group"><label>Nombre</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input type="text" id="id_first_name" name="first_name" placeholder="Nombre" maxlength="20" required></div><div class="field-msg" id="msg_first_name"></div></div>
-<div class="form-group"><label>Apellidos</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input type="text" id="id_last_name" name="last_name" placeholder="Apellidos" maxlength="20" required></div><div class="field-msg" id="msg_last_name"></div></div>
+<div class="form-group"><label>Nombre</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input type="text" id="id_first_name" name="first_name" value="{{ form_data.first_name|default:'' }}" placeholder="Nombre" maxlength="20" required></div><div class="field-msg" id="msg_first_name"></div></div>
+<div class="form-group"><label>Apellidos</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><input type="text" id="id_last_name" name="last_name" value="{{ form_data.last_name|default:'' }}" placeholder="Apellidos" maxlength="20" required></div><div class="field-msg" id="msg_last_name"></div></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label>Email</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><input type="email" id="id_email" name="email" placeholder="correo@email.com"></div><div class="field-msg" id="msg_email"></div></div>
-<div class="form-group"><label>Cédula</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><input type="text" id="id_cedula" name="cedula" placeholder="1234567890" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"></div><div class="field-msg" id="msg_cedula"></div></div>
+<div class="form-group"><label>Email</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><input type="email" id="id_email" name="email" value="{{ form_data.email|default:'' }}" placeholder="correo@email.com"></div><div class="field-msg" id="msg_email"></div></div>
+<div class="form-group"><label>Cédula</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg><input type="text" id="id_cedula" name="cedula" value="{{ form_data.cedula|default:'' }}" placeholder="1234567890" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"></div><div class="field-msg" id="msg_cedula"></div></div>
 </div>
 <div class="form-row">
-<div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" id="id_telefono" name="telefono" placeholder="0999999999" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"></div><div class="field-msg" id="msg_telefono"></div></div>
-<div class="form-group"><label>Edad</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><input type="number" name="edad" placeholder="25" min="1" max="99" maxlength="3" oninput="this.value=this.value.slice(0,3)"></div></div>
+<div class="form-group"><label>Teléfono</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 13a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.6 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9.91a16 16 0 0 0 6.18 6.18l.95-.95a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg><input type="text" id="id_telefono" name="telefono" value="{{ form_data.telefono|default:'' }}" placeholder="0999999999" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)"></div><div class="field-msg" id="msg_telefono"></div></div>
+<div class="form-group"><label>Edad</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><input type="number" name="edad" value="{{ form_data.edad|default:'' }}" placeholder="25" min="1" max="99" maxlength="3" oninput="this.value=this.value.slice(0,3)"></div></div>
 </div>
-<div class="form-group"><label>Dirección</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><input type="text" name="direccion" placeholder="Dirección completa" maxlength="60"></div></div>
+<div class="form-group"><label>Dirección</label><div class="input-wrap"><svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg><input type="text" name="direccion" value="{{ form_data.direccion|default:'' }}" placeholder="Dirección completa" maxlength="60"></div></div>
 </div>
 <div class="form-section">
 <div class="form-section-title">Datos clínicos (opcional)</div>
 <div class="form-row">
-<div class="form-group"><label>Fecha última menstruación</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><input type="date" name="fecha_ultima_menstruacion"></div></div>
-<div class="form-group"><label>Fecha probable de parto</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><input type="date" name="fecha_probable_parto"></div></div>
+<div class="form-group"><label>Fecha última menstruación</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><input type="date" name="fecha_ultima_menstruacion" value="{{ form_data.fecha_ultima_menstruacion|default:'' }}"></div></div>
+<div class="form-group"><label>Fecha probable de parto</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><input type="date" name="fecha_probable_parto" value="{{ form_data.fecha_probable_parto|default:'' }}"></div></div>
 </div>
 </div>
 <div class="form-section">
 <div class="form-section-title">Credenciales de acceso</div>
 <div class="form-row credentials-stack-layout">
-<div class="form-group"><label>Usuario</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><input type="text" id="id_username" name="username" placeholder="nombre_paciente" required></div><div class="field-msg" id="msg_username"></div></div>
+<div class="form-group"><label>Usuario</label><div class="input-wrap"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><input type="text" id="id_username" name="username" value="{{ form_data.username|default:'' }}" placeholder="nombre_paciente" required></div><div class="field-msg" id="msg_username"></div></div>
 <div class="form-group"><label>Contraseña</label><div class="input-wrap"><svg viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg><input type="password" id="id_password" name="password" placeholder="Mínimo 8 caracteres" required style="padding-right:2.8rem"><button type="button" class="pwd-toggle" onclick="togglePassword()"><svg id="eyeOpen" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg><svg id="eyeClosed" viewBox="0 0 24 24" style="display:none"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg></button></div>
 <div class="pwd-meter" id="pwd_meter"><div class="pwd-meter-bar" id="pwd_meter_bar"></div></div>
 <ul class="pwd-checklist" id="pwd_checklist">
@@ -448,6 +448,8 @@ function closeSidebar() {
     const summary = $('validationSummary');
     const summaryList = $('validationSummaryList');
     const touched = new Set();
+    const disponibilidad = { email: true, username: true };
+    const disponibilidadTimers = {};
     let submitted = false;
 
     function msg(id, text, ok) {
@@ -480,6 +482,32 @@ function closeSidebar() {
         if (!allowedDomains.has(domain)) return 'El dominio "' + domain + '" no está permitido. Usa un correo real permitido.';
         return '';
     }
+    function verificarDisponibilidad(campo, valor, puedeConsultar) {
+        clearTimeout(disponibilidadTimers[campo]);
+        disponibilidad[campo] = true;
+        if (!valor || !puedeConsultar()) {
+            validate(false);
+            return;
+        }
+        disponibilidad[campo] = null;
+        validate(false);
+        disponibilidadTimers[campo] = setTimeout(function() {
+            fetch("{% url 'verificar_disponibilidad' %}?campo=" + encodeURIComponent(campo) + "&valor=" + encodeURIComponent(valor), {
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    const actual = campo === 'email' ? value('email') : value('username');
+                    if (actual !== valor) return;
+                    disponibilidad[campo] = data.disponible !== false;
+                    validate(false);
+                })
+                .catch(function() {
+                    disponibilidad[campo] = true;
+                    validate(false);
+                });
+        }, 450);
+    }
     function validate(show) {
         const errors = [];
         const names = [
@@ -498,7 +526,10 @@ function closeSidebar() {
         });
 
         const email = value('email');
-        const emailMsg = emailError(email);
+        let emailMsg = emailError(email);
+        if (!emailMsg && email && disponibilidad.email !== true) {
+            emailMsg = disponibilidad.email === null ? 'Verificando si el correo está disponible.' : 'Este correo ya está registrado.';
+        }
         if (emailMsg) errors.push(emailMsg);
         const emailVisible = submitted || touched.has('id_email') || email;
         msg('email', emailVisible ? emailMsg : '', !emailMsg);
@@ -519,6 +550,7 @@ function closeSidebar() {
         let usernameError = '';
         if (!username) usernameError = 'El usuario es obligatorio.';
         else if (username.length < 3) usernameError = 'El usuario debe tener mínimo 3 caracteres.';
+        else if (disponibilidad.username !== true) usernameError = disponibilidad.username === null ? 'Verificando si el usuario está disponible.' : 'Este usuario ya está registrado.';
         if (usernameError) errors.push(usernameError);
         const usernameVisible = submitted || touched.has('id_username') || username;
         msg('username', usernameVisible ? usernameError : '', !usernameError);
@@ -558,6 +590,22 @@ function closeSidebar() {
         input.addEventListener('input', function() { touched.add(id); validate(false); });
         input.addEventListener('blur', function() { touched.add(id); validate(false); });
     });
+    const emailInput = $('id_email');
+    const usernameInput = $('id_username');
+    if (emailInput) {
+        emailInput.addEventListener('input', function() {
+            verificarDisponibilidad('email', value('email'), function() {
+                return value('email') && !emailError(value('email'));
+            });
+        });
+    }
+    if (usernameInput) {
+        usernameInput.addEventListener('input', function() {
+            verificarDisponibilidad('username', value('username'), function() {
+                return value('username').length >= 3;
+            });
+        });
+    }
     form.addEventListener('submit', function(e) {
         submitted = true;
         if (!validate(true)) e.preventDefault();

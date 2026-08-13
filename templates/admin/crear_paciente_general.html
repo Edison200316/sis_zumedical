@@ -204,7 +204,7 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
                         <label>Nombre</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-user"></i>
-                            <input type="text" id="id_first_name" name="first_name" placeholder="Nombre" maxlength="20" required>
+                            <input type="text" id="id_first_name" name="first_name" value="{{ form_data.first_name|default:'' }}" placeholder="Nombre" maxlength="20" required>
                         </div>
                         <div class="field-msg" id="msg_first_name"></div>
                     </div>
@@ -212,7 +212,7 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
                         <label>Apellidos</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-user"></i>
-                            <input type="text" id="id_last_name" name="last_name" placeholder="Apellidos" maxlength="20" required>
+                            <input type="text" id="id_last_name" name="last_name" value="{{ form_data.last_name|default:'' }}" placeholder="Apellidos" maxlength="20" required>
                         </div>
                         <div class="field-msg" id="msg_last_name"></div>
                     </div>
@@ -222,7 +222,7 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
                         <label>Email</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-envelope"></i>
-                            <input type="email" id="id_email" name="email" placeholder="correo@email.com">
+                            <input type="email" id="id_email" name="email" value="{{ form_data.email|default:'' }}" placeholder="correo@email.com">
                         </div>
                         <div class="field-msg" id="msg_email"></div>
                     </div>
@@ -230,7 +230,7 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
                         <label>Cédula</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-id-card"></i>
-                            <input type="text" id="id_cedula" name="cedula" placeholder="1234567890" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
+                            <input type="text" id="id_cedula" name="cedula" value="{{ form_data.cedula|default:'' }}" placeholder="1234567890" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
                         </div>
                         <div class="field-msg" id="msg_cedula"></div>
                     </div>
@@ -240,7 +240,7 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
                         <label>Teléfono</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-phone"></i>
-                            <input type="text" id="id_telefono" name="telefono" placeholder="0999999999" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
+                            <input type="text" id="id_telefono" name="telefono" value="{{ form_data.telefono|default:'' }}" placeholder="0999999999" maxlength="10" inputmode="numeric" pattern="[0-9]*" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,10)">
                         </div>
                         <div class="field-msg" id="msg_telefono"></div>
                     </div>
@@ -248,7 +248,7 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
                         <label>Edad</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-cake-candles"></i>
-                            <input type="number" name="edad" placeholder="30" min="1" max="120" maxlength="3" oninput="this.value=this.value.slice(0,3)">
+                            <input type="number" name="edad" value="{{ form_data.edad|default:'' }}" placeholder="30" min="1" max="120" maxlength="3" oninput="this.value=this.value.slice(0,3)">
                         </div>
                     </div>
                 </div>
@@ -256,7 +256,7 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
                     <label>Dirección</label>
                     <div class="input-wrap">
                         <i class="fa-solid fa-location-dot"></i>
-                        <input type="text" name="direccion" placeholder="Dirección completa" maxlength="60">
+                        <input type="text" name="direccion" value="{{ form_data.direccion|default:'' }}" placeholder="Dirección completa" maxlength="60">
                     </div>
                 </div>
                 <div class="form-row">
@@ -283,7 +283,7 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
                         <label>Usuario</label>
                         <div class="input-wrap">
                             <i class="fa-solid fa-circle-user"></i>
-                            <input type="text" id="id_username" name="username" placeholder="nombre_paciente" required>
+                            <input type="text" id="id_username" name="username" value="{{ form_data.username|default:'' }}" placeholder="nombre_paciente" required>
                         </div>
                         <div class="field-msg" id="msg_username"></div>
                     </div>
@@ -526,6 +526,8 @@ function closeSidebar() {
     const summary = $('validationSummary');
     const summaryList = $('validationSummaryList');
     const touched = new Set();
+    const disponibilidad = { email: true, username: true };
+    const disponibilidadTimers = {};
     let submitted = false;
 
     function msg(id, text, ok) {
@@ -550,6 +552,32 @@ function closeSidebar() {
         if (!allowedDomains.has(domain)) return 'El dominio "' + domain + '" no está permitido. Usa un correo real permitido.';
         return '';
     }
+    function verificarDisponibilidad(campo, valor, puedeConsultar) {
+        clearTimeout(disponibilidadTimers[campo]);
+        disponibilidad[campo] = true;
+        if (!valor || !puedeConsultar()) {
+            validate(false);
+            return;
+        }
+        disponibilidad[campo] = null;
+        validate(false);
+        disponibilidadTimers[campo] = setTimeout(function() {
+            fetch("{% url 'verificar_disponibilidad' %}?campo=" + encodeURIComponent(campo) + "&valor=" + encodeURIComponent(valor), {
+                headers: { "X-Requested-With": "XMLHttpRequest" }
+            })
+                .then(function(response) { return response.json(); })
+                .then(function(data) {
+                    const actual = campo === 'email' ? value('email') : value('username');
+                    if (actual !== valor) return;
+                    disponibilidad[campo] = data.disponible !== false;
+                    validate(false);
+                })
+                .catch(function() {
+                    disponibilidad[campo] = true;
+                    validate(false);
+                });
+        }, 450);
+    }
     function passwordRules(password) {
         return {
             len: password.length >= 8,
@@ -572,7 +600,10 @@ function closeSidebar() {
         });
 
         const email = value('email');
-        const emailMsg = emailError(email);
+        let emailMsg = emailError(email);
+        if (!emailMsg && email && disponibilidad.email !== true) {
+            emailMsg = disponibilidad.email === null ? 'Verificando si el correo está disponible.' : 'Este correo ya está registrado.';
+        }
         if (emailMsg) errors.push(emailMsg);
         const emailVisible = submitted || touched.has('id_email') || email;
         msg('email', emailVisible ? emailMsg : '', !emailMsg);
@@ -596,6 +627,7 @@ function closeSidebar() {
         let usernameError = '';
         if (!username) usernameError = 'El usuario es obligatorio.';
         else if (username.length < 3) usernameError = 'El usuario debe tener mínimo 3 caracteres.';
+        else if (disponibilidad.username !== true) usernameError = disponibilidad.username === null ? 'Verificando si el usuario está disponible.' : 'Este usuario ya está registrado.';
         if (usernameError) errors.push(usernameError);
         const usernameVisible = submitted || touched.has('id_username') || username;
         msg('username', usernameVisible ? usernameError : '', !usernameError);
@@ -636,6 +668,22 @@ function closeSidebar() {
         input.addEventListener('change', function() { touched.add(id); validate(false); });
         input.addEventListener('blur', function() { touched.add(id); validate(false); });
     });
+    const emailInput = $('id_email');
+    const usernameInput = $('id_username');
+    if (emailInput) {
+        emailInput.addEventListener('input', function() {
+            verificarDisponibilidad('email', value('email'), function() {
+                return value('email') && !emailError(value('email'));
+            });
+        });
+    }
+    if (usernameInput) {
+        usernameInput.addEventListener('input', function() {
+            verificarDisponibilidad('username', value('username'), function() {
+                return value('username').length >= 3;
+            });
+        });
+    }
     form.addEventListener('submit', function(e) {
         submitted = true;
         if (!validate(true)) e.preventDefault();

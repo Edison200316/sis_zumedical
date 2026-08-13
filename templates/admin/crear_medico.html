@@ -308,6 +308,8 @@ const dominiosEmailPermitidos = new Set([
     'tutanota.com', 'tuta.com', 'hey.com', 'inbox.com'
 ]);
 let mostrarResumenValidacion = false;
+const disponibilidad = { email: true, username: true };
+const disponibilidadTimers = {};
 const adminMedicoForm = document.getElementById('adminMedicoForm');
 adminMedicoForm.addEventListener('input', function () {
     mostrarResumenValidacion = true;
@@ -328,6 +330,38 @@ function mensajeEmail(valor) {
     const dominio = valor.split('@').pop().toLowerCase();
     if (!dominiosEmailPermitidos.has(dominio)) return 'Email: dominio no permitido. Usa gmail.com, outlook.com, hotmail.com, yahoo.com u otro dominio autorizado.';
     return '';
+}
+
+function verificarDisponibilidad(campo, valor, input, error, errorText, puedeConsultar) {
+    clearTimeout(disponibilidadTimers[campo]);
+    disponibilidad[campo] = true;
+    if (!valor || !puedeConsultar()) {
+        validarFormulario();
+        return;
+    }
+    disponibilidad[campo] = null;
+    validarFormulario();
+    disponibilidadTimers[campo] = setTimeout(function () {
+        fetch("{% url 'verificar_disponibilidad' %}?campo=" + encodeURIComponent(campo) + "&valor=" + encodeURIComponent(valor), {
+            headers: { "X-Requested-With": "XMLHttpRequest" }
+        })
+            .then(function (response) { return response.json(); })
+            .then(function (data) {
+                if (input.value.trim() !== valor) return;
+                disponibilidad[campo] = data.disponible !== false;
+                if (!disponibilidad[campo]) {
+                    input.classList.add('input-invalid');
+                    input.classList.remove('input-valid');
+                    errorText.textContent = data.mensaje || (campo === 'email' ? 'Este correo ya está registrado.' : 'Este usuario ya está registrado.');
+                    error.classList.add('show');
+                }
+                validarFormulario();
+            })
+            .catch(function () {
+                disponibilidad[campo] = true;
+                validarFormulario();
+            });
+    }, 450);
 }
 
 function actualizarResumenValidacion(errores) {
@@ -471,6 +505,9 @@ function validarUsuarioCampo(mostrarVacio = false) {
 
 usernameInput.addEventListener('input', function () {
     validarUsuarioCampo();
+    verificarDisponibilidad('username', usernameInput.value.trim(), usernameInput, usernameError, usernameErrorText, function () {
+        return usernameInput.value.trim().length >= 3 && usuarioRegex.test(usernameInput.value.trim());
+    });
     validarFormulario();
 });
 usernameInput.addEventListener('blur', function () {
@@ -513,6 +550,9 @@ function validarEmailCampo() {
 
 emailInput.addEventListener('input', function () {
     validarEmailCampo();
+    verificarDisponibilidad('email', emailInput.value.trim(), emailInput, emailError, emailErrorText, function () {
+        return emailInput.value.trim().length > 0 && emailPermitido(emailInput.value.trim());
+    });
     validarFormulario();
 });
 
@@ -613,8 +653,10 @@ function validarFormulario() {
     const nombreOk   = firstName.length > 0 && soloLetras.test(firstName);
     const apellidoOk = lastName.length > 0 && soloLetras.test(lastName);
     const emailOk    = email.length === 0 || emailPermitido(email);
+    const emailDisponible = disponibilidad.email === true;
     const telefonoOk = telefono.length === 0 || telefono.length === 10;
     const usuarioOk  = username.length >= 3 && usuarioRegex.test(username);
+    const usuarioDisponible = disponibilidad.username === true;
     const pwdChecks  = passwordChecks(password);
     const pwdOk      = pwdChecks.length && pwdChecks.upper && pwdChecks.number && pwdChecks.symbol;
     const pwdConfirmOk = passwordConfirm.length > 0 && passwordConfirm === password;
@@ -625,15 +667,17 @@ function validarFormulario() {
     if (!apellidoOk) errores.push('Apellidos: obligatorio, solo letras y espacios.');
     const emailMsg = mensajeEmail(email);
     if (emailMsg) errores.push(emailMsg);
+    if (emailOk && !emailDisponible) errores.push(disponibilidad.email === null ? 'Email: verificando disponibilidad.' : 'Email: este correo ya está registrado.');
     if (telefono.length > 0 && telefono.length !== 10) errores.push('Teléfono: debe tener 10 dígitos.');
     if (!usuarioOk) errores.push(username.length === 0 ? 'Usuario: obligatorio.' : 'Usuario: mínimo 3 caracteres, solo letras, números, punto o guion bajo.');
+    if (usuarioOk && !usuarioDisponible) errores.push(disponibilidad.username === null ? 'Usuario: verificando disponibilidad.' : 'Usuario: este usuario ya está registrado.');
     if (!pwdOk) errores.push('Contraseña: debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.');
     if (!pwdConfirmOk) errores.push(passwordConfirm.length === 0 ? 'Confirmar contraseña: obligatorio.' : 'Confirmar contraseña: no coincide.');
     if (!especialidadOk) errores.push('Especialidad: obligatoria.');
     actualizarResumenValidacion(errores);
 
     const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = !(nombreOk && apellidoOk && emailOk && telefonoOk && usuarioOk && pwdOk && pwdConfirmOk && especialidadOk);
+    submitBtn.disabled = !(nombreOk && apellidoOk && emailOk && emailDisponible && telefonoOk && usuarioOk && usuarioDisponible && pwdOk && pwdConfirmOk && especialidadOk);
 }
 
 if (document.getElementById('firstName').value.trim()) validarLetrasObligatorio('firstName', 'firstNameError', 'El nombre');

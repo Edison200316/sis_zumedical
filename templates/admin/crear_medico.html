@@ -63,6 +63,11 @@ body{font-family:'DM Sans', 'Segoe UI', system-ui, -apple-system, BlinkMacSystem
 .alert svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;flex-shrink:0}
 .alert-success{background:var(--success-bg);color:var(--success);border:1px solid #C8E6C9}
 .alert-error{background:var(--error-bg);color:var(--error);border:1px solid #FFCDD2}
+.validation-summary{display:none;background:var(--error-bg);border:1px solid #FFCDD2;color:var(--error);border-radius:12px;padding:0.85rem 1rem;margin-bottom:1.25rem;font-size:0.82rem}
+.validation-summary.show{display:block}
+.validation-summary strong{display:block;margin-bottom:0.35rem;font-weight:600}
+.validation-summary ul{margin:0;padding-left:1.1rem}
+.validation-summary li{margin:0.18rem 0}
 .form-card{background:var(--white);border-radius:16px;border:1px solid var(--mg-border);padding:2rem;max-width:700px;position:relative;overflow:hidden}
 .form-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--mg-d),var(--mg-l))}
 .form-card-title{font-family:'Cormorant Garamond', Georgia, 'Times New Roman', serif;font-size:1.15rem;font-weight:600;color:var(--text);margin-bottom:1.5rem;padding-bottom:0.75rem;border-bottom:1px solid var(--mg-border);display:flex;align-items:center;gap:0.5rem}
@@ -200,8 +205,9 @@ tbody tr:hover{background:var(--mg-bg)}
 {% endfor %}{% endif %}
 <div class="form-card">
 <p class="form-card-title"><svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Datos del médico</p>
-<form method="POST">
+<form method="POST" id="adminMedicoForm" novalidate>
 {% csrf_token %}
+<div class="validation-summary" id="validationSummary"><strong>Errores por corregir</strong><ul id="validationSummaryList"></ul></div>
 <div class="form-section">
 <div class="form-section-title">Información personal</div>
 <div class="form-row">
@@ -306,6 +312,26 @@ function emailPermitido(valor) {
     if (!emailRegex.test(valor)) return false;
     const dominio = valor.split('@').pop().toLowerCase();
     return dominiosEmailPermitidos.has(dominio);
+}
+
+function mensajeEmail(valor) {
+    if (valor.length === 0) return '';
+    if (!emailRegex.test(valor)) return 'Email: formato inválido. Ejemplo: nombre@gmail.com';
+    const dominio = valor.split('@').pop().toLowerCase();
+    if (!dominiosEmailPermitidos.has(dominio)) return 'Email: dominio no permitido. Usa gmail.com, outlook.com, hotmail.com, yahoo.com u otro dominio autorizado.';
+    return '';
+}
+
+function actualizarResumenValidacion(errores) {
+    const summary = document.getElementById('validationSummary');
+    const list = document.getElementById('validationSummaryList');
+    list.innerHTML = '';
+    errores.forEach(function (error) {
+        const item = document.createElement('li');
+        item.textContent = error;
+        list.appendChild(item);
+    });
+    summary.classList.toggle('show', errores.length > 0);
 }
 
 function bloquearCaracterInvalido(input, regex) {
@@ -584,6 +610,18 @@ function validarFormulario() {
     const pwdOk      = pwdChecks.length && pwdChecks.upper && pwdChecks.number && pwdChecks.symbol;
     const pwdConfirmOk = passwordConfirm.length > 0 && passwordConfirm === password;
     const especialidadOk = especialidad !== '';
+    const errores = [];
+
+    if (!nombreOk) errores.push('Nombre: obligatorio, solo letras y espacios.');
+    if (!apellidoOk) errores.push('Apellidos: obligatorio, solo letras y espacios.');
+    const emailMsg = mensajeEmail(email);
+    if (emailMsg) errores.push(emailMsg);
+    if (telefono.length > 0 && telefono.length !== 10) errores.push('Teléfono: debe tener 10 dígitos.');
+    if (!usuarioOk) errores.push(username.length === 0 ? 'Usuario: obligatorio.' : 'Usuario: mínimo 3 caracteres, solo letras, números, punto o guion bajo.');
+    if (!pwdOk) errores.push('Contraseña: debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.');
+    if (!pwdConfirmOk) errores.push(passwordConfirm.length === 0 ? 'Confirmar contraseña: obligatorio.' : 'Confirmar contraseña: no coincide.');
+    if (!especialidadOk) errores.push('Especialidad: obligatoria.');
+    actualizarResumenValidacion(errores);
 
     const submitBtn = document.getElementById('submitBtn');
     submitBtn.disabled = !(nombreOk && apellidoOk && emailOk && telefonoOk && usuarioOk && pwdOk && pwdConfirmOk && especialidadOk);
@@ -596,7 +634,7 @@ if (emailInput.value.trim()) validarEmailCampo();
 if (passwordConfirmInput.value.length > 0) validarConfirmacionPassword();
 validarFormulario();
 
-document.querySelector('form').addEventListener('submit', function (event) {
+document.getElementById('adminMedicoForm').addEventListener('submit', function (event) {
     validarLetrasObligatorio('firstName', 'firstNameError', 'El nombre', true);
     validarLetrasObligatorio('lastName', 'lastNameError', 'El apellido', true);
     validarUsuarioCampo(true);

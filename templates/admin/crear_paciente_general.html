@@ -168,7 +168,7 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
     </div>
 
     {% if messages %}
-        {% for message in messages %}
+        {% for message in messages %}{% if message.tags == "error" %}
         <div class="alert alert-{{ message.tags }}">
             <svg viewBox="0 0 24 24">
                 {% if message.tags == "error" %}
@@ -179,6 +179,7 @@ input[type="password"]::-ms-reveal,input[type="password"]::-ms-clear{display:non
             </svg>
             {{ message }}
         </div>
+        {% endif %}
         {% endfor %}
     {% endif %}
 
@@ -524,6 +525,8 @@ function closeSidebar() {
     const submitBtn = $('submitBtn');
     const summary = $('validationSummary');
     const summaryList = $('validationSummaryList');
+    const touched = new Set();
+    let submitted = false;
 
     function msg(id, text, ok) {
         const el = $('msg_' + id);
@@ -563,15 +566,17 @@ function closeSidebar() {
             if (!v) error = label + ' es obligatorio.';
             else if (!/^[A-Za-zÁÉÍÓÚÑÜáéíóúñü\s]+$/.test(v)) error = label + ' solo debe tener letras y espacios.';
             if (error) errors.push(error);
-            msg(id, show || v ? error : '', !error);
-            state(input, !error, show || v);
+            const visible = submitted || touched.has('id_' + id) || v;
+            msg(id, visible ? error : '', !error);
+            state(input, !error, visible);
         });
 
         const email = value('email');
         const emailMsg = emailError(email);
         if (emailMsg) errors.push(emailMsg);
-        msg('email', show || email ? emailMsg : '', !emailMsg);
-        state($('id_email'), !emailMsg, show || email);
+        const emailVisible = submitted || touched.has('id_email') || email;
+        msg('email', emailVisible ? emailMsg : '', !emailMsg);
+        state($('id_email'), !emailMsg, emailVisible);
 
         [['cedula', 'La cédula'], ['telefono', 'El teléfono']].forEach(function(item) {
             const id = item[0], label = item[1], input = $('id_' + id);
@@ -579,8 +584,9 @@ function closeSidebar() {
             const v = value(id);
             const error = v && v.length !== 10 ? label + ' debe tener exactamente 10 números.' : '';
             if (error) errors.push(error);
-            msg(id, show || v ? error : '', !error);
-            state(input, !error, show || v);
+            const visible = submitted || touched.has('id_' + id) || v;
+            msg(id, visible ? error : '', !error);
+            state(input, !error, visible);
         });
 
         const genero = value('genero');
@@ -591,22 +597,24 @@ function closeSidebar() {
         if (!username) usernameError = 'El usuario es obligatorio.';
         else if (username.length < 3) usernameError = 'El usuario debe tener mínimo 3 caracteres.';
         if (usernameError) errors.push(usernameError);
-        msg('username', show || username ? usernameError : '', !usernameError);
-        state($('id_username'), !usernameError, show || username);
+        const usernameVisible = submitted || touched.has('id_username') || username;
+        msg('username', usernameVisible ? usernameError : '', !usernameError);
+        state($('id_username'), !usernameError, usernameVisible);
 
         const password = $('id_password') ? $('id_password').value : '';
         const rules = passwordRules(password);
         const passwordError = rules.len && rules.upper && rules.num && rules.sym ? '' : 'La contraseña debe tener mínimo 8 caracteres, una mayúscula, un número y un símbolo.';
         if (passwordError) errors.push(passwordError);
-        state($('id_password'), !passwordError, show || password);
+        state($('id_password'), !passwordError, submitted || touched.has('id_password') || password);
 
         const confirm = $('id_password_confirm') ? $('id_password_confirm').value : '';
         let confirmError = '';
         if (!confirm) confirmError = 'Debes confirmar la contraseña.';
         else if (confirm !== password) confirmError = 'Las contraseñas no coinciden.';
         if (confirmError) errors.push(confirmError);
-        msg('password_confirm', show || confirm ? confirmError : '', !confirmError);
-        state($('id_password_confirm'), !confirmError, show || confirm);
+        const confirmVisible = submitted || touched.has('id_password_confirm') || confirm;
+        msg('password_confirm', confirmVisible ? confirmError : '', !confirmError);
+        state($('id_password_confirm'), !confirmError, confirmVisible);
 
         if (summary && summaryList) {
             summaryList.innerHTML = '';
@@ -615,7 +623,7 @@ function closeSidebar() {
                 item.textContent = error;
                 summaryList.appendChild(item);
             });
-            summary.classList.toggle('show', show && errors.length > 0);
+            summary.classList.toggle('show', submitted && errors.length > 0);
         }
         if (submitBtn) submitBtn.disabled = errors.length > 0;
         return errors.length === 0;
@@ -624,11 +632,12 @@ function closeSidebar() {
     ['id_first_name','id_last_name','id_email','id_cedula','id_telefono','id_genero','id_username','id_password','id_password_confirm'].forEach(function(id) {
         const input = $(id);
         if (!input) return;
-        input.addEventListener('input', function() { validate(true); });
-        input.addEventListener('change', function() { validate(true); });
-        input.addEventListener('blur', function() { validate(true); });
+        input.addEventListener('input', function() { touched.add(id); validate(false); });
+        input.addEventListener('change', function() { touched.add(id); validate(false); });
+        input.addEventListener('blur', function() { touched.add(id); validate(false); });
     });
     form.addEventListener('submit', function(e) {
+        submitted = true;
         if (!validate(true)) e.preventDefault();
     });
     validate(false);

@@ -662,6 +662,35 @@
         font-size: 0.73rem;
         color: var(--error);
       }
+      .field-msg {
+        display: none;
+        margin-top: 0.35rem;
+        font-size: 0.73rem;
+        line-height: 1.35;
+        font-weight: 500;
+      }
+      .field-msg.show {
+        display: block;
+      }
+      .field-msg.err {
+        color: var(--error);
+      }
+      .field-msg.ok {
+        color: #007e4a;
+      }
+      input.field-invalid,
+      select.field-invalid,
+      textarea.field-invalid {
+        border-color: var(--error);
+        background: #fff8f8;
+        box-shadow: 0 0 0 3px rgba(179, 38, 30, 0.08);
+      }
+      input.field-valid,
+      select.field-valid,
+      textarea.field-valid {
+        border-color: #17a05d;
+        box-shadow: 0 0 0 3px rgba(23, 160, 93, 0.08);
+      }
 
       /* ACTIONS */
       .form-actions {
@@ -2009,6 +2038,257 @@
       }
       if (selPac) selPac.addEventListener("change", updateBanner);
 
+      // ── VALIDACION EN TIEMPO REAL ──
+      var reglasControl = {
+        id_paciente: {
+          requerido: true,
+          validar: function (valor) {
+            return valor ? "" : "Selecciona una paciente de la lista.";
+          },
+        },
+        id_semanas_gestacion: {
+          requerido: true,
+          validar: function (valor) {
+            if (!valor) return "Ingresa las semanas de gestación.";
+            if (!/^\d+$/.test(valor)) return "Solo se permiten números enteros.";
+            var n = Number(valor);
+            if (n < 4 || n > 42) return "Debe estar entre 4 y 42 semanas.";
+            return "";
+          },
+        },
+        id_peso: {
+          requerido: true,
+          validar: function (valor) {
+            if (!valor) return "Ingresa el peso.";
+            if (!/^\d+([.,]\d{1,2})?$/.test(valor)) return "Usa un número válido. Ej: 68.5";
+            var n = Number(valor.replace(",", "."));
+            if (n < 30 || n > 250) return "El peso debe estar entre 30 y 250 kg.";
+            return "";
+          },
+        },
+        id_presion_arterial: {
+          requerido: true,
+          normalizar: function (valor) {
+            return valor.replace(/\s+/g, "");
+          },
+          validar: function (valor) {
+            if (!valor) return "Ingresa la presión arterial.";
+            var m = valor.match(/^(\d{2,3})\/(\d{2,3})$/);
+            if (!m) return "Formato correcto: sistólica/diastólica. Ej: 120/80.";
+            var sis = Number(m[1]);
+            var dia = Number(m[2]);
+            if (sis < 70 || sis > 250) return "La presión sistólica debe estar entre 70 y 250 mmHg.";
+            if (dia < 40 || dia > 150) return "La presión diastólica debe estar entre 40 y 150 mmHg.";
+            if (sis <= dia) return "La presión sistólica debe ser mayor que la diastólica.";
+            return "";
+          },
+        },
+        id_altura: {
+          requerido: true,
+          validar: function (valor) {
+            if (!valor) return "Ingresa la altura.";
+            if (!/^\d+([.,]\d{1,2})?$/.test(valor)) return "Usa metros con decimal. Ej: 1.62";
+            var n = Number(valor.replace(",", "."));
+            if (n < 1.2 || n > 2.2) return "La altura debe estar entre 1.20 y 2.20 m.";
+            return "";
+          },
+        },
+        id_glucosa: {
+          requerido: true,
+          validar: function (valor) {
+            if (!valor) return "Ingresa la glucosa.";
+            if (!/^\d+([.,]\d{1,2})?$/.test(valor)) return "Usa un número válido. Ej: 90";
+            var n = Number(valor.replace(",", "."));
+            if (n < 40 || n > 400) return "La glucosa debe estar entre 40 y 400 mg/dL.";
+            return "";
+          },
+        },
+        id_frecuencia_cardiaca: {
+          requerido: true,
+          validar: function (valor) {
+            if (!valor) return "Ingresa la frecuencia cardíaca.";
+            if (!/^\d+$/.test(valor)) return "Solo se permiten números enteros.";
+            var n = Number(valor);
+            if (n < 40 || n > 180) return "Debe estar entre 40 y 180 lpm.";
+            return "";
+          },
+        },
+        id_temperatura: {
+          requerido: true,
+          validar: function (valor) {
+            if (!valor) return "Ingresa la temperatura.";
+            if (!/^\d+([.,]\d{1,2})?$/.test(valor)) return "Usa un número válido. Ej: 98.6";
+            var n = Number(valor.replace(",", "."));
+            if (n < 95 || n > 106) return "La temperatura debe estar entre 95 y 106 °F.";
+            return "";
+          },
+        },
+        id_embarazos_previos: {
+          requerido: false,
+          validar: function (valor) {
+            if (!valor) return "";
+            if (!/^\d+$/.test(valor)) return "Solo se permiten números enteros.";
+            var n = Number(valor);
+            if (n < 0 || n > 20) return "Debe estar entre 0 y 20 embarazos.";
+            return "";
+          },
+        },
+        id_observaciones: {
+          requerido: false,
+          validar: function (valor) {
+            if (!valor) return "";
+            if (valor.trim().length < 3) return "Escribe una observación más clara o deja el campo vacío.";
+            if (valor.length > 1000) return "Máximo 1000 caracteres.";
+            return "";
+          },
+        },
+      };
+
+      function mensajeCampo(el) {
+        if (!el) return null;
+        var id = "msg-" + el.id;
+        var msg = document.getElementById(id);
+        if (msg) return msg;
+        msg = document.createElement("div");
+        msg.id = id;
+        msg.className = "field-msg";
+        var contenedor = el.id === "id_paciente"
+          ? document.getElementById("combo-wrap").closest(".fw")
+          : (el.closest(".fw") || el.parentElement);
+        if (contenedor) {
+          var tags = contenedor.querySelector(".qtags");
+          if (tags) contenedor.insertBefore(msg, tags);
+          else contenedor.appendChild(msg);
+        }
+        return msg;
+      }
+
+      function setEstadoCampo(el, error, mostrarOk) {
+        var msg = mensajeCampo(el);
+        var visualEl = el.id === "id_paciente" ? document.getElementById("paciente-search") : el;
+        visualEl.classList.remove("field-invalid", "field-valid");
+        el.setCustomValidity(error || "");
+        if (error) {
+          visualEl.classList.add("field-invalid");
+          if (msg) {
+            msg.textContent = error;
+            msg.className = "field-msg show err";
+          }
+          return false;
+        }
+        if (mostrarOk && el.value && String(el.value).trim()) {
+          visualEl.classList.add("field-valid");
+          if (msg) {
+            msg.textContent = "Correcto";
+            msg.className = "field-msg show ok";
+          }
+        } else if (msg) {
+          msg.textContent = "";
+          msg.className = "field-msg";
+        }
+        return true;
+      }
+
+      function validarCampo(id, opciones) {
+        var el = document.getElementById(id);
+        var regla = reglasControl[id];
+        if (!el || !regla) return true;
+        var valor = String(el.value || "").trim();
+        if (regla.normalizar) {
+          var limpio = regla.normalizar(valor);
+          if (limpio !== valor) {
+            el.value = limpio;
+            valor = limpio;
+          }
+        }
+        var mostrar = opciones && opciones.mostrar;
+        var forzar = opciones && opciones.forzar;
+        var error = regla.validar(valor);
+        if (!forzar && !valor && !regla.requerido) return setEstadoCampo(el, "", false);
+        if (!forzar && !valor) return setEstadoCampo(el, "", false);
+        return setEstadoCampo(el, error, mostrar !== false);
+      }
+
+      function validarFormularioCompleto() {
+        var primero = null;
+        var ok = true;
+        Object.keys(reglasControl).forEach(function (id) {
+          var campoOk = validarCampo(id, { mostrar: true, forzar: true });
+          if (!campoOk && !primero) primero = document.getElementById(id);
+          ok = ok && campoOk;
+        });
+        if (primero) {
+          if (primero.id === "id_paciente") {
+            var buscador = document.getElementById("paciente-search");
+            if (buscador) buscador.focus();
+          } else {
+            primero.focus();
+          }
+        }
+        return ok;
+      }
+
+      Object.keys(reglasControl).forEach(function (id) {
+        var el = document.getElementById(id);
+        if (!el) return;
+        if (
+          [
+            "id_semanas_gestacion",
+            "id_peso",
+            "id_altura",
+            "id_glucosa",
+            "id_frecuencia_cardiaca",
+            "id_temperatura",
+            "id_embarazos_previos",
+          ].indexOf(id) !== -1
+        ) {
+          el.addEventListener("keydown", function (e) {
+            var permitidas = ["Backspace", "Delete", "Tab", "ArrowLeft", "ArrowRight", "Home", "End"];
+            if (permitidas.indexOf(e.key) !== -1 || e.ctrlKey || e.metaKey) return;
+            var aceptaDecimal = ["id_peso", "id_altura", "id_glucosa", "id_temperatura"].indexOf(id) !== -1;
+            if (/^\d$/.test(e.key)) return;
+            if (aceptaDecimal && (e.key === "." || e.key === ",") && !/[.,]/.test(el.value)) return;
+            e.preventDefault();
+          });
+          el.addEventListener("paste", function (e) {
+            var texto = (e.clipboardData || window.clipboardData).getData("text");
+            var aceptaDecimal = ["id_peso", "id_altura", "id_glucosa", "id_temperatura"].indexOf(id) !== -1;
+            var re = aceptaDecimal ? /^\d+([.,]\d{0,2})?$/ : /^\d+$/;
+            if (!re.test(texto.trim())) e.preventDefault();
+          });
+        }
+        if (id === "id_presion_arterial") {
+          el.addEventListener("keydown", function (e) {
+            var permitidas = ["Backspace", "Delete", "Tab", "ArrowLeft", "ArrowRight", "Home", "End"];
+            if (permitidas.indexOf(e.key) !== -1 || e.ctrlKey || e.metaKey) return;
+            if (/^\d$/.test(e.key)) return;
+            if (e.key === "/" && el.value.indexOf("/") === -1) return;
+            e.preventDefault();
+          });
+          el.addEventListener("paste", function (e) {
+            var texto = (e.clipboardData || window.clipboardData).getData("text").trim();
+            if (!/^\d{2,3}\s*\/\s*\d{0,3}$/.test(texto)) e.preventDefault();
+          });
+        }
+        ["input", "change", "blur"].forEach(function (evt) {
+          el.addEventListener(evt, function () {
+            validarCampo(id, { mostrar: true });
+            checkProgress();
+          });
+        });
+        if (el.value && String(el.value).trim()) validarCampo(id, { mostrar: false });
+      });
+
+      var formControl = document.getElementById("ctrl-form");
+      if (formControl) {
+        formControl.addEventListener("submit", function (e) {
+          if (!validarFormularioCompleto()) {
+            e.preventDefault();
+            mostrarToast("Revisa los campos marcados antes de guardar.", "error");
+          }
+        });
+      }
+
       // ── PROGRESS ──
       function checkProgress() {
         var fields = [
@@ -2020,11 +2300,11 @@
         var done = 0;
         fields.forEach(function (f) {
           var el = document.getElementById(f.id);
-          var filled =
-            el && el.value && el.value.trim() !== "" && el.value !== "0";
-          document.getElementById(f.ps).classList.toggle("done", !!filled);
-          document.getElementById(f.sd).textContent = filled ? "✓" : "";
-          if (filled) done++;
+          var filled = el && el.value && el.value.trim() !== "";
+          var valid = filled && (!reglasControl[f.id] || !reglasControl[f.id].validar(String(el.value).trim()));
+          document.getElementById(f.ps).classList.toggle("done", !!valid);
+          document.getElementById(f.sd).textContent = valid ? "✓" : "";
+          if (valid) done++;
         });
         var pct = Math.round((done / fields.length) * 100);
         document.getElementById("prog-bar").style.width = pct + "%";

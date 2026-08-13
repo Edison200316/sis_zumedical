@@ -448,7 +448,7 @@ function closeSidebar() {
     const summary = $('validationSummary');
     const summaryList = $('validationSummaryList');
     const touched = new Set();
-    const disponibilidad = { email: true, username: true };
+    const disponibilidad = { email: true, username: true, cedula: true };
     const disponibilidadTimers = {};
     let submitted = false;
 
@@ -497,7 +497,7 @@ function closeSidebar() {
             })
                 .then(function(response) { return response.json(); })
                 .then(function(data) {
-                    const actual = campo === 'email' ? value('email') : value('username');
+                    const actual = campo === 'email' ? value('email') : (campo === 'cedula' ? value('cedula') : value('username'));
                     if (actual !== valor) return;
                     disponibilidad[campo] = data.disponible !== false;
                     validate(false);
@@ -539,7 +539,10 @@ function closeSidebar() {
             const id = item[0], label = item[1], input = $('id_' + id);
             if (input) input.value = input.value.replace(/[^0-9]/g, '').slice(0, 10);
             const v = value(id);
-            const error = v && v.length !== 10 ? label + ' debe tener exactamente 10 números.' : '';
+            let error = v && v.length !== 10 ? label + ' debe tener exactamente 10 números.' : '';
+            if (!error && id === 'cedula' && v && disponibilidad.cedula !== true) {
+                error = disponibilidad.cedula === null ? 'Verificando si la cédula está disponible.' : 'Esta cédula ya está registrada.';
+            }
             if (error) errors.push(error);
             const visible = submitted || touched.has('id_' + id) || v;
             msg(id, visible ? error : '', !error);
@@ -592,6 +595,7 @@ function closeSidebar() {
     });
     const emailInput = $('id_email');
     const usernameInput = $('id_username');
+    const cedulaInput = $('id_cedula');
     if (emailInput) {
         emailInput.addEventListener('input', function() {
             verificarDisponibilidad('email', value('email'), function() {
@@ -603,6 +607,13 @@ function closeSidebar() {
         usernameInput.addEventListener('input', function() {
             verificarDisponibilidad('username', value('username'), function() {
                 return value('username').length >= 3;
+            });
+        });
+    }
+    if (cedulaInput) {
+        cedulaInput.addEventListener('input', function() {
+            verificarDisponibilidad('cedula', value('cedula'), function() {
+                return value('cedula').length === 10;
             });
         });
     }

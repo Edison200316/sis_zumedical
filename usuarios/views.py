@@ -2405,6 +2405,8 @@ def admin_crear_paciente(request):
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
 
+        from pacientes.models import Paciente
+
         if User.objects.filter(username=username).exists():
             messages.error(request, f'El usuario "{username}" ya existe.')
             return render(request, 'admin/crear_paciente.html', {
@@ -2417,6 +2419,12 @@ def admin_crear_paciente(request):
                 'form_data': request.POST,
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
+        if cedula and Paciente.objects.filter(cedula=cedula).exists():
+            messages.error(request, f'La cédula "{cedula}" ya está registrada.')
+            return render(request, 'admin/crear_paciente.html', {
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
 
         try:
             with transaction.atomic():
@@ -2425,7 +2433,6 @@ def admin_crear_paciente(request):
                     first_name=first_name, last_name=last_name,
                     email=email, rol='paciente', genero=genero
                 )
-                from pacientes.models import Paciente
                 paciente, _ = Paciente.objects.get_or_create(usuario=user)
                 paciente.cedula    = cedula
                 paciente.telefono  = telefono
@@ -2816,6 +2823,8 @@ def admin_crear_paciente_general(request):
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
 
+        from pacientes.models import Paciente
+
         if Usuario.objects.filter(username=username).exists():
             messages.error(request, f'El usuario "{username}" ya existe.')
             return render(request, 'admin/crear_paciente_general.html', {
@@ -2828,6 +2837,12 @@ def admin_crear_paciente_general(request):
                 'form_data': request.POST,
                 'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
             })
+        if cedula and Paciente.objects.filter(cedula=cedula).exists():
+            messages.error(request, f'La cédula "{cedula}" ya está registrada.')
+            return render(request, 'admin/crear_paciente_general.html', {
+                'form_data': request.POST,
+                'citas_pendientes': Cita.objects.filter(estado='pendiente').count(),
+            })
 
         try:
             with transaction.atomic():
@@ -2836,7 +2851,6 @@ def admin_crear_paciente_general(request):
                     first_name=first_name, last_name=last_name,
                     email=email, rol='paciente', genero=genero
                 )
-                from pacientes.models import Paciente
                 paciente, _ = Paciente.objects.get_or_create(usuario=user)
                 paciente.cedula = cedula
                 paciente.telefono = telefono

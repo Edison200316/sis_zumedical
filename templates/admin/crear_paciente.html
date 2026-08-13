@@ -568,7 +568,7 @@ function closeSidebar() {
         else if (confirm !== password) confirmError = 'Las contraseñas no coinciden.';
         if (confirmError) errors.push(confirmError);
         const confirmVisible = submitted || touched.has('id_password_confirm') || confirm;
-        msg('password_confirm', confirmVisible ? confirmError : '', !confirmError);
+        msg('password_confirm', confirmVisible ? (confirmError || 'Las contraseñas coinciden.') : '', !confirmError);
         state($('id_password_confirm'), !confirmError, confirmVisible);
 
         if (summary && summaryList) {

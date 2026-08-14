@@ -2062,6 +2062,173 @@ def controles_admin(request):
     })
 
 
+@login_required
+@no_cache_view
+def lista_especialidades(request):
+    if request.user.rol != 'admin' and not request.user.is_superuser:
+        return redireccionar_por_rol(request.user)
+
+    from landing.models import Especialidad
+
+    especialidades = Especialidad.objects.all()
+    return render(request, 'admin/lista_especialidades.html', {
+        'especialidades': especialidades,
+        'citas_pendientes': _admin_citas_pendientes_count(),
+    })
+
+
+def _validar_especialidad_admin(nombre, descripcion, icono, tipo):
+    errores = []
+    tipos_validos = {'prenatal', 'general'}
+
+    if len(nombre or '') < 3:
+        errores.append('El nombre de la especialidad debe tener al menos 3 caracteres.')
+    if len(descripcion or '') < 10:
+        errores.append('La descripción debe tener al menos 10 caracteres.')
+    if not icono:
+        errores.append('Ingresa una clase de ícono Font Awesome, por ejemplo fa-stethoscope.')
+    if tipo not in tipos_validos:
+        errores.append('Selecciona un tipo de especialidad válido.')
+
+    return errores
+
+
+def _especialidad_form_values(especialidad=None, post_data=None):
+    if post_data is not None:
+        return {
+            'nombre': post_data.get('nombre', '').strip(),
+            'descripcion': post_data.get('descripcion', '').strip(),
+            'icono': post_data.get('icono', '').strip() or 'fa-stethoscope',
+            'tipo': post_data.get('tipo', '').strip() or 'general',
+            'activo': post_data.get('activo') == 'on',
+        }
+
+    return {
+        'nombre': getattr(especialidad, 'nombre', ''),
+        'descripcion': getattr(especialidad, 'descripcion', ''),
+        'icono': getattr(especialidad, 'icono', '') or 'fa-stethoscope',
+        'tipo': getattr(especialidad, 'tipo', '') or 'general',
+        'activo': getattr(especialidad, 'activo', True),
+    }
+
+
+@login_required
+@no_cache_view
+def admin_crear_especialidad(request):
+    if request.user.rol != 'admin' and not request.user.is_superuser:
+        return redireccionar_por_rol(request.user)
+
+    from landing.models import Especialidad
+
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre', '').strip()
+        descripcion = request.POST.get('descripcion', '').strip()
+        icono = request.POST.get('icono', '').strip()
+        tipo = request.POST.get('tipo', '').strip()
+        activo = request.POST.get('activo') == 'on'
+        errores = _validar_especialidad_admin(nombre, descripcion, icono, tipo)
+
+        if Especialidad.objects.filter(nombre__iexact=nombre).exists():
+            errores.append(f'La especialidad "{nombre}" ya existe.')
+
+        if errores:
+            for error in errores:
+                messages.error(request, error)
+            return render(request, 'admin/form_especialidad.html', {
+                'form_values': _especialidad_form_values(post_data=request.POST),
+                'modo': 'crear',
+                'citas_pendientes': _admin_citas_pendientes_count(),
+            })
+
+        especialidad = Especialidad.objects.create(
+            nombre=nombre,
+            descripcion=descripcion,
+            icono=icono,
+            tipo=tipo,
+            activo=activo,
+        )
+        messages.success(request, f'Especialidad "{especialidad.nombre}" creada correctamente.')
+        registrar_log(request, 'CREATE', 'Especialidades',
+            f'Especialidad "{especialidad.nombre}" creada desde el panel admin', 'INFO')
+        return redirect('lista_especialidades')
+
+    return render(request, 'admin/form_especialidad.html', {
+        'form_values': _especialidad_form_values(),
+        'modo': 'crear',
+        'citas_pendientes': _admin_citas_pendientes_count(),
+    })
+
+
+@login_required
+@no_cache_view
+def admin_editar_especialidad(request, especialidad_id):
+    if request.user.rol != 'admin' and not request.user.is_superuser:
+        return redireccionar_por_rol(request.user)
+
+    from landing.models import Especialidad
+
+    especialidad = get_object_or_404(Especialidad, id=especialidad_id)
+
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre', '').strip()
+        descripcion = request.POST.get('descripcion', '').strip()
+        icono = request.POST.get('icono', '').strip()
+        tipo = request.POST.get('tipo', '').strip()
+        activo = request.POST.get('activo') == 'on'
+        errores = _validar_especialidad_admin(nombre, descripcion, icono, tipo)
+
+        if Especialidad.objects.filter(nombre__iexact=nombre).exclude(id=especialidad.id).exists():
+            errores.append(f'La especialidad "{nombre}" ya existe.')
+
+        if errores:
+            for error in errores:
+                messages.error(request, error)
+            return render(request, 'admin/form_especialidad.html', {
+                'especialidad': especialidad,
+                'form_values': _especialidad_form_values(especialidad, request.POST),
+                'modo': 'editar',
+                'citas_pendientes': _admin_citas_pendientes_count(),
+            })
+
+        especialidad.nombre = nombre
+        especialidad.descripcion = descripcion
+        especialidad.icono = icono
+        especialidad.tipo = tipo
+        especialidad.activo = activo
+        especialidad.save()
+
+        messages.success(request, f'Especialidad "{especialidad.nombre}" actualizada correctamente.')
+        registrar_log(request, 'UPDATE', 'Especialidades',
+            f'Especialidad "{especialidad.nombre}" (ID {especialidad.id}) actualizada', 'INFO')
+        return redirect('lista_especialidades')
+
+    return render(request, 'admin/form_especialidad.html', {
+        'especialidad': especialidad,
+        'form_values': _especialidad_form_values(especialidad),
+        'modo': 'editar',
+        'citas_pendientes': _admin_citas_pendientes_count(),
+    })
+
+
+@login_required
+@no_cache_view
+def admin_toggle_especialidad(request, especialidad_id):
+    if request.user.rol != 'admin' and not request.user.is_superuser:
+        return redireccionar_por_rol(request.user)
+
+    from landing.models import Especialidad
+
+    especialidad = get_object_or_404(Especialidad, id=especialidad_id)
+    especialidad.activo = not especialidad.activo
+    especialidad.save(update_fields=['activo'])
+
+    estado = 'activada' if especialidad.activo else 'desactivada'
+    messages.success(request, f'Especialidad "{especialidad.nombre}" {estado}.')
+    registrar_log(request, 'UPDATE', 'Especialidades',
+        f'Especialidad "{especialidad.nombre}" (ID {especialidad.id}) {estado}', 'INFO')
+    return redirect('lista_especialidades')
+
+
 def _admin_citas_pendientes_count():
     try:
         return Cita.objects.filter(estado='pendiente').count()

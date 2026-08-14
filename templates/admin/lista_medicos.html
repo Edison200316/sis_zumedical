@@ -128,6 +128,7 @@
         <div class="nav-lbl">Gestión</div>
         <a href="{% url 'lista_usuarios' %}" class="nav-item"><i class="fa-solid fa-users"></i> Usuarios</a>
         <a href="{% url 'lista_medicos' %}" class="nav-item active"><i class="fa-solid fa-user-doctor"></i> Médicos</a>
+        <a href="{% url 'lista_especialidades' %}" class="nav-item"><i class="fa-solid fa-stethoscope"></i> Especialidades</a>
         <a href="{% url 'lista_pacientes' %}" class="nav-item"><i class="fa-solid fa-hospital-user"></i> Pacientes</a>
         <a href="{% url 'todas_citas' %}" class="nav-item">
             <i class="fa-regular fa-calendar-check"></i> Citas
@@ -148,6 +149,10 @@
             <p>Listado de médicos registrados en el sistema</p>
         </div>
         <div class="page-header-actions">
+            <a href="{% url 'lista_especialidades' %}" class="btn-back">
+                <i class="fa-solid fa-stethoscope"></i>
+                Especialidades
+            </a>
             <a href="{% url 'admin_crear_medico' %}" class="btn-new">
                 <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Nuevo médico

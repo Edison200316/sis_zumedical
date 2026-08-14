@@ -80,12 +80,16 @@ urlpatterns = [
     path('panel/pacientes/', views.lista_pacientes, name='lista_pacientes'),
     path('panel/citas/', views.todas_citas, name='todas_citas'),
     path('panel/controles/', views.controles_admin, name='controles_admin'),
+    path('panel/especialidades/', views.lista_especialidades, name='lista_especialidades'),
     path('panel/pacientes/crear-general/', views.admin_crear_paciente_general, name='admin_crear_paciente_general'),
 
     # ADMIN — CRUD completo
     path('panel/usuarios/crear/', views.admin_crear_usuario, name='admin_crear_usuario'),
     path('panel/usuarios/<int:usuario_id>/editar/', views.admin_editar_usuario, name='admin_editar_usuario'),
     path('panel/usuarios/<int:usuario_id>/eliminar/', views.admin_eliminar_usuario, name='admin_eliminar_usuario'),
+    path('panel/especialidades/crear/', views.admin_crear_especialidad, name='admin_crear_especialidad'),
+    path('panel/especialidades/<int:especialidad_id>/editar/', views.admin_editar_especialidad, name='admin_editar_especialidad'),
+    path('panel/especialidades/<int:especialidad_id>/toggle/', views.admin_toggle_especialidad, name='admin_toggle_especialidad'),
     path('panel/medicos/crear/', views.admin_crear_medico, name='admin_crear_medico'),
     path('panel/medicos/<int:medico_id>/editar/', views.admin_editar_medico, name='admin_editar_medico'),
     path('panel/medicos/<int:medico_id>/eliminar/', views.admin_eliminar_medico, name='admin_eliminar_medico'),

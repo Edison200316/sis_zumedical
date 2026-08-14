@@ -9,8 +9,8 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from .models import FAQChatbot, InteraccionChatbot
-from ai.knowledge_base import CATEGORIAS_CHATBOT
+from .models import InteraccionChatbot
+from ai.knowledge_base import CATEGORIAS_CHATBOT, FAQ_CHATBOT
 
 
 # ---------------------------------------------------------------------------
@@ -51,6 +51,7 @@ def _get_client_ip(request):
 
 def _build_categorias_payload():
     """Devuelve la lista de categorías con emoji y nombre para el frontend."""
+    categorias_con_faqs = {faq["categoria"] for faq in _get_faqs_activas()}
     return [
         {
             "slug": cat["slug"],
@@ -59,28 +60,56 @@ def _build_categorias_payload():
             "descripcion": cat["descripcion"],
         }
         for cat in CATEGORIAS_CHATBOT
-        if FAQChatbot.objects.filter(categoria=cat["slug"], activo=True).exists()
+        if cat["slug"] in categorias_con_faqs
     ]
+
+
+def _get_faqs_activas():
+    faqs = []
+    for index, faq in enumerate(FAQ_CHATBOT, start=1):
+        if faq.get("activo", True):
+            faqs.append({
+                "id": faq.get("id", index),
+                "categoria": faq.get("categoria", ""),
+                "pregunta": faq.get("pregunta", ""),
+                "respuesta": faq.get("respuesta", ""),
+                "palabras_clave": faq.get("palabras_clave", ""),
+                "orden": faq.get("orden", index),
+            })
+    return faqs
 
 
 def _build_preguntas_payload(categoria_slug):
     """Devuelve las preguntas activas de una categoría."""
-    faqs = FAQChatbot.objects.filter(
-        categoria=categoria_slug,
-        activo=True,
-    ).order_by('orden', 'id').values('id', 'pregunta')
-    return list(faqs)
+    faqs = [
+        {"id": faq["id"], "pregunta": faq["pregunta"]}
+        for faq in _get_faqs_activas()
+        if faq["categoria"] == categoria_slug
+    ]
+    return sorted(faqs, key=lambda faq: faq["id"])
+
+
+def _get_faq_por_id(faq_id):
+    return next((faq for faq in _get_faqs_activas() if faq["id"] == faq_id), None)
+
+
+def _get_categoria_nombre(categoria_slug):
+    categoria = next((cat for cat in CATEGORIAS_CHATBOT if cat["slug"] == categoria_slug), None)
+    return categoria["nombre"] if categoria else categoria_slug
 
 
 def _log_interaccion(request, estado, pregunta_texto, respuesta_texto, faq_pregunta=''):
-    InteraccionChatbot.objects.create(
-        canal='landing',
-        estado=estado,
-        pregunta=pregunta_texto,
-        respuesta=respuesta_texto,
-        pregunta_relacionada=faq_pregunta,
-        direccion_ip=_get_client_ip(request),
-    )
+    try:
+        InteraccionChatbot.objects.create(
+            canal='landing',
+            estado=estado,
+            pregunta=pregunta_texto,
+            respuesta=respuesta_texto,
+            pregunta_relacionada=faq_pregunta,
+            direccion_ip=_get_client_ip(request),
+        )
+    except Exception:
+        pass
 
 
 # ---------------------------------------------------------------------------
@@ -158,30 +187,29 @@ def chatbot_response(request):
         except ValueError:
             return JsonResponse({'tipo': 'error', 'mensaje': MSG_NO_ENCONTRADO})
 
-        try:
-            faq = FAQChatbot.objects.get(id=faq_id, activo=True)
-        except FAQChatbot.DoesNotExist:
+        faq = _get_faq_por_id(faq_id)
+        if not faq:
             return JsonResponse({'tipo': 'error', 'mensaje': MSG_NO_ENCONTRADO})
 
         # Agregar footer de advertencia médica si es categoría de síntomas
-        respuesta = faq.respuesta
-        if faq.categoria == 'sintomas_alarmas':
+        respuesta = faq["respuesta"]
+        if faq["categoria"] == 'sintomas_alarmas':
             respuesta += MSG_RESPUESTA_FOOTER
 
         _log_interaccion(
             request, estado,
-            faq.pregunta, respuesta,
-            faq_pregunta=faq.pregunta,
+            faq["pregunta"], respuesta,
+            faq_pregunta=faq["pregunta"],
         )
 
         return JsonResponse({
             'tipo': 'respuesta',
             'mensaje': respuesta,
             'faq': {
-                'id': faq.id,
-                'pregunta': faq.pregunta,
-                'categoria_slug': faq.categoria,
-                'categoria_nombre': faq.get_categoria_display(),
+                'id': faq["id"],
+                'pregunta': faq["pregunta"],
+                'categoria_slug': faq["categoria"],
+                'categoria_nombre': _get_categoria_nombre(faq["categoria"]),
             },
         })
 

@@ -1,0 +1,189 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zumedical - Especialidades</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--mg:#B03580;--mg-l:#CC4D99;--mg-d:#8A2563;--mg-bg:#FBF0F7;--mg-border:#E8AAD4;--text:#2A1020;--muted:#8A6070;--white:#fff;--bg:#FDF5FA;--sw:260px;--green:#2E7D32;--green-bg:#E8F5E9;--red:#C0392B;--red-bg:#FFEBEE}
+body{font-family:'DM Sans','Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;display:flex;opacity:0;animation:fadeIn .4s ease .05s forwards}
+@keyframes fadeIn{to{opacity:1}}
+.sidebar{width:var(--sw);height:100vh;background:linear-gradient(175deg,#8A2563 0%,#B03580 55%,#CC4D99 100%);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;overflow:hidden;transition:transform .3s ease;box-shadow:4px 0 24px rgba(138,37,99,.2)}
+.sb-brand{padding:1.75rem 1.5rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.75rem}
+.sb-logo{width:42px;height:42px;background:white;border-radius:50%;overflow:hidden;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo img{width:38px;height:38px;object-fit:contain}
+.sb-brand-text h2{font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:1.35rem;font-weight:600;color:white;line-height:1}
+.sb-brand-text span{font-size:.7rem;color:rgba(255,255,255,.65);letter-spacing:.1em;text-transform:uppercase}
+.sb-user{padding:1rem 1.5rem;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:.7rem}
+.sb-avatar{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:500;color:white;text-transform:uppercase}
+.sb-user-info p{font-size:.72rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.1rem}
+.sb-user-info h3{font-size:.88rem;font-weight:500;color:white}
+.sb-nav{flex:1;min-height:0;padding:1rem .75rem;overflow-y:auto}
+.nav-lbl{font-size:.68rem;color:rgba(255,255,255,.45);letter-spacing:.1em;text-transform:uppercase;padding:.5rem .75rem;margin-top:.75rem}
+.nav-item{display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;border-radius:10px;color:rgba(255,255,255,.82);text-decoration:none;font-size:.88rem;transition:all .2s;margin-bottom:.2rem}
+.nav-item:hover,.nav-item.active{background:rgba(255,255,255,.18);color:white}
+.nav-item i{width:18px;text-align:center;font-size:15px;flex-shrink:0}
+.sb-footer{padding:1rem .75rem;border-top:1px solid rgba(255,255,255,.12)}
+.btn-logout{display:flex;align-items:center;gap:.7rem;padding:.7rem 1rem;border-radius:10px;color:rgba(255,255,255,.75);text-decoration:none;font-size:.88rem}
+.btn-logout:hover{background:rgba(255,255,255,.15);color:white}
+.mobile-topbar{display:none;align-items:center;justify-content:space-between;padding:1rem 1.25rem;background:linear-gradient(135deg,#8A2563,#CC4D99);position:fixed;top:0;left:0;right:0;z-index:300}
+.mobile-topbar-brand{display:flex;align-items:center;gap:.6rem}
+.mobile-topbar-brand img{width:32px;height:32px;background:white;border-radius:50%;padding:2px;object-fit:contain}
+.mobile-topbar-brand span{font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:1.2rem;font-weight:600;color:white}
+.hamburger{background:rgba(255,255,255,.15);border:none;border-radius:8px;padding:.5rem .65rem;cursor:pointer;display:flex;flex-direction:column;gap:4px}
+.hamburger span{display:block;width:20px;height:2px;background:white;border-radius:2px}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:150;opacity:0;pointer-events:none;transition:opacity .3s}
+.sidebar-overlay.active{opacity:1;pointer-events:auto}
+.main{margin-left:var(--sw);flex:1;padding:2.5rem;min-height:100vh}
+.page-header{margin-bottom:2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.page-header h1{font-family:'Cormorant Garamond',Georgia,'Times New Roman',serif;font-size:2rem;font-weight:600;color:var(--text);margin-bottom:.25rem}
+.page-header p{color:var(--muted);font-size:.88rem;font-weight:300}
+.page-header-actions{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap}
+.btn-new,.btn-back{display:inline-flex;align-items:center;gap:.45rem;padding:.62rem 1.18rem;border-radius:9px;text-decoration:none;font-size:.85rem;font-weight:500;transition:all .2s;white-space:nowrap}
+.btn-new{background:linear-gradient(135deg,var(--mg-d),var(--mg-l));color:white}
+.btn-new:hover{opacity:.9;transform:translateY(-1px)}
+.btn-back{background:var(--white);color:var(--mg);border:1.5px solid var(--mg-border)}
+.btn-back:hover{background:var(--mg-bg);border-color:var(--mg)}
+.table-card{background:var(--white);border-radius:16px;border:1px solid var(--mg-border);overflow:hidden;position:relative}
+.table-card::before{content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:linear-gradient(180deg,var(--mg-d),var(--mg-l))}
+.table-search{padding:1.25rem 1.5rem;border-bottom:1px solid var(--mg-border);display:flex;align-items:center;gap:1rem;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:220px}
+.search-wrap i{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.85rem}
+.search-wrap input{width:100%;padding:.68rem 1rem .68rem 2.4rem;border:1.5px solid var(--mg-border);border-radius:10px;font-family:inherit;font-size:.88rem;color:var(--text);outline:none;background:var(--bg)}
+.search-wrap input:focus{border-color:var(--mg);box-shadow:0 0 0 3px rgba(176,53,128,.08);background:var(--white)}
+.table-count{font-size:.82rem;color:var(--muted);white-space:nowrap;background:var(--mg-bg);padding:.35rem .85rem;border-radius:20px;border:1px solid var(--mg-border)}
+.table-wrapper{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:760px}
+thead tr{background:var(--mg-bg)}
+th{padding:.85rem 1.5rem;text-align:left;font-size:.72rem;font-weight:500;color:var(--mg-d);text-transform:uppercase;letter-spacing:.08em;border-bottom:1px solid var(--mg-border);white-space:nowrap}
+td{padding:1rem 1.5rem;font-size:.88rem;color:var(--text);border-bottom:1px solid rgba(232,170,212,.3);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--mg-bg)}
+.esp-name{display:flex;align-items:center;gap:.75rem}
+.esp-icon{width:38px;height:38px;border-radius:12px;background:var(--mg-bg);border:1px solid var(--mg-border);display:flex;align-items:center;justify-content:center;color:var(--mg);flex-shrink:0}
+.badge{display:inline-flex;padding:.24rem .72rem;border-radius:20px;font-size:.72rem;font-weight:500;border:1px solid}
+.badge-prenatal{background:#FFF0F8;color:#9B1B65;border-color:#E8AAD4}
+.badge-general{background:#E8F5E9;color:#2E7D32;border-color:#A5D6A7}
+.badge-on{background:var(--green-bg);color:var(--green);border-color:#A5D6A7}
+.badge-off{background:var(--red-bg);color:var(--red);border-color:#FFCDD2}
+.td-actions{display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+.btn-sm{display:inline-flex;align-items:center;gap:.32rem;padding:.38rem .8rem;border-radius:7px;font-size:.78rem;font-weight:500;text-decoration:none;transition:all .2s;white-space:nowrap;border:1px solid}
+.btn-secondary{background:var(--mg-bg);color:var(--mg-d);border-color:var(--mg-border)}
+.btn-secondary:hover{background:var(--mg);color:white;border-color:var(--mg)}
+.btn-toggle{background:#F8FAFC;color:#334155;border-color:#CBD5E1}
+.btn-toggle:hover{background:#E2E8F0}
+.empty-state{padding:3rem;text-align:center;color:var(--muted)}
+.empty-state i{font-size:2.4rem;color:var(--mg-border);display:block;margin-bottom:1rem}
+.mensaje{display:flex;align-items:center;gap:.6rem;padding:.85rem 1.1rem;border-radius:12px;font-size:.88rem;margin-bottom:1.25rem}
+.mensaje-success{background:#E8F5E9;color:#2E7D32;border:1px solid #A5D6A7}
+.mensaje-error{background:#FEF0F0;color:#8B2020;border:1px solid #F5AAAA}
+@media(max-width:768px){body{flex-direction:column}.sidebar{position:fixed;top:64px;left:0;bottom:0;height:auto;transform:translateX(-100%);width:var(--sw)}.sidebar.open{transform:translateX(0)}.sidebar-overlay{display:block;z-index:150}.mobile-topbar{display:flex}.main{margin-left:0;padding:1.25rem;padding-top:calc(1.25rem + 64px)}}
+</style>
+</head>
+<body>
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="mobile-topbar">
+    <div class="mobile-topbar-brand"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"><span>Zumedical</span></div>
+    <button class="hamburger" id="hamburger" onclick="toggleSidebar()"><span></span><span></span><span></span></button>
+</div>
+<aside class="sidebar" id="sidebar">
+    <div class="sb-brand">
+        <div class="sb-logo"><img src="https://res.cloudinary.com/dsmbfnh4x/image/upload/v1784997420/Logo_kjsnsx.png" alt="Zumedical"></div>
+        <div class="sb-brand-text"><h2>Zumedical</h2><span>Administrador</span></div>
+    </div>
+    <div class="sb-user">
+        <div class="sb-avatar">{% if request.user.first_name %}{{ request.user.first_name|slice:":1" }}{{ request.user.last_name|slice:":1" }}{% else %}{{ request.user.username|slice:":1"|upper }}{% endif %}</div>
+        <div class="sb-user-info"><p>Sesión activa</p><h3>{{ request.user.get_full_name|default:request.user.username }}</h3></div>
+    </div>
+    <nav class="sb-nav">
+        <div class="nav-lbl">Panel</div>
+        <a href="{% url 'admin_dashboard' %}" class="nav-item"><i class="fa-solid fa-grid-2"></i> Inicio</a>
+        <div class="nav-lbl">Gestión</div>
+        <a href="{% url 'lista_usuarios' %}" class="nav-item"><i class="fa-solid fa-users"></i> Usuarios</a>
+        <a href="{% url 'lista_medicos' %}" class="nav-item"><i class="fa-solid fa-user-doctor"></i> Médicos</a>
+        <a href="{% url 'lista_especialidades' %}" class="nav-item active"><i class="fa-solid fa-stethoscope"></i> Especialidades</a>
+        <a href="{% url 'lista_pacientes' %}" class="nav-item"><i class="fa-solid fa-hospital-user"></i> Pacientes</a>
+        <a href="{% url 'todas_citas' %}" class="nav-item"><i class="fa-regular fa-calendar-check"></i> Citas</a>
+        <a href="{% url 'controles_admin' %}" class="nav-item"><i class="fa-solid fa-heart-pulse"></i> Controles Prenatales</a>
+        <div class="nav-lbl">Sistema</div>
+        <a href="{% url 'auditoria_admin' %}" class="nav-item"><i class="fa-solid fa-shield-halved"></i> Auditoría</a>
+    </nav>
+    <div class="sb-footer"><a href="{% url 'logout' %}" class="btn-logout"><i class="fa-solid fa-arrow-right-from-bracket"></i> Cerrar sesión</a></div>
+</aside>
+
+<main class="main">
+    <div class="page-header">
+        <div>
+            <h1>Especialidades</h1>
+            <p>Gestiona las especialidades que se muestran al crear médicos y en la landing</p>
+        </div>
+        <div class="page-header-actions">
+            <a href="{% url 'admin_crear_especialidad' %}" class="btn-new"><i class="fa-solid fa-plus"></i> Nueva especialidad</a>
+            <a href="{% url 'admin_dashboard' %}" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Volver</a>
+        </div>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+        <div class="mensaje {% if 'success' in message.tags %}mensaje-success{% else %}mensaje-error{% endif %}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="table-card">
+        <div class="table-search">
+            <div class="search-wrap">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="searchInput" placeholder="Buscar especialidad...">
+            </div>
+            <span class="table-count">{{ especialidades|length }} especialidad{{ especialidades|length|pluralize:"es" }}</span>
+        </div>
+        <div class="table-wrapper">
+            <table id="especialidadesTable">
+                <thead>
+                    <tr>
+                        <th>Especialidad</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                        <th>Descripcion</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for esp in especialidades %}
+                    <tr>
+                        <td data-label="Especialidad">
+                            <div class="esp-name">
+                                <div class="esp-icon"><i class="fa-solid {{ esp.icono }}"></i></div>
+                                <strong>{{ esp.nombre }}</strong>
+                            </div>
+                        </td>
+                        <td data-label="Tipo"><span class="badge badge-{{ esp.tipo }}">{{ esp.get_tipo_display }}</span></td>
+                        <td data-label="Estado"><span class="badge {% if esp.activo %}badge-on{% else %}badge-off{% endif %}">{% if esp.activo %}Activa{% else %}Inactiva{% endif %}</span></td>
+                        <td data-label="Descripcion" style="color:var(--muted);max-width:520px">{{ esp.descripcion }}</td>
+                        <td data-label="Acciones">
+                            <div class="td-actions">
+                                <a href="{% url 'admin_editar_especialidad' esp.id %}" class="btn-sm btn-secondary"><i class="fa-solid fa-pen"></i> Editar</a>
+                                <a href="{% url 'admin_toggle_especialidad' esp.id %}" class="btn-sm btn-toggle">{% if esp.activo %}Desactivar{% else %}Activar{% endif %}</a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-stethoscope"></i><p>No hay especialidades registradas.</p></div></td></tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>
+<script>
+function toggleSidebar(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('active');document.getElementById('hamburger').classList.toggle('open')}
+function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('active');document.getElementById('hamburger').classList.remove('open')}
+document.getElementById('searchInput').addEventListener('input',function(){const q=this.value.toLowerCase();document.querySelectorAll('#especialidadesTable tbody tr').forEach(row=>{row.style.display=row.textContent.toLowerCase().includes(q)?'':'none'})});
+</script>
+</body>
+</html>

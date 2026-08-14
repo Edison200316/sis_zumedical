@@ -5,7 +5,6 @@ Django settings for sistema_prenatal project.
 import os
 from pathlib import Path
 
-import dj_database_url
 from decouple import config, Csv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -151,15 +150,24 @@ LOGIN_URL = '/login/'
 
 
 # ============================================================
-# BASE DE DATOS — PostgreSQL (Neon) via .env
+# BASE DE DATOS — MySQL (Oracle Cloud) via .env
 # ============================================================
 
 DATABASES = {
-    'default': dj_database_url.parse(
-        config('DATABASE_URL'),
-        conn_max_age=600,
-        ssl_require=True,
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': config('DB_NAME', default='zumedical'),
+        'USER': config('DB_USER', default='zumedical_app'),
+        'PASSWORD': config('DB_PASSWORD', default=''),
+        'HOST': config('DB_HOST', default='157.137.213.54'),
+        'PORT': config('DB_PORT', default='3306'),
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+            'ssl': config('DB_SSL_MODE', default='REQUIRED').upper() != 'DISABLED',
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
+        'CONN_MAX_AGE': 0,
+    }
 }
 
 

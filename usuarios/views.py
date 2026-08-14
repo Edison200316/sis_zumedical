@@ -161,7 +161,7 @@ def admin_required(view_func):
         if not request.user.is_authenticated:
             return redirect('login')
         rol_lower = request.user.rol.lower() if request.user.rol else ''
-        if rol_lower != 'admin':
+        if rol_lower != 'admin' and not request.user.is_superuser:
             return redireccionar_por_rol(request.user)
         return view_func(request, *args, **kwargs)
     return wrapper
@@ -268,7 +268,7 @@ def logout_view(request):
 def redireccionar_por_rol(user):
     rol_lower = user.rol.lower() if user.rol else ''
     
-    if rol_lower == 'admin':
+    if rol_lower == 'admin' or user.is_superuser:
         return redirect('admin_dashboard')
     elif rol_lower == 'medico':
         return redirect('medico_dashboard')
@@ -289,7 +289,7 @@ def redireccionar_por_rol(user):
 @no_cache_view
 def admin_dashboard(request):
     rol_lower = request.user.rol.lower() if request.user.rol else ''
-    if rol_lower != 'admin':
+    if rol_lower != 'admin' and not request.user.is_superuser:
         return redireccionar_por_rol(request.user)
 
     from pacientes.models import Paciente
@@ -1212,6 +1212,7 @@ def _ejecutar_ia_en_control(control, request=None):
             'explicacion':     resultado.explicacion,
             'alerta_critica':  resultado.alerta_critica,
             'nota_antecedente': resultado.nota_antecedente,
+            'ajuste_seguridad': resultado.ajuste_seguridad,
             'motor_usado':     'ml_random_forest' if ml_engine.modelo_disponible else 'respaldo_clinico_reglas',
             'datos_procesados': {
                 'glucosa_mmol':  glucosa_mmol,

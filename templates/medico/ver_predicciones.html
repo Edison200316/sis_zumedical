@@ -50,6 +50,7 @@
     .alerta-critica { background:#fff1f2; border:2px solid #fca5a5; border-radius:14px; padding:1.1rem 1.5rem; margin-bottom:1.5rem; display:flex; align-items:flex-start; gap:.85rem; animation:slideIn .3s ease; }
     .alerta-critica-icon { font-size:1.6rem; flex-shrink:0; line-height:1; }
     .alerta-critica-text { font-size:.9rem; color:#7f1d1d; font-weight:500; line-height:1.5; }
+    .ajuste-seguridad { background:var(--yellow-bg); border:1px solid var(--yellow-border); border-radius:10px; padding:.85rem 1.1rem; font-size:.82rem; color:var(--yellow); line-height:1.5; margin:1rem 2rem; font-weight:500; }
 
     /* FICHA PACIENTE */
     .ficha-card { background:var(--white); border-radius:16px; border:1px solid var(--mg-border); overflow:hidden; margin-bottom:1.75rem; box-shadow:0 2px 12px rgba(176,53,128,.06); }
@@ -336,6 +337,9 @@
   <!-- Nota de antecedente diabético -->
   {% if d.nota_antecedente %}
   <div class="nota-antecedente">{{ d.nota_antecedente }}</div>
+  {% endif %}
+  {% if d.ajuste_seguridad %}
+  <div class="ajuste-seguridad">⚠️ {{ d.ajuste_seguridad }}</div>
   {% endif %}
 
   <!-- Secciones: factores, complicaciones, recomendaciones, XAI -->

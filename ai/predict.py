@@ -198,6 +198,7 @@ class ResultadoPrediccion:
     datos_clinicos:         Dict
     alerta_critica:         Optional[str] = None
     nota_antecedente:       Optional[str] = None
+    ajuste_seguridad:       Optional[str] = None
 
 
 class PrenatalMLEngine:
@@ -342,7 +343,98 @@ class PrenatalMLEngine:
 
         return factores
 
-    def _resultado_clinico(self, datos_clinicos: dict, nivel: str, probs: Dict[str, float], prob_nivel: float) -> ResultadoPrediccion:
+    def _normalizar_probabilidades(self, probs: Dict[str, float]) -> Dict[str, float]:
+        total = sum(float(probs.get(k, 0.0)) for k in LABEL_COLORS) or 1.0
+        normalizadas = {
+            k: round((float(probs.get(k, 0.0)) / total) * 100.0, 1)
+            for k in LABEL_COLORS
+        }
+        diferencia = round(100.0 - sum(normalizadas.values()), 1)
+        if diferencia:
+            mayor = max(normalizadas, key=normalizadas.get)
+            normalizadas[mayor] = round(normalizadas[mayor] + diferencia, 1)
+        return normalizadas
+
+    def _aplicar_piso_clinico(
+        self,
+        datos_clinicos: dict,
+        nivel: str,
+        probs: Dict[str, float],
+    ):
+        """Aplica reglas conservadoras para que factores clinicos confirmados no queden como bajo riesgo."""
+        orden = {"Bajo": 0, "Medio": 1, "Alto": 2}
+        sistolica = datos_clinicos.get("systolic_bp", 0)
+        diastolica = datos_clinicos.get("diastolic_bp", 0)
+        glucosa = datos_clinicos.get("glucose", 0)
+        bmi = datos_clinicos.get("bmi", 0)
+        edad = datos_clinicos.get("age", 0)
+        prev_comp = int(datos_clinicos.get("prev_complications", 0))
+        diab_pre = int(datos_clinicos.get("diabetes_preexisting", 0))
+        diab_gest = int(datos_clinicos.get("diabetes_gestacional", 0))
+
+        objetivo = nivel
+        minimo = 0.0
+        razones = []
+
+        if sistolica >= 160 or diastolica >= 110:
+            objetivo = "Alto"
+            minimo = max(minimo, 90.0)
+            razones.append("presion arterial severa")
+        if glucosa > 11.1:
+            objetivo = "Alto"
+            minimo = max(minimo, 90.0)
+            razones.append("glucosa en rango critico")
+
+        requiere_medio = []
+        if sistolica >= 140 or diastolica >= 90:
+            requiere_medio.append("presion arterial elevada")
+        if glucosa > 7.8:
+            requiere_medio.append("hiperglucemia")
+        if diab_pre:
+            requiere_medio.append("diabetes preexistente registrada")
+        if diab_gest:
+            requiere_medio.append("diabetes gestacional registrada")
+        if prev_comp:
+            requiere_medio.append("complicaciones obstetricas previas")
+        if bmi >= 35:
+            requiere_medio.append("obesidad grado II-III")
+        if edad >= 40:
+            requiere_medio.append("edad materna muy avanzada")
+
+        if requiere_medio and orden[objetivo] < orden["Medio"]:
+            objetivo = "Medio"
+            minimo = max(minimo, 65.0)
+            razones.extend(requiere_medio)
+
+        if orden[objetivo] <= orden[nivel]:
+            return nivel, probs, float(probs.get(nivel, 0.0)), None
+
+        ajustadas = dict(probs)
+        if objetivo == "Medio":
+            ajustadas["Medio"] = max(float(ajustadas.get("Medio", 0.0)), minimo or 65.0)
+            ajustadas["Bajo"] = min(float(ajustadas.get("Bajo", 0.0)), 30.0)
+            ajustadas["Alto"] = max(float(ajustadas.get("Alto", 0.0)), 5.0)
+        else:
+            ajustadas["Alto"] = max(float(ajustadas.get("Alto", 0.0)), minimo or 90.0)
+            ajustadas["Medio"] = min(max(float(ajustadas.get("Medio", 0.0)), 5.0), 5.0)
+            ajustadas["Bajo"] = min(float(ajustadas.get("Bajo", 0.0)), 5.0)
+
+        ajustadas = self._normalizar_probabilidades(ajustadas)
+        nota = (
+            "Ajuste clinico de seguridad: el modelo sugirio riesgo "
+            f"{nivel}, pero se elevo a {objetivo} por "
+            f"{'; '.join(dict.fromkeys(razones))}."
+        )
+        return objetivo, ajustadas, float(ajustadas[objetivo]), nota
+
+    def _resultado_clinico(
+        self,
+        datos_clinicos: dict,
+        nivel: str,
+        probs: Dict[str, float],
+        prob_nivel: float,
+        ajuste_seguridad: Optional[str] = None,
+    ) -> ResultadoPrediccion:
         """Construye la respuesta completa a partir de un nivel ya calculado."""
         factores_dict = self._detectar_factores(datos_clinicos)
         factores_texto = [t for textos in factores_dict.values() for t in textos]
@@ -439,6 +531,8 @@ class PrenatalMLEngine:
             )
             if not self._loaded:
                 explicacion += " Se usó el respaldo clínico por reglas porque el modelo ML no está disponible."
+        if ajuste_seguridad:
+            explicacion += " " + ajuste_seguridad
 
         return ResultadoPrediccion(
             nivel_riesgo=nivel,
@@ -455,6 +549,7 @@ class PrenatalMLEngine:
             datos_clinicos=datos_clinicos,
             alerta_critica=alerta_critica,
             nota_antecedente=nota_antecedente,
+            ajuste_seguridad=ajuste_seguridad,
         )
 
     def _predict_rule_based(self, datos_clinicos: dict) -> ResultadoPrediccion:
@@ -508,7 +603,8 @@ class PrenatalMLEngine:
             prob_nivel = max(60, 82 - puntos * 7)
             probs = {"Bajo": float(prob_nivel), "Medio": max(5.0, 100.0 - prob_nivel - 5.0), "Alto": 5.0}
 
-        return self._resultado_clinico(datos_clinicos, nivel, probs, float(prob_nivel))
+        nivel, probs, prob_nivel, ajuste = self._aplicar_piso_clinico(datos_clinicos, nivel, probs)
+        return self._resultado_clinico(datos_clinicos, nivel, probs, float(prob_nivel), ajuste)
 
     def predict(self, datos_clinicos: dict) -> ResultadoPrediccion:
         """
@@ -536,10 +632,10 @@ class PrenatalMLEngine:
             for i, p in enumerate(probabilidades_arr)
         }
         nivel      = LABEL_DECODE[clase_pred]
-        prob_nivel = probs[nivel]
+        nivel, probs, prob_nivel, ajuste = self._aplicar_piso_clinico(datos_clinicos, nivel, probs)
         puntuacion = int(prob_nivel)
 
-        resultado = self._resultado_clinico(datos_clinicos, nivel, probs, prob_nivel)
+        resultado = self._resultado_clinico(datos_clinicos, nivel, probs, prob_nivel, ajuste)
         if resultado.factores_detectados:
             resultado.explicacion += (
                 f" El modelo analizó {len(self._features)} variables clínicas "

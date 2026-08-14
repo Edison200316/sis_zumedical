@@ -81,7 +81,9 @@
     }
 
     if (cedula.length < 10) {
-      setEstado(input, 'error', mostrarCompleto ? 'La cedula debe tener 10 digitos.' : '');
+      var faltan = 10 - cedula.length;
+      var mensajeFaltan = 'Faltan ' + faltan + ' digito' + (faltan !== 1 ? 's' : '') + ' para completar la cedula.';
+      setEstado(input, 'error', mostrarCompleto ? 'La cedula debe tener 10 digitos.' : mensajeFaltan);
       return false;
     }
 

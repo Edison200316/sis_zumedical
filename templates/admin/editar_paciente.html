@@ -273,6 +273,24 @@ function closeSidebar() {
         input.classList.remove('valid', 'invalid');
         if (state) input.classList.add(state);
     }
+    function esCedulaLocalValida(cedula) {
+        cedula = String(cedula || '').trim();
+        if (!/^\d{10}$/.test(cedula)) return false;
+        if (/^(\d)\1{9}$/.test(cedula)) return false;
+        const provincia = parseInt(cedula.substring(0, 2), 10);
+        if (!(provincia >= 1 && provincia <= 24)) return false;
+        if (parseInt(cedula[2], 10) >= 6) return false;
+        const coeficientes = [2, 1, 2, 1, 2, 1, 2, 1, 2];
+        let suma = 0;
+        for (let i = 0; i < 9; i++) {
+            let resultado = parseInt(cedula[i], 10) * coeficientes[i];
+            if (resultado >= 10) resultado -= 9;
+            suma += resultado;
+        }
+        const residuo = suma % 10;
+        const verificador = residuo === 0 ? 0 : 10 - residuo;
+        return verificador === parseInt(cedula[9], 10);
+    }
 
     // Nombre / Apellidos: solo letras, bloquear al teclear, no pueden quedar vacíos
     ['first_name', 'last_name'].forEach(function(id) {
@@ -317,7 +335,7 @@ function closeSidebar() {
             input.value = input.value.replace(/\D/g, '').slice(0, 10);
             const v = input.value;
             if (v === '') { fields.cedula = true; setInputState(input, null); setMsg('cedula', ''); updateSubmit(); return; }
-            const valid = window.esCedulaEcuatorianaValida ? window.esCedulaEcuatorianaValida(v) : false;
+            const valid = window.esCedulaEcuatorianaValida ? window.esCedulaEcuatorianaValida(v) : esCedulaLocalValida(v);
             fields.cedula = valid;
             setInputState(input, valid ? 'valid' : 'invalid');
             setMsg('cedula', valid ? '' : (v.length < 10 ? 'Debe tener 10 dígitos' : 'Ingresa una cédula ecuatoriana real'), 'error');

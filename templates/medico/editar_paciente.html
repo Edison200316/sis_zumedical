@@ -206,6 +206,9 @@
         }
         .form-group input:focus { border-color: var(--mg); box-shadow: 0 0 0 4px rgba(176, 53, 128, 0.08); }
         .form-group input::placeholder { color: #D4A8C4; }
+        .form-group input.is-valid { border-color: var(--green); box-shadow: 0 0 0 4px rgba(26, 122, 74, 0.08); }
+        .form-group input.is-invalid { border-color: var(--red); box-shadow: 0 0 0 4px rgba(176, 48, 48, 0.08); }
+        .field-msg { display: block; min-height: 1rem; margin-top: .45rem; font-size: .82rem; line-height: 1.25; }
  
         .form-actions { display: flex; gap: 1.25rem; align-items: center; margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid var(--mg-border); }
         .btn-primary {
@@ -342,6 +345,7 @@
                 <div class="form-group">
                     <label>Cédula de identidad</label>
                     <input type="text" id="cedula" name="cedula" value="{{ paciente.cedula }}" placeholder="0000000000" maxlength="10" minlength="10" inputmode="numeric" autocomplete="off">
+                    <small class="field-msg" id="msg_cedula"></small>
                 </div>
                 <div class="form-group">
                     <label>Edad</label>

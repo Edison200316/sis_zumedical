@@ -153,6 +153,9 @@ LOGIN_URL = '/login/'
 # BASE DE DATOS — MySQL (Oracle Cloud) via .env
 # ============================================================
 
+DB_SSL_ENABLED = config('DB_SSL_MODE', default='REQUIRED').upper() != 'DISABLED'
+DB_SSL_OPTIONS = {'verify_mode': 'none'} if os.environ.get('VERCEL') else True
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -163,7 +166,7 @@ DATABASES = {
         'PORT': config('DB_PORT', default='3306'),
         'OPTIONS': {
             'charset': 'utf8mb4',
-            'ssl': config('DB_SSL_MODE', default='REQUIRED').upper() != 'DISABLED',
+            'ssl': DB_SSL_OPTIONS if DB_SSL_ENABLED else None,
             'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
         },
         'CONN_MAX_AGE': 0,

@@ -457,7 +457,6 @@ def paciente_dashboard(request):
         # ── Programación de parto próxima ─────────────────────────────────────
         tiene_prenatal_activo = bool(
             perfil
-            and getattr(perfil, 'tiene_prenatal', False)
             and getattr(perfil, 'estado_embarazo', '') == 'ACTIVO'
         )
         parto_programado = None
@@ -470,11 +469,12 @@ def paciente_dashboard(request):
             
             parto_programado = ProgramacionParto.objects.filter(
                 paciente=request.user,
-                estado__in=['programado', 'confirmado'],
+                fecha_programada__gte=hoy,
+                estado__in=['programado', 'confirmado', 'reprogramado'],
             ).order_by('fecha_programada', 'hora_programada').first()
             print(f"DEBUG: Parto programado encontrado: {parto_programado}")
         else:
-            print(f"DEBUG: No tiene prenatal activo - perfil:{perfil}, tiene_prenatal:{getattr(perfil, 'tiene_prenatal', False) if perfil else None}, estado:{getattr(perfil, 'estado_embarazo', '') if perfil else None}")
+            print(f"DEBUG: No tiene prenatal activo - perfil:{perfil}, estado:{getattr(perfil, 'estado_embarazo', '') if perfil else None}")
         print(f"DEBUG: Parto programado: {parto_programado}")
 
         print("DEBUG: Renderizando template...")
